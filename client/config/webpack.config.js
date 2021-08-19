@@ -364,6 +364,12 @@ module.exports = function (webpackEnv) {
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
         {
+          test: /.jsx?$/,
+          include: [path.resolve(__dirname, "src")],
+          exclude: [path.resolve(__dirname, "node_modules")],
+          loader: "babel-loader",
+        },
+        {
           test: /.css?$/,
           exclude: [],
           //로더는 오른쪽부터 읽어들이므로 postcss-loader를 맨 오른쪽에 넣어준다.
