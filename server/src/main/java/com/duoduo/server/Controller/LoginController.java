@@ -3,10 +3,16 @@ package com.duoduo.server.Controller;
 import com.duoduo.server.Entity.UserEntity;
 import com.duoduo.server.Repository.LoginDTO;
 import com.duoduo.server.Repository.UserRepository;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
+import java.util.Date;
 
 @CrossOrigin(value = "*")
 @Controller
@@ -22,9 +28,23 @@ public class LoginController {
     }
 
     @PostMapping(value = "/signin")
-    public UserEntity signin(@RequestBody(required = true) LoginDTO data) {
+    public String signin(@RequestBody(required = true) LoginDTO data) {
         try {
+            Date now = new Date();
             // db에 일치하는 유저가 있는 검사
+            // TODO: password에 hashing 적용해야 됨
+            // TODO: jwt 발급해야 됨
+            if (userRepository.findByEmail(data.getEmail()) != null) {
+                 UserEntity user = userRepository.findByPassword(data.getPassword());
+                return Jwts.builder()
+                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                        .setIssuer("duoduo")
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis()))
+                        .claim("email", user.getEmail())
+                        .signWith(SignatureAlgorithm.HS256, "secret")
+                        .compact();
+            }
             return null;
         } catch (Exception e) {
             return null;
