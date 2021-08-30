@@ -7,6 +7,7 @@ import styled from "styled-components";
 import Loading from "./Loading";
 import { isLoadingState } from "../state";
 import { loadavg } from "os";
+import { saveToken } from "../common/auth";
 
 function Signin() {
   const [email, setEmail] = useState("");
@@ -21,7 +22,17 @@ function Signin() {
     });
 
     console.log(data);
+
+    if (!data) {
+      alert("invalid email or password");
+      setIsLoading(false);
+      return;
+    }
     // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
+
+    // jwt 저장 (local)
+    saveToken(data);
+
     setTimeout(() => {
       setIsLoading(false);
       window.history.pushState("signin", "", "/");

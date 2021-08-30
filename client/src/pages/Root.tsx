@@ -1,17 +1,21 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { getToken } from "../common/auth";
 import UserCard from "../components/UserCard";
 
 function Root() {
+  let loggedIn = getToken().token;
   return (
     <>
       <Top>
         <p className="text-4xl flex-1 font-bold">DUODUO</p>
-        <GreenBtn className="flex-2 bg-green-400">
-          <Link to="signin">
-            <p className="text-2xl font-bold">SIGN IN</p>
-          </Link>
-        </GreenBtn>
+        {!loggedIn && (
+          <GreenBtn className="flex-2 bg-green-400">
+            <Link to="signin">
+              <p className="text-2xl font-bold">SIGN IN</p>
+            </Link>
+          </GreenBtn>
+        )}
       </Top>
       <main>
         <Screen

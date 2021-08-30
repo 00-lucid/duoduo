@@ -61,7 +61,7 @@ function Signup() {
       console.log(data);
       if (!data) {
         // 실패시
-        alert("이미있는 계정 이메일 또는 닉네임입니다.");
+        alert("exist account of email");
         setIsLoading(false);
         return;
       }
@@ -69,11 +69,11 @@ function Signup() {
       setTimeout(() => {
         setIsLoading(false);
 
-        window.history.pushState("signup", "", "/");
+        window.history.pushState("signup", "", "/signin");
         window.history.go(0);
       }, 1000);
     } else {
-      alert("잘못된 회원가입 정보입니다");
+      alert("invalid email / password / nickname");
     }
   };
 
