@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
+import Modal from "../components/Modal";
 import UserCard from "../components/UserCard";
 
 function Root() {
   let loggedIn = getToken().token;
   return (
     <>
+      <Modal></Modal>
       <Top>
         <p className="text-4xl flex-1 font-bold">DUODUO</p>
         {!loggedIn && (
