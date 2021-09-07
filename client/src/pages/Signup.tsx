@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import Modal from "../components/Modal";
 import { isLoadingState } from "../state";
 import Loading from "./Loading";
 
@@ -71,7 +72,7 @@ function Signup() {
 
         window.history.pushState("signup", "", "/signin");
         window.history.go(0);
-      }, 1000);
+      }, 800);
     } else {
       alert("invalid email / password / nickname");
     }
@@ -117,6 +118,7 @@ function Signup() {
               feedback(isNickname, e.target.style);
             }}
           ></Input>
+
           <SocialLoginBtn
             className="bg-green-400 flex justify-center items-center"
             onClick={postSignup}

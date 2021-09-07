@@ -31,13 +31,13 @@ function Signin() {
     // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
 
     // jwt 저장 (local)
-    saveToken(data);
+    saveToken({ token: data, csrf: null });
 
     setTimeout(() => {
       setIsLoading(false);
       window.history.pushState("signin", "", "/");
       window.history.go(0);
-    }, 1000);
+    }, 800);
   };
 
   return (
