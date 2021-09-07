@@ -1,28 +1,80 @@
+import axios from "axios";
+import { useEffect } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import Loading from "./Loading";
+import { isLoadingState } from "../state";
+import { loadavg } from "os";
+import { saveToken } from "../common/auth";
 
 function Signin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
+
+  const postSignin = async () => {
+    setIsLoading(true);
+    const { data } = await axios.post("http://localhost:8080/signin", {
+      email,
+      password,
+    });
+
+    console.log(data);
+
+    if (!data) {
+      alert("invalid email or password");
+      setIsLoading(false);
+      return;
+    }
+    // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
+
+    // jwt 저장 (local)
+    saveToken({ token: data, csrf: null });
+
+    setTimeout(() => {
+      setIsLoading(false);
+      window.history.pushState("signin", "", "/");
+      window.history.go(0);
+    }, 800);
+  };
+
   return (
     <>
+      {/* 로딩을 이렇게 구현하는게 효율적이지 않다 왜냐하면 로딩이 필요한 페이지마다 아래 코드 한줄을 삽입해야 하기 때문이다 다른 방법이 없을까? */}
+      {/* {isLoading && <Loading></Loading>} */}
       <Top>
         <p className="text-4xl flex-1 font-bold">DUODUO</p>
       </Top>
       <main className="flex flex-row h-full items-center justify-center mt-24">
         <Card className="flex justify-center items-center">
-          <img
-            className="w-full"
-            src="https://o.remove.bg/downloads/edc7bb66-b66e-49c3-b446-108dffc61231/umi-removebg-preview.png"
-            alt="umi"
-          ></img>
+          <img className="w-full" src="umi-removebg.png" alt="umi"></img>
         </Card>
         <Card className="bg-white rounded-xl p-10">
           <p className="text-3xl font-bold mb-6">SignIn</p>
-          <Input type="text" placeholder="email"></Input>
-          <Input type="password" placeholder="password"></Input>
+          <Input
+            type="text"
+            placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
+          ></Input>
+          <Input
+            type="password"
+            placeholder="password"
+            onChange={(e) => setPassword(e.target.value)}
+          ></Input>
+          <SocialLoginBtn
+            className="bg-green-400 flex justify-center items-center"
+            onClick={postSignin}
+          >
+            {isLoading ? <Loading></Loading> : "OK"}
+          </SocialLoginBtn>
+          <p>or</p>
           <SocialLoginBtn className="bg-yellow-300">Kakao</SocialLoginBtn>
           <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
             Google
           </SocialLoginBtn>
-          <SocialLoginBtn className="bg-blue-500">Facebook</SocialLoginBtn>
+          <Link to="/signup">create duoduo account</Link>
         </Card>
       </main>
     </>
@@ -50,7 +102,7 @@ const Input = styled.input({
   outline: "none",
   color: "#343a40",
   backgroundColor: "#e9ecef",
-  fontSize: "1.2rem",
+  fontSize: "1.1rem",
   padding: "0.9rem",
   borderRadius: "0.375rem",
   marginBottom: "0.7rem",
@@ -61,7 +113,7 @@ const SocialLoginBtn = styled.button({
   height: "60px",
   cursor: "pointer",
   marginBottom: "0.3rem",
-  fontSize: "1.2rem",
+  fontSize: "1.1rem",
   fontWeight: 600,
   borderRadius: "0.375rem",
 });
