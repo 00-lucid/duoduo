@@ -1,11 +1,13 @@
 package com.duoduo.server.Entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity(name = "user")
@@ -24,6 +26,9 @@ public class UserEntity {
 
     @Column
     private String nickname;
+
+    @OneToMany(mappedBy = "username")
+    private List<UserNameEntity> usernames = new ArrayList<>();
 
     @Builder
     public UserEntity(Long id, String email, String password, String nickname) {

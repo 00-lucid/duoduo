@@ -1,12 +1,11 @@
 package com.duoduo.server.Controller;
 
 import com.duoduo.server.Entity.UserEntity;
+import com.duoduo.server.Entity.UserNameEntity;
 import com.duoduo.server.Repository.LoginDTO;
+import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,9 @@ public class LoginController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserNameRepository userNameRepository;
+
     @GetMapping(value = "/")
     public String getVoid() {
         return "hello duoduo server";
@@ -31,9 +33,7 @@ public class LoginController {
     public String signin(@RequestBody(required = true) LoginDTO data) {
         try {
             Date now = new Date();
-            // db에 일치하는 유저가 있는 검사
             // TODO: password에 hashing 적용해야 됨
-            // TODO: jwt 발급해야 됨
             if (userRepository.findByEmail(data.getEmail()) != null) {
                  UserEntity user = userRepository.findByPassword(data.getPassword());
                 return Jwts.builder()
@@ -71,6 +71,30 @@ public class LoginController {
             return userRepository.save(user);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    @PostMapping(value = "/username")
+    public boolean createUsername(@RequestBody(required = true) String username, @RequestHeader("Authorization") String data) {
+        // TODO: username을 스트링 타입이 아닌 객체타입으로 만들어 키값으로 불러올 수 있어야 함
+        try{
+            System.out.println(username);
+            String jwt = data.substring(7);
+            Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt).getBody();
+            System.out.println(claims);
+            System.out.println(claims.get("email"));
+            String decodedEmail = claims.get("email").toString();
+            // createusernameentity
+            UserEntity findUser = userRepository.findByEmail(decodedEmail);
+            UserNameEntity userName =  UserNameEntity.builder()
+                            .userId(findUser)
+                            .username(username)
+                            .build();
+            userNameRepository.save(userName);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
         }
     }
 
