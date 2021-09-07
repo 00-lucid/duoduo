@@ -11,10 +11,10 @@
 ## Stack
 
 [ Frontend ]
-: React, TypeScript, StyledComponent
+: React, TypeScript, StyledComponent, Recoil
 
 [ Backend ]
-: SpringBoot, Java, Jpa
+: SpringBoot, Java, Jpa, MySQL
 
 ## Member
 
