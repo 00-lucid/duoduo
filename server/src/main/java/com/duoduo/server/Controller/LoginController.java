@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
 
 @CrossOrigin(value = "*")
 @Controller
@@ -75,10 +76,9 @@ public class LoginController {
     }
 
     @PostMapping(value = "/username")
-    public boolean createUsername(@RequestBody(required = true) String username, @RequestHeader("Authorization") String data) {
+    public boolean createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
         // TODO: username을 스트링 타입이 아닌 객체타입으로 만들어 키값으로 불러올 수 있어야 함
         try{
-            System.out.println(username);
             String jwt = data.substring(7);
             Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt).getBody();
             System.out.println(claims);
@@ -88,7 +88,7 @@ public class LoginController {
             UserEntity findUser = userRepository.findByEmail(decodedEmail);
             UserNameEntity userName =  UserNameEntity.builder()
                             .userId(findUser)
-                            .username(username)
+                            .username(map.get("username"))
                             .build();
             userNameRepository.save(userName);
             return true;
