@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
+import { isLoadingState } from "../state";
 
 function Modal() {
   const [username, setUsername] = useState("");
-
   const postUsername = async () => {
     const token = getToken().token;
     console.log(token);

@@ -1,14 +1,19 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { getToken } from "../common/auth";
+import { destroyToken, getCookie, getToken } from "../common/auth";
 import Modal from "../components/Modal";
 import UserCard from "../components/UserCard";
+import { isLoadingState } from "../state";
 
 function Root() {
   let loggedIn = getToken().token;
+  let isUsername = getCookie("isUsername");
+
   return (
     <>
-      <Modal></Modal>
+      {loggedIn && !isUsername && <Modal></Modal>}
       <Top>
         <p className="text-4xl flex-1 font-bold">DUODUO</p>
         {!loggedIn && (

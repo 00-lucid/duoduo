@@ -1,3 +1,4 @@
+import Cookies from "universal-cookie";
 import packageJson from "../../../package.json";
 
 const ID_TOKEN_KEY = `${packageJson.name}_token`;
@@ -18,6 +19,16 @@ export const saveToken = ({ token, csrf }) => {
 export const destroyToken = () => {
   window.localStorage.removeItem(ID_TOKEN_KEY);
   window.localStorage.removeItem(CSRF_KEY);
+};
+
+export const setCookie = (name, value, option) => {
+  const newCookie = new Cookies();
+  newCookie.set(name, value, { ...option });
+};
+
+export const getCookie = (name) => {
+  const newCookie = new Cookies();
+  return newCookie.get(name);
 };
 
 export default { getToken, saveToken, destroyToken };

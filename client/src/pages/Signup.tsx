@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { setCookie } from "../common/auth";
 import Modal from "../components/Modal";
 import { isLoadingState } from "../state";
 import Loading from "./Loading";
@@ -67,6 +68,10 @@ function Signup() {
         return;
       }
       // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
+
+      // TODO: cookie logic
+      setCookie("isUsername", false);
+
       setTimeout(() => {
         setIsLoading(false);
 
