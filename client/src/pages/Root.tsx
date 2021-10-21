@@ -2,26 +2,45 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
+import moveHome from "../common/api/page";
 import { destroyToken, getCookie, getToken } from "../common/auth";
 import Modal from "../components/Modal";
 import UserCard from "../components/UserCard";
 import { isLoadingState } from "../state";
+import { userInfoState } from "../state-persist";
 
 function Root() {
-  let loggedIn = getToken().token;
+  let loggedIn = !!getToken().token;
   let isUsername = getCookie("isUsername");
+  const userInfo = useRecoilValue(userInfoState);
 
   return (
     <>
-      {loggedIn && !isUsername && <Modal></Modal>}
-      <Top>
-        <p className="text-4xl flex-1 font-bold">DUODUO</p>
+      {loggedIn && isUsername === "false" && <Modal></Modal>}
+      <Top className="border-2">
+        <p
+          className="text-4xl font-bold border-2 cursor-pointer"
+          onClick={moveHome}
+        >
+          DUODUO
+        </p>
         {!loggedIn && (
           <GreenBtn className="flex-2 bg-green-400">
             <Link to="signin">
               <p className="text-2xl font-bold">SIGN IN</p>
             </Link>
           </GreenBtn>
+        )}
+        {loggedIn && (
+          <div className="flex flex-row w-1/5 justify-between">
+            <p className="text-2xl font-bold border-2">{`${userInfo}`}</p>
+            <p
+              className="text-2xl font-bold border-2 cursor-pointer"
+              onClick={destroyToken}
+            >
+              SIGN OUT
+            </p>
+          </div>
         )}
       </Top>
       <main>
@@ -69,6 +88,11 @@ function Root() {
             <UserCard></UserCard>
             <UserCard></UserCard>
           </li>
+          <Link to="rooms">
+            <p className="text-white text-xl font-medium cursor-pointer">
+              전체보기
+            </p>
+          </Link>
         </Screen>
         <Screen className="flex flex-col items-center justify-center">
           <p className="text-white text-5xl font-medium">
@@ -84,6 +108,7 @@ function Root() {
 }
 
 const Top = styled.header({
+  padding: "0.8rem",
   width: "100%",
   height: "4rem",
   color: "white",
@@ -91,6 +116,7 @@ const Top = styled.header({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
+  justifyContent: "space-between",
 });
 
 const GreenBtn = styled.button({

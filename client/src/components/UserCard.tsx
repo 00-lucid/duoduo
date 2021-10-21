@@ -23,7 +23,7 @@ function UserCard() {
 
 export default UserCard;
 
-const Body = styled.ul({
+const Body = styled.li({
   minWidth: "280px",
   height: "350px",
   backgroundColor: "white",

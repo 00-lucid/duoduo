@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import moveHome from "../common/api/page";
 import { setCookie } from "../common/auth";
 import Modal from "../components/Modal";
 import { isLoadingState } from "../state";
@@ -86,7 +87,12 @@ function Signup() {
   return (
     <>
       <Top>
-        <p className="text-4xl flex-1 font-bold">DUODUO</p>
+        <p
+          className="text-4xl flex-1 font-bold cursor-pointer"
+          onClick={moveHome}
+        >
+          DUODUO
+        </p>
       </Top>
       <main className="flex flex-row h-full items-center justify-center mt-24">
         <Card className="flex justify-center items-center">
