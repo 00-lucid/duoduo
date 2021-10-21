@@ -6,6 +6,7 @@ import com.duoduo.server.Repository.LoginDTO;
 import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
 import io.jsonwebtoken.*;
+import org.json.simple.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,20 +32,28 @@ public class LoginController {
     }
 
     @PostMapping(value = "/signin")
-    public String signin(@RequestBody(required = true) LoginDTO data) {
+    public JSONObject signin(@RequestBody(required = true) LoginDTO data) {
         try {
             Date now = new Date();
             // TODO: password에 hashing 적용해야 됨
             if (userRepository.findByEmail(data.getEmail()) != null) {
-                 UserEntity user = userRepository.findByPassword(data.getPassword());
-                return Jwts.builder()
+                UserEntity user = userRepository.findByPassword(data.getPassword());
+
+                JSONObject jsonObject = new JSONObject();
+
+                String jwt =  Jwts.builder()
                         .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                         .setIssuer("duoduo")
                         .setIssuedAt(now)
-                        .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis()))
+                        .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
                         .claim("email", user.getEmail())
                         .signWith(SignatureAlgorithm.HS256, "secret")
                         .compact();
+                jsonObject.put("token", jwt);
+                jsonObject.put("nickname", user.getNickname());
+                System.out.println(jsonObject);
+
+                return jsonObject;
             }
             return null;
         } catch (Exception e) {
@@ -77,7 +86,6 @@ public class LoginController {
 
     @PostMapping(value = "/username")
     public boolean createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
-        // TODO: username을 스트링 타입이 아닌 객체타입으로 만들어 키값으로 불러올 수 있어야 함
         try{
             String jwt = data.substring(7);
             Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt).getBody();
