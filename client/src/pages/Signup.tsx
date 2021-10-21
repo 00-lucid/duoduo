@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import moveHome from "../common/api/page";
+import { setCookie } from "../common/auth";
 import Modal from "../components/Modal";
 import { isLoadingState } from "../state";
 import Loading from "./Loading";
@@ -67,6 +69,10 @@ function Signup() {
         return;
       }
       // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
+
+      // TODO: cookie logic
+      setCookie("isUsername", false);
+
       setTimeout(() => {
         setIsLoading(false);
 
@@ -81,7 +87,12 @@ function Signup() {
   return (
     <>
       <Top>
-        <p className="text-4xl flex-1 font-bold">DUODUO</p>
+        <p
+          className="text-4xl flex-1 font-bold cursor-pointer"
+          onClick={moveHome}
+        >
+          DUODUO
+        </p>
       </Top>
       <main className="flex flex-row h-full items-center justify-center mt-24">
         <Card className="flex justify-center items-center">

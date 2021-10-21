@@ -3,6 +3,7 @@ package com.duoduo.server.Entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.catalina.User;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Entity(name = "user")
 @NoArgsConstructor
+@ToString
 public class UserEntity {
 
     @Id

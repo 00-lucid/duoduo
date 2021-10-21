@@ -1,14 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { getToken } from "../common/auth";
+import { getToken, setCookie } from "../common/auth";
+import { isLoadingState } from "../state";
 
 function Modal() {
   const [username, setUsername] = useState("");
-
   const postUsername = async () => {
     const token = getToken().token;
-    console.log(token);
+
     const { data } = await axios.post(
       "http://localhost:8080/username",
       {
@@ -20,7 +21,14 @@ function Modal() {
         },
       }
     );
+
     console.log(data);
+
+    if (data) {
+      setCookie("isUsername", true);
+      window.history.pushState("signin", "", "/");
+      window.history.go(0);
+    }
   };
 
   return (

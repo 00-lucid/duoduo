@@ -5,6 +5,7 @@ import Root from "./pages/Root";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import { RecoilRoot } from "recoil";
+import Rooms from "./pages/Rooms";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" exact component={Root}></Route>
           <Route path="/signin" exact component={Signin}></Route>
           <Route path="/signup" exact component={Signup}></Route>
+          <Route path="/rooms" exact component={Rooms}></Route>
         </Switch>
       </div>
     </RecoilRoot>
