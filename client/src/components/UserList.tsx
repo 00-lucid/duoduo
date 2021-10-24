@@ -1,28 +1,27 @@
 import styled from "styled-components";
 
-function UserList() {
+function UserList({ room }: any) {
   return (
-    <li className="flex flex-row border h-20 bg-white">
+    <li
+      className="flex flex-row border h-20 text-white justify-start rounded-l-lg mb-2 overflow-hidden"
+      style={{ backgroundColor: "#2b2d42" }}
+    >
       <section className="flex flex-row items-center">
         <div className="border-2 border-green-300 w-16 h-16 rounded-full m-2"></div>
-        <div className="m-2">
-          <p>SKT T1 Faker</p>
-          <p>t1_faker</p>
+        <div className="m-2 w-40 text-left">
+          <p>{room.username}</p>
+          <p className="opacity-50">{room.nickname}</p>
         </div>
-        <div className="border w-16 h-16 m-2"></div>
-        <p className="m-2">C1</p>
-      </section>
-      <section className="flex flex-row items-center">
-        <div className="w-40 bg-gray-200 h-6 m-2">최근승률</div>
-        <div className="m-2">가렌 갈리오 갱플랭크</div>
-        <div className="m-2">4.3</div>
-        <div className="m-2">상</div>
-        <div className="m-2">76점</div>
-        <div className="m-2">53%</div>
-      </section>
-      <section className="border">
-        <button className="bg-green-400">
-          <p className="text-white font-medium text-medium">같이하기</p>
+        <div className="border w-16 h-16 ml-2"></div>
+        <p className="w-4 m-3 font-black">{room.tier}</p>
+        <div className="w-40 bg-gray-200 h-6 m-2"></div>
+        <div className="m-2 border w-40 h-16"></div>
+        <div className="w-4 m-3">{room.kda}</div>
+        <div className="w-4 m-3">{room.poro}</div>
+        <div className="w-4 m-3">{room.synergy}</div>
+        <div className="w-4 m-3">53%</div>
+        <button className="bg-green-400 ml-10 w-10 h-full flex flex-row items-center justify-center">
+          <img className="w-6 h-6" src="icon_arrow.png"></img>
         </button>
       </section>
     </li>
