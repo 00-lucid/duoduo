@@ -11,12 +11,12 @@ function TopMenu() {
 
   return (
     <Top className="border-2">
-      <p
-        className="text-4xl font-bold border-2 cursor-pointer"
-        onClick={moveHome}
-      >
+      <p className="text-4xl font-bold cursor-pointer" onClick={moveHome}>
         DUODUO
       </p>
+      <p className="cursor-pointer">듀오 찾기</p>
+      <p className="cursor-pointer">듀오 매칭</p>
+      <p>알람</p>
       {!loggedIn && (
         <GreenBtn className="flex-2 bg-green-400">
           <Link to="signin">

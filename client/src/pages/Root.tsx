@@ -5,6 +5,7 @@ import styled from "styled-components";
 import moveHome from "../common/api/page";
 import { destroyToken, getCookie, getToken } from "../common/auth";
 import Modal from "../components/Modal";
+import TopMenu from "../components/TopMenu";
 import UserCard from "../components/UserCard";
 import { isLoadingState } from "../state";
 import { userInfoState } from "../state-persist";
@@ -17,32 +18,7 @@ function Root() {
   return (
     <>
       {loggedIn && isUsername === "false" && <Modal></Modal>}
-      <Top className="border-2">
-        <p
-          className="text-4xl font-bold border-2 cursor-pointer"
-          onClick={moveHome}
-        >
-          DUODUO
-        </p>
-        {!loggedIn && (
-          <GreenBtn className="flex-2 bg-green-400">
-            <Link to="signin">
-              <p className="text-2xl font-bold">SIGN IN</p>
-            </Link>
-          </GreenBtn>
-        )}
-        {loggedIn && (
-          <div className="flex flex-row w-1/5 justify-between">
-            <p className="text-2xl font-bold border-2">{`${userInfo}`}</p>
-            <p
-              className="text-2xl font-bold border-2 cursor-pointer"
-              onClick={destroyToken}
-            >
-              SIGN OUT
-            </p>
-          </div>
-        )}
-      </Top>
+      <TopMenu></TopMenu>
       <main>
         <Screen
           style={{
