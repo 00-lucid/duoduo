@@ -85,7 +85,7 @@ public class LoginController {
     }
 
     @PostMapping(value = "/username")
-    public boolean createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
+    public UserNameEntity createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
         try{
             String jwt = data.substring(7);
             Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt).getBody();
@@ -99,10 +99,10 @@ public class LoginController {
                             .username(map.get("username"))
                             .build();
             userNameRepository.save(userName);
-            return true;
+            return userName;
         } catch (Exception e) {
             System.out.println(e);
-            return false;
+            return null;
         }
     }
 

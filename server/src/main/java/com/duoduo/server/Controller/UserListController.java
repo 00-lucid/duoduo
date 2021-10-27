@@ -36,14 +36,16 @@ public class UserListController {
             UserListEntity userList = UserListEntity.builder()
                     .username(userListDTO.getUsername())
                     .nickname(userListDTO.getNickname())
-                    .position(userListDTO.getPosition().get(0))
+                    .position(userListDTO.getPosition())
                     .tier(userListDTO.getTier())
                     .recent_rate(70)
                     .most("sindra")
                     .kda(5)
                     .poro(50)
                     .synergy(50)
-                    .total_rate(50)
+                    .total_rate(userListDTO.getTotal_rate())
+                    .profileIconId(userListDTO.getProfileIconId())
+                    .summonerLevel(userListDTO.getSummonerLevel())
                     .build();
 
             userListRepository.save(userList);
