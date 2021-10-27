@@ -14,7 +14,6 @@ function Root() {
   let loggedIn = !!getToken().token;
   let isUsername = getCookie("isUsername");
   const userInfo = useRecoilValue(userInfoState);
-
   return (
     <>
       {loggedIn && isUsername === "false" && <Modal></Modal>}

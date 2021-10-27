@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class UserListDTO {
     private String username;
     private String nickname;
-    private ArrayList<String> position;
+    private String position;
     private String tier;
     private Integer recent_win;
     private Integer recent_defeat;
@@ -17,6 +17,7 @@ public class UserListDTO {
     private Long kda;
     private Integer poro;
     private Integer synergy;
-    private Integer total_win;
-    private Integer total_defeat;
+    private Integer total_rate;
+    private Integer profileIconId;
+    private Integer summonerLevel;
 }

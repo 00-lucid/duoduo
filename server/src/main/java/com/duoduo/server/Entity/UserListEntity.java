@@ -47,8 +47,14 @@ public class UserListEntity {
     @Column
     private Integer total_rate;
 
+    @Column
+    private Integer profileIconId;
+
+    @Column
+    private Integer summonerLevel;
+
     @Builder
-    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate){
+    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
         this.id = id;
         this.username = username;
         this.nickname = nickname;
@@ -60,5 +66,7 @@ public class UserListEntity {
         this.poro = poro;
         this.synergy = synergy;
         this.total_rate = total_rate;
+        this.profileIconId = profileIconId;
+        this.summonerLevel = summonerLevel;
     }
 }
