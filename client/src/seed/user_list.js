@@ -12,6 +12,8 @@ export default [
     synergy: 65,
     total_win: 43,
     total_defeat: 19,
+    profileIconId: 1,
+    summonerLevel: 30,
   },
   {
     username: "SKT T1 Faker",
@@ -26,6 +28,8 @@ export default [
     synergy: 70,
     total_win: 100,
     total_defeat: 20,
+    profileIconId: 1,
+    summonerLevel: 30,
   },
   {
     username: "쵸비",
@@ -40,5 +44,7 @@ export default [
     synergy: 80,
     total_win: 200,
     total_defeat: 57,
+    profileIconId: 1,
+    summonerLevel: 30,
   },
 ];

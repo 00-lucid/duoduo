@@ -26,9 +26,9 @@ function TopMenu() {
       )}
       {loggedIn && (
         <div className="flex flex-row w-1/5 justify-between">
-          <p className="text-2xl font-bold border-2">{`${userInfo}`}</p>
+          <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
           <p
-            className="text-2xl font-bold border-2 cursor-pointer"
+            className="text-2xl font-bold cursor-pointer"
             onClick={destroyToken}
           >
             SIGN OUT

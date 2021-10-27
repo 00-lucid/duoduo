@@ -1,33 +1,75 @@
 import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
+import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
+import { userInfoState } from "../state-persist";
 
 function Rooms() {
   const [dummys, setDummy] = useState<Array<object>>([]);
-  const addUserList = async () => {
+  const userInfo = useRecoilValue(userInfoState);
+
+  const [isModal, setIsModal] = useState<boolean>(false);
+
+  const getLeague = async (encryptedSummonerId: string) => {
+    const { data } = await axios.get(
+      `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
+    );
+    return data[0];
+  };
+
+  const getSummoner = async () => {
+    const { data } = await axios.get(
+      `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${userInfo.username}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
+    );
+    return data;
+  };
+
+  const addUserList = async (position: string) => {
+    const summoner = await getSummoner();
+    const league = await getLeague(summoner.id);
+
+    console.log(league);
+    // typescript는 string type으로 객체 값 접근을 허용하지 않는다. 때문에 허용하는 객체라고 타입을 지정하거나 string-literal 타입을 이용해서 접근한다.
+    const rankToNumber: { [index: string]: number } = {
+      I: 1,
+      II: 2,
+      III: 3,
+      IV: 4,
+      V: 5,
+    };
+
     const result = {
-      username: "username",
-      nickname: "nickname",
-      position: ["mid", "adc"],
-      tier: "D4",
+      username: userInfo.username,
+      nickname: userInfo.nickname,
+      position: position,
+      tier: league.tier[0] + rankToNumber[league.rank],
       recent_win: 10,
       recent_defeat: 10,
       most: [],
       kda: 3,
       poro: 80,
       synergy: 70,
-      total_win: 200,
-      total_defeat: 200,
+      total_rate: logicWinRate(league.wins, league.losses),
+      profileIconId: summoner.profileIconId,
+      summonerLevel: summoner.summonerLevel,
     };
 
     const { data } = await axios.post("http://localhost:8080/userlist", result);
-    console.log(data);
+
     setDummy((old) => {
       return [data, ...old];
     });
+
+    setIsModal(false);
+  };
+
+  const logicWinRate = (win: number, defeat: number) => {
+    const total = win + defeat;
+    return (win / total) * 100;
   };
 
   useEffect(() => {
@@ -40,6 +82,9 @@ function Rooms() {
 
   return (
     <>
+      {isModal && (
+        <LineModal setIsModal={setIsModal} addUserList={addUserList} />
+      )}
       <TopMenu />
       <section className="flex flex-row justify-center">
         <header
@@ -90,15 +135,18 @@ function Rooms() {
         </section>
         <button
           className="absolute font-bold mb-3 text-white text-3xl"
-          onClick={addUserList}
+          onClick={() => {
+            // addUserList()
+            setIsModal(true);
+          }}
         >
           +
         </button>
       </header>
       <main className="flex items-center justify-center">
         <ul className="overflow-scroll w-4/6" style={{ height: "520px" }}>
-          {dummys.map((room) => {
-            return <UserList room={room} />;
+          {dummys.map((room, idx) => {
+            return <UserList key={idx} room={room} />;
           })}
         </ul>
       </main>

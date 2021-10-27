@@ -30,7 +30,14 @@ function Signin() {
     // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
     // jwt 저장 (local)
     saveToken({ token: data.token, csrf: null });
-    setUserInfo(data.nickname);
+    setUserInfo((old: object) => {
+      {
+        return {
+          ...old,
+          nickname: data.nickname,
+        };
+      }
+    });
     setTimeout(() => {
       setIsLoading(false);
       window.history.pushState("signin", "", "/");
