@@ -1,8 +1,6 @@
 import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import styled from "styled-components";
-import { getToken } from "../common/auth";
 import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
@@ -28,10 +26,17 @@ function Rooms() {
     return data;
   };
 
+  const getMatches = async (puuid: string) => {
+    const { data } = await axios.get(
+      `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20&api_key=${process.env.REACT_APP_API_KEY_RIOT}`
+    );
+
+    return data;
+  };
+
   const addUserList = async (position: string) => {
     const summoner = await getSummoner();
     const league = await getLeague(summoner.id);
-
     console.log(league);
     // typescript는 string type으로 객체 값 접근을 허용하지 않는다. 때문에 허용하는 객체라고 타입을 지정하거나 string-literal 타입을 이용해서 접근한다.
     const rankToNumber: { [index: string]: number } = {
@@ -43,16 +48,11 @@ function Rooms() {
     };
 
     const result = {
+      puuid: summoner.puuid,
       username: userInfo.username,
       nickname: userInfo.nickname,
       position: position,
       tier: league.tier[0] + rankToNumber[league.rank],
-      recent_win: 10,
-      recent_defeat: 10,
-      most: [],
-      kda: 3,
-      poro: 80,
-      synergy: 70,
       total_rate: logicWinRate(league.wins, league.losses),
       profileIconId: summoner.profileIconId,
       summonerLevel: summoner.summonerLevel,
