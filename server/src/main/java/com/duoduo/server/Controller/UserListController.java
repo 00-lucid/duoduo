@@ -4,6 +4,7 @@ import com.duoduo.server.Entity.UserListEntity;
 import com.duoduo.server.Repository.UserListDTO;
 import com.duoduo.server.Repository.UserListRepository;
 import com.duoduo.server.Service.RiotService;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +38,15 @@ public class UserListController {
         try {
             System.out.println(userListDTO.toString());
             // 모듈 객체를 활용해서 ript api와 http 통신을 진행한 뒤 결과를 userlist에 담아 생성한다.
-            riotService.getMatches(userListDTO.getPuuid());
+            JSONArray arrMatches = riotService.getMatches(userListDTO.getPuuid());
+
+            System.out.println("결과" + arrMatches.toString());
+
+            for (int i = 0; i < arrMatches.size() - 1; i++) {
+                Object match = arrMatches.get(i);
+                System.out.println(match);
+            }
+
             UserListEntity userList = UserListEntity.builder()
                     .username(userListDTO.getUsername())
                     .nickname(userListDTO.getNickname())
