@@ -1,6 +1,5 @@
 # duoduo
-
-![logo](https://user-images.githubusercontent.com/68249818/141679958-06e448e0-3837-418b-9792-eeb288733407.png)
+<img src="https://user-images.githubusercontent.com/68249818/141679958-06e448e0-3837-418b-9792-eeb288733407.png" width="200" height="400"/>
 
 : 특정 카테고리에서 친구를 찾는 웹사이트 (주 타겟 롤)
 
