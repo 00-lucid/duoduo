@@ -10,37 +10,37 @@ function TopMenu() {
   let loggedIn = !!getToken().token;
 
   return (
-    <Top className="border-2">
+    <Top>
       <p className="text-4xl font-bold cursor-pointer" onClick={moveHome}>
         DUODUO
       </p>
-      <p className="cursor-pointer">듀오 찾기</p>
-      <p className="cursor-pointer">듀오 매칭</p>
-      <p>알람</p>
+      {/* <p className="cursor-pointer">듀오 찾기</p> */}
+      {/* <p className="cursor-pointer">듀오 매칭</p> */}
+      {/* <p>알람</p> */}
       {!loggedIn && (
-        <GreenBtn className="flex-2 bg-green-400">
-          <Link to="signin">
-            <p className="text-2xl font-bold">SIGN IN</p>
-          </Link>
-        </GreenBtn>
+        <Link
+          to="signin"
+          className="bg-green-400 text-2xl h-full flex items-center"
+        >
+          <p className="mx-4 font-bold">SIGNIN</p>
+        </Link>
       )}
       {loggedIn && (
-        <div className="flex flex-row w-1/5 justify-between">
+        <>
           <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
-          <p
-            className="text-2xl font-bold cursor-pointer"
-            onClick={destroyToken}
-          >
-            SIGN OUT
-          </p>
-        </div>
+          <div className="bg-red-400 text-xl h-full flex items-center cursor-pointer">
+            <p className="mx-4 font-bold" onClick={destroyToken}>
+              SIGNOUT
+            </p>
+          </div>
+        </>
       )}
     </Top>
   );
 }
 
 const Top = styled.header({
-  padding: "0.8rem",
+  paddingLeft: "0.8rem",
   width: "100%",
   height: "4rem",
   color: "white",
@@ -49,14 +49,6 @@ const Top = styled.header({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
-});
-
-const GreenBtn = styled.button({
-  padding: "0.7rem",
-});
-
-const Screen = styled.div({
-  height: "100vh",
 });
 
 export default TopMenu;

@@ -12,6 +12,7 @@ function Rooms() {
 
   const [isModal, setIsModal] = useState<boolean>(false);
 
+  // 가공이 필요없는 lol 플레이어 데이터는 여기서 가져옴
   const getLeague = async (encryptedSummonerId: string) => {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
@@ -23,14 +24,6 @@ function Rooms() {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${userInfo.username}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
     );
-    return data;
-  };
-
-  const getMatches = async (puuid: string) => {
-    const { data } = await axios.get(
-      `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20&api_key=${process.env.REACT_APP_API_KEY_RIOT}`
-    );
-
     return data;
   };
 
