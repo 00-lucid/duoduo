@@ -20,7 +20,11 @@ function UserList({ room }: any) {
           <img src={`./${room.position}.png`} />
         </div>
         <p className="w-4 m-3 font-black">{room.tier}</p>
-        <div className="w-40 bg-gray-200 h-6 m-2"></div>
+        <div className="w-40 bg-gray-200 h-6 m-2">
+          <Graph rate={room.recent_rate}>
+            <p className="text-sm">{room.recent_rate}%</p>
+          </Graph>
+        </div>
         <div className="m-2 border w-40 h-16"></div>
         <div className="w-4 m-3">{room.kda}</div>
         <div className="w-4 m-3">{room.poro}</div>
@@ -33,5 +37,11 @@ function UserList({ room }: any) {
     </li>
   );
 }
+
+const Graph = styled.div<{ rate: string }>`
+  width: ${(props) => (props.rate ? `${props.rate}%` : "0%")};
+  height: 100%;
+  background-color: #34d399;
+`;
 
 export default UserList;
