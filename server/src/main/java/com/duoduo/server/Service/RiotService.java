@@ -23,7 +23,6 @@ public class RiotService {
     public JSONArray getMatches(String puuid) {
 
         HttpURLConnection connection = null;
-        JSONObject responseJsonObj = null;
         JSONArray responseJsonArr = null;
 
         try {
@@ -54,8 +53,33 @@ public class RiotService {
         }
     }
 
-    public String getMatch(String matchId) {
+    public JSONObject getMatch(String matchId) {
+
+        HttpURLConnection connection = null;
+        JSONObject responseJsonObj = null;
+
         try {
+            URL requestURL = new URL("https://asia.api.riotgames.com/lol/match/v5/matches/" + matchId + "?api_key=" + API_KEY);
+            connection = (HttpURLConnection) requestURL.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(responseCode);
+            if (responseCode == 200) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuffer sb = new StringBuffer();
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+                br.close();
+
+                JSONParser parser = new JSONParser();
+                responseJsonObj = (JSONObject) parser.parse(sb.toString());
+                System.out.println(responseJsonObj.toString());
+                return responseJsonObj;
+            }
+
             return null;
         } catch (Exception e) {
             return null;
