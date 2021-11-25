@@ -138,9 +138,13 @@ function Rooms() {
       </header>
       <main className="flex items-center justify-center">
         <ul className="overflow-scroll w-4/6" style={{ height: "520px" }}>
-          {dummys.map((room, idx) => {
-            return <UserList key={idx} room={room} />;
-          })}
+          {dummys
+            .filter(
+              (room: object, idx) => room.queueType !== "RANKED_TFT_PAIRS"
+            )
+            .map((room, idx) => {
+              return <UserList key={idx} room={room} />;
+            })}
         </ul>
       </main>
     </>
