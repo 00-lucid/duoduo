@@ -1,11 +1,10 @@
 package com.duoduo.server.Entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Getter
 @Entity(name = "userlist")
@@ -54,14 +53,14 @@ public class UserListEntity {
     private Integer summonerLevel;
 
     @Builder
-    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
+    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, ArrayList most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
         this.id = id;
         this.username = username;
         this.nickname = nickname;
         this.position = position;
         this.tier = tier;
         this.recent_rate = recent_rate;
-        this.most = most;
+        this.most = most.toString();
         this.kda = kda;
         this.poro = poro;
         this.synergy = synergy;

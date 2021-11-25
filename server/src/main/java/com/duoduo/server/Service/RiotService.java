@@ -27,7 +27,7 @@ public class RiotService {
 
         try {
 
-            URL requestURL = new URL("https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids?start=0&count=20&api_key=" + API_KEY);
+            URL requestURL = new URL("https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids?start=0&count=10&api_key=" + API_KEY);
             connection = (HttpURLConnection) requestURL.openConnection();
             connection.setRequestMethod("GET");
             int responseCode = connection.getResponseCode();
@@ -64,7 +64,6 @@ public class RiotService {
             connection.setRequestMethod("GET");
 
             int responseCode = connection.getResponseCode();
-            System.out.println(responseCode);
             if (responseCode == 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 StringBuffer sb = new StringBuffer();
@@ -76,7 +75,6 @@ public class RiotService {
 
                 JSONParser parser = new JSONParser();
                 responseJsonObj = (JSONObject) parser.parse(sb.toString());
-                System.out.println(responseJsonObj.toString());
                 return responseJsonObj;
             }
 
