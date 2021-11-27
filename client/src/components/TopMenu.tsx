@@ -44,7 +44,7 @@ const Top = styled.header({
   width: "100%",
   height: "4rem",
   color: "white",
-  backgroundColor: "#2b2d42",
+  backgroundColor: "#4a4e4d",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",

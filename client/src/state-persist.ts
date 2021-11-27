@@ -5,8 +5,14 @@ const { persistAtom } = recoilPersist();
 
 const userInfoState = atom({
   key: "userInfo",
-  value: {},
+  default: {},
   effects_UNSTABLE: [persistAtom],
 });
 
-export { userInfoState };
+const userListCooldownState = atom({
+  key: "userListCooldown",
+  default: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export { userInfoState, userListCooldownState };
