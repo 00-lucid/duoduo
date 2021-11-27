@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { delay } from "../common/api/page";
+import { delay, setTimeRemoveAlarm } from "../common/api/page";
 import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
@@ -39,13 +39,10 @@ function Rooms() {
   const addUserList = async (position: string) => {
     setIsSK(true);
     setTextSK("일꾼 포로들을 소집하는 중입니다...");
-    delay(700);
     setIsModal(false);
     setTextSK("소환사님의 유저정보를 가져옵니다...");
-    delay(700);
     const summoner = await getSummoner();
     setTextSK("소환사님의 리그정보를 가져옵니다...");
-    delay(700);
     const league = await getLeague(summoner.id);
     // typescript는 string type으로 객체 값 접근을 허용하지 않는다. 때문에 허용하는 객체라고 타입을 지정하거나 string-literal 타입을 이용해서 접근한다.
     const rankToNumber: { [index: string]: number } = {
@@ -73,12 +70,13 @@ function Rooms() {
       return [data, ...old];
     });
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
-    delay(5000);
     const dDate = new Date();
     dDate.setMinutes(dDate.getMinutes() + 5);
     const dDateStr = dDate.toString();
     setUserListCooldown(dDateStr);
     setIsSK(false);
+    setAlarmModal((old) => [{ text: "리스트 생성 완료", type: 1 }, ...old]);
+    setTimeRemoveAlarm(setAlarmModal);
   };
 
   const logicWinRate = (win: number, defeat: number) => {
@@ -129,13 +127,14 @@ function Rooms() {
             const now = new Date();
             if (userListCooldown > now.toString()) {
               setAlarmModal((old) => {
-                const result = [{ text: "5분 후 다시 시도하세요" }, ...old];
+                const result = [
+                  { text: "5분 후 다시 시도하세요", type: 0 },
+                  ...old,
+                ];
                 console.log(result);
                 return result;
               });
-              setTimeout(() => {
-                setAlarmModal((old) => old.slice(1));
-              }, 3000);
+              setTimeRemoveAlarm(setAlarmModal);
             } else {
               setIsModal(true);
             }

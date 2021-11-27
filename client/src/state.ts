@@ -6,6 +6,7 @@ import { atom } from "recoil";
 
 interface Alarm {
   text: string;
+  type: number;
 }
 
 const isLoadingState = atom({

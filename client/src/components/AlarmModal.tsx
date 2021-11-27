@@ -4,7 +4,12 @@ function AlarmModal({ alarm, idx }: any) {
   return (
     <>
       <Alarm interval={idx}>
-        <img src="./icon_x.png" width="32" height="32" className="mb-1"></img>
+        <img
+          src={`./icon_${alarm.type}.png`}
+          width="32"
+          height="32"
+          className="mb-1"
+        ></img>
         <p className="text-sm font-medium">{alarm?.text}</p>
       </Alarm>
     </>
