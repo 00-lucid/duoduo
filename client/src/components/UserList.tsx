@@ -3,39 +3,47 @@ import styled from "styled-components";
 function UserList({ room }: any) {
   return (
     <li
-      className="relative flex flex-row border h-20 text-white justify-start rounded-l-lg mb-2 overflow-hidden"
-      style={{ backgroundColor: "#2b2d42" }}
+      className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden shadow-md bg-gray-50 hover:bg-white hover:scale-105 transform transition duration-500"
+      style={{ color: "#333d4b" }}
     >
       <section className="flex flex-row items-center ">
-        <div className="border-2 border-green-300 w-16 h-16 rounded-full m-2 overflow-hidden">
+        <div className="border-green-300 w-14 h-14 rounded-full m-2 overflow-hidden">
           <img
             src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/profileicon/${room.profileIconId}.png`}
           />
         </div>
         <div className="m-2 w-40 text-left">
-          <p>{room.username}</p>
-          <p className="opacity-50">{room.nickname}</p>
+          <p className="font-bold">{room.username}</p>
+          <p className="opacity-40">{room.nickname}</p>
         </div>
         <div className="w-14 h-14 ml-2">
           <img src={`./${room.position}.png`} />
         </div>
-        <p className="w-4 m-3 font-black">{room.tier}</p>
+        <TierText tier={room.tier} className="w-4 m-3 font-bold">
+          {room.tier}
+        </TierText>
         <div className="w-40 bg-gray-200 h-6 m-2">
           <Graph rate={room.recent_rate}>
-            <p className="text-sm">{room.recent_rate}%</p>
+            <p className="text-xs font-light">{room.recent_rate}%</p>
           </Graph>
         </div>
-        <div className="flex flex-row m-2 border w-48 h-16">
+        <div
+          className="flex flex-row m-2 border h-14"
+          style={{ width: "168px" }}
+        >
           <img
-            className="w-16 h-full"
+            className="h-full"
+            style={{ width: "56px" }}
             src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room.most[0].championName}.png`}
           ></img>
           <img
-            className="w-16 h-full"
+            className="h-full"
+            style={{ width: "56px" }}
             src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room.most[1].championName}.png`}
           ></img>
           <img
-            className="w-16 h-full"
+            className="h-full"
+            style={{ width: "56px" }}
             src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room.most[2].championName}.png`}
           ></img>
         </div>
@@ -58,6 +66,24 @@ const Graph = styled.div<{ rate: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const TierText = styled.div<{ tier: string }>`
+  color: ${(props) => {
+    if (!props.tier) return "#333d4b";
+    const tier = props.tier[0];
+    const tierToColor: { [index: string]: string } = {
+      I: "#69605C",
+      B: "#964B00",
+      S: "#C0C0C0",
+      G: "#FFD700",
+      P: "#65c3ba",
+      D: "#6FD1F4",
+      M: "#D486BB",
+      C: "#aaaaaa",
+    };
+    return tierToColor[tier];
+  }};
 `;
 
 export default UserList;

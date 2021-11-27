@@ -8,17 +8,16 @@ import { useRecoilState } from "recoil";
 import Rooms from "./pages/Rooms";
 import Bells from "./pages/Bells";
 import { pathToFileURL } from "url";
-import { alarmModalState } from "./state";
+import { Alarm, alarmModalState } from "./state";
 import AlarmModal from "./components/AlarmModal";
 
 function App() {
-  const [alarmModals, setAlarmModal] =
-    useRecoilState<Array<object>>(alarmModalState);
+  const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
 
   return (
     <div className="App">
       {alarmModals?.map((alarm, idx) => (
-        <AlarmModal key={idx} alarm={alarm} />
+        <AlarmModal key={idx} alarm={alarm} idx={idx} />
       ))}
       <Switch>
         <Route path="/" exact component={Root}></Route>
