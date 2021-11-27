@@ -8,4 +8,9 @@ const isLoadingState = atom({
   value: false,
 });
 
-export { isLoadingState };
+const alarmModalState = atom({
+  key: "alarmModal",
+  value: [],
+});
+
+export { isLoadingState, alarmModalState };

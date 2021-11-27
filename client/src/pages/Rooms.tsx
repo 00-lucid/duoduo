@@ -1,14 +1,25 @@
 import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
-import { userInfoState } from "../state-persist";
+import { alarmModalState } from "../state";
+import { userInfoState, userListCooldownState } from "../state-persist";
+
+// 인터페이스를 적극적으로 사용하자
+interface Alarm {
+  text: string;
+}
 
 function Rooms() {
   const [dummys, setDummy] = useState<Array<object>>([]);
   const userInfo = useRecoilValue(userInfoState);
+  const [userListCooldown, setUserListCooldown] = useRecoilState<Date>(
+    userListCooldownState
+  );
+  const [alarmModals, setAlarmModal] =
+    useRecoilState<Array<Alarm>>(alarmModalState);
 
   const [isModal, setIsModal] = useState<boolean>(false);
 
@@ -61,6 +72,10 @@ function Rooms() {
     });
 
     setIsModal(false);
+
+    const dDate = new Date();
+    dDate.setMinutes(dDate.getMinutes() + 5);
+    setUserListCooldown(dDate);
   };
 
   const logicWinRate = (win: number, defeat: number) => {
@@ -132,8 +147,20 @@ function Rooms() {
         <button
           className="absolute font-bold mb-3 text-white text-3xl"
           onClick={() => {
-            // addUserList()
-            setIsModal(true);
+            const now = new Date();
+            console.log(userListCooldown);
+            console.log(userListCooldown > now);
+            if (userListCooldown > now) {
+              setAlarmModal((old) => {
+                console.log(old);
+                return [{ text: "5분 뒤 다시 시도하세요" }].concat(old);
+              });
+              setTimeout(() => {
+                setAlarmModal((old) => old.slice(1));
+              }, 3000);
+            } else {
+              setIsModal(true);
+            }
           }}
         >
           +

@@ -9,4 +9,10 @@ const userInfoState = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export { userInfoState };
+const userListCooldownState = atom({
+  key: "userListCooldown",
+  value: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export { userInfoState, userListCooldownState };
