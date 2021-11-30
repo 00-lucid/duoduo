@@ -19,5 +19,10 @@ const alarmModalState = atom<Alarm[]>({
   default: [],
 });
 
-export { isLoadingState, alarmModalState };
+const filtersState = atom<any[]>({
+  key: "filters",
+  default: [[], []],
+});
+
+export { isLoadingState, alarmModalState, filtersState };
 export type { Alarm };
