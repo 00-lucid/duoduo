@@ -9,9 +9,11 @@ import com.duoduo.server.Service.RiotService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpHeaders;
 import java.util.*;
 
 @CrossOrigin(value = "*")
@@ -28,12 +30,67 @@ public class UserListController {
     @Autowired
     private UserListRepository userListRepository;
 
+    @GetMapping(value = "/userlist/infinite")
+    public List<HashMap> getUserListInfinite(@RequestHeader("Page") int id) {
+        try {
+            List<UserListEntity> userListEntities =  userListRepository.findMoreTen(id * 10);
+            List<HashMap> result = new ArrayList<>();
+            if (userListEntities.size() > 0) {
+                for (int i = 0; i < userListEntities.size(); i++) {
+                    UserListEntity obj = userListEntities.get(i);
+                    String pre = obj.getMost();
+                    String[] next = pre.split(" ");
+                    HashMap userListResponse = new HashMap(){{
+                        put("id", obj.getId());
+                        put("username", obj.getUsername());
+                        put("nickname", obj.getNickname());
+                        put("position", obj.getPosition());
+                        put("tier", obj.getTier());
+                        put("recent_rate", obj.getRecent_rate());
+                        put("most", next);
+                        put("total_rate", obj.getTotal_rate());
+                        put("profileIconId", obj.getProfileIconId());
+                        put("summonerLevel", obj.getSummonerLevel());
+                        put("createdAt",obj.getCreatedAt());
+                    }};
+                    result.add(userListResponse);
+                }
+                return result;
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     @GetMapping(value = "/userlist")
-    public List<UserListEntity> getUserList() {
-
-        List<UserListEntity> list = userListRepository.findAll();
-
-        return list;
+    public List<HashMap> getUserList() {
+        List<UserListEntity> list = userListRepository.findRecentTen();
+        List<HashMap> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            int finalI = i;
+            UserListEntity obj = list.get(finalI);
+            String pre = obj.getMost();
+            String[] next = pre.split(" ");
+            HashMap userListResponse = new HashMap(){{
+                put("id", obj.getId());
+                put("username", obj.getUsername());
+                put("nickname", obj.getNickname());
+                put("position", obj.getPosition());
+                put("tier", obj.getTier());
+                put("recent_rate", obj.getRecent_rate());
+                put("most", next);
+                put("total_rate", obj.getTotal_rate());
+                put("profileIconId", obj.getProfileIconId());
+                put("summonerLevel", obj.getSummonerLevel());
+                put("createdAt",obj.getCreatedAt());
+            }};
+            result.add(userListResponse);
+        }
+        return result;
     }
 
     @PostMapping(value = "/userlist")
@@ -67,12 +124,10 @@ public class UserListController {
                 if (idxChampion == -1) {
                     MostDTO mostDTO = new MostDTO(championName, 1);
                     championMost.add(mostDTO);
-                    System.out.println("-1");
                 } else {
                     MostDTO pre = championMost.get(idxChampion);
                     pre.setCount(pre.getCount() + 1);
                     championMost.set(idxChampion, pre);
-                    System.out.println("1");
                 }
             }
 
@@ -81,6 +136,12 @@ public class UserListController {
             // 산출한 모스트를 count 값에 따라서 정렬해줘야 됨
             // TODO:
             Collections.sort(championMost, Collections.reverseOrder());
+            List<MostDTO> onlyMost = championMost.subList(0, 3);
+            List resultMost = new ArrayList();
+            for (int i = 0; i < onlyMost.size(); i++) {
+                resultMost.add(onlyMost.get(i).getChampionName());
+            }
+            String result = String.join(" ", resultMost);
 
             UserListEntity userList = UserListEntity.builder()
                     .username(userListDTO.getUsername())
@@ -88,7 +149,7 @@ public class UserListController {
                     .position(userListDTO.getPosition())
                     .tier(userListDTO.getTier())
                     .recent_rate(win * 10)
-                    .most(championMost)
+                    .most(result)
                     .kda(5)
                     .poro(50)
                     .synergy(50)
@@ -100,15 +161,17 @@ public class UserListController {
             userListRepository.save(userList);
             int finalWin = win;
             HashMap userListResponse = new HashMap(){{
+                put("id", userList.getId());
                 put("username", userListDTO.getUsername());
                 put("nickname", userListDTO.getNickname());
                 put("position", userListDTO.getPosition());
                 put("tier", userListDTO.getTier());
                 put("recent_rate", finalWin * 10);
-                put("most", championMost);
+                put("most", resultMost);
                 put("total_rate", userListDTO.getTotal_rate());
                 put("profileIconId", userListDTO.getProfileIconId());
                 put("summonerLevel", userListDTO.getSummonerLevel());
+                put("createdAt", userList.getCreatedAt());
             }};
 
             return userListResponse;

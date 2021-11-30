@@ -3,8 +3,11 @@ package com.duoduo.server.Entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 @Getter
 @Entity(name = "userlist")
@@ -52,20 +55,26 @@ public class UserListEntity {
     @Column
     private Integer summonerLevel;
 
+    @Column
+    private String createdAt;
+
     @Builder
-    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, ArrayList most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
+    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
         this.id = id;
         this.username = username;
         this.nickname = nickname;
         this.position = position;
         this.tier = tier;
         this.recent_rate = recent_rate;
-        this.most = most.toString();
+        this.most = most;
         this.kda = kda;
         this.poro = poro;
         this.synergy = synergy;
         this.total_rate = total_rate;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        this.createdAt = simpleDateFormat.format(new Date());
     }
+
 }
