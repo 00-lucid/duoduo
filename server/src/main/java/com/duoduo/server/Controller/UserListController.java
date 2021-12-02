@@ -17,7 +17,6 @@ import java.net.http.HttpHeaders;
 import java.util.*;
 
 @CrossOrigin(value = "*")
-@Controller
 @RestController
 public class UserListController {
 
