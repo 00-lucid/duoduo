@@ -10,6 +10,7 @@ import Bells from "./pages/Bells";
 import { pathToFileURL } from "url";
 import { Alarm, alarmModalState } from "./state";
 import AlarmModal from "./components/AlarmModal";
+import MyPage from "./pages/MyPage";
 
 function App() {
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
@@ -25,6 +26,7 @@ function App() {
         <Route path="/signup" exact component={Signup}></Route>
         <Route path="/rooms" exact component={Rooms}></Route>
         <Route path="/bells" exact component={Bells}></Route>
+        <Route path="/mypage" exact component={MyPage}></Route>
       </Switch>
     </div>
   );
