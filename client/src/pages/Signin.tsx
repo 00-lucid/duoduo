@@ -38,11 +38,9 @@ function Signin() {
         };
       }
     });
-    setTimeout(() => {
-      setIsLoading(false);
-      window.history.pushState("signin", "", "/");
-      window.history.go(0);
-    }, 800);
+    setIsLoading(false);
+    window.history.pushState("signin", "", "/");
+    window.history.go(0);
   };
 
   return (

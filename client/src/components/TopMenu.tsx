@@ -27,7 +27,9 @@ function TopMenu() {
       )}
       {loggedIn && (
         <>
-          <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
+          <Link to="mypage">
+            <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
+          </Link>
         </>
       )}
     </Top>
@@ -36,7 +38,6 @@ function TopMenu() {
 
 const Top = styled.header({
   paddingLeft: "0.8rem",
-  paddingRight: "0.8rem",
   width: "100%",
   height: "4rem",
   color: "white",

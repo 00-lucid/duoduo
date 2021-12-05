@@ -11,7 +11,7 @@ export const getToken = () => {
   };
 };
 
-export const saveToken = ({ token, csrf }) => {
+export const saveToken = ({ token, csrf }: any) => {
   window.localStorage.setItem(ID_TOKEN_KEY, token);
   window.localStorage.setItem(CSRF_KEY, csrf);
 };
@@ -21,14 +21,18 @@ export const destroyToken = () => {
   window.localStorage.removeItem(CSRF_KEY);
 };
 
-export const setCookie = (name, value, option) => {
+export const setCookie = (name: string, value: boolean, option: any = {}) => {
   const newCookie = new Cookies();
   newCookie.set(name, value, { ...option });
 };
 
-export const getCookie = (name) => {
+export const getCookie = (name: string) => {
   const newCookie = new Cookies();
   return newCookie.get(name);
+};
+
+export const decodeJwt: any = (jwt: string) => {
+  return {};
 };
 
 export default { getToken, saveToken, destroyToken };

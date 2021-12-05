@@ -5,17 +5,18 @@ import styled from "styled-components";
 import { getToken } from "../common/auth";
 import { userInfoState } from "../state-persist";
 
-function MyPageInfoBlock({ title, value, token }: any) {
+function MyPageInfoBlock({ title, value, setValues, token }: any) {
   const [isInput, setIsInput] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
-  const patchInfo = () => {
+  const patchInfo = async () => {
     // api 분리가 필요할 경우 분리하자
+    let res = null;
     if (!text) {
       return;
     }
     setIsInput(false);
     if (title === "이메일") {
-      axios.patch(
+      res = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/email`,
         {
           nextEmail: text,
@@ -27,7 +28,7 @@ function MyPageInfoBlock({ title, value, token }: any) {
         }
       );
     } else {
-      axios.patch(
+      res = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/username`,
         {
           nextUsername: text,
@@ -38,6 +39,9 @@ function MyPageInfoBlock({ title, value, token }: any) {
           },
         }
       );
+    }
+    if (res.data) {
+      setValues(res.data);
     }
   };
 

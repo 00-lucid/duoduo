@@ -73,12 +73,10 @@ function Signup() {
       // TODO: cookie logic
       setCookie("isUsername", false);
 
-      setTimeout(() => {
-        setIsLoading(false);
+      setIsLoading(false);
 
-        window.history.pushState("signup", "", "/signin");
-        window.history.go(0);
-      }, 800);
+      window.history.pushState("signup", "", "/signin");
+      window.history.go(0);
     } else {
       alert("invalid email / password / nickname");
     }
