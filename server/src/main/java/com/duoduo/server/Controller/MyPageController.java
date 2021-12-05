@@ -1,7 +1,10 @@
 package com.duoduo.server.Controller;
 
 import com.duoduo.server.Entity.UserEntity;
+import com.duoduo.server.Entity.UserNameEntity;
+import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
+import com.duoduo.server.Service.JsonWebTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -16,21 +19,33 @@ import java.util.Map;
 public class MyPageController {
 
     @Autowired
+    private JsonWebTokenService jsonWebTokenService;
+
+    @Autowired
     private UserRepository userRepository;
 
-    @PatchMapping(value = "/email")
-    public UserEntity configEmail(@RequestBody JSONObject data, @RequestHeader(value = "Authorization") String jwt) {
-        Map<String, Object> claimMap = null;
+    @Autowired
+    private UserNameRepository userNameRepository;
+
+    @GetMapping(value = "/mypage")
+    public JSONObject getMypage(@RequestHeader(value = "Authorization") String jwt) {
         try {
-            //TODO jwt 인증로직 분리하기 인증키는 (이메일 + 시크릿키)
-            System.out.println(data);
-            Claims claims = Jwts.parser()
-                    .setSigningKey("secret")
-                    .parseClaimsJws(jwt)
-                    .getBody();
-            claimMap = claims;
-            String preEmail = (String) claimMap.get("email");
-            return userRepository.patchNextEmailByPreEmail(preEmail, (String) data.get("nextEmail"));
+            // TODO: JsonWebTokenService 객체가 싱글톤인지, 만약 싱글톤이라면 상태를 가져서 문제가 되지 않는지 체크 필요!
+            String decodeEmail = jsonWebTokenService.decodeEmail(jwt);
+
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @PatchMapping(value = "/email")
+    public String configEmail(@RequestBody JSONObject data, @RequestHeader(value = "Authorization") String jwt) {
+        try {
+            String preEmail = jsonWebTokenService.decodeEmail(jwt);
+            String nextEmail = (String) data.get("nextEmail");
+            userRepository.patchNextEmailByPreEmail(nextEmail, preEmail);
+            return nextEmail;
         } catch (ExpiredJwtException e) {
             System.out.println(e);
             return null;
@@ -41,8 +56,22 @@ public class MyPageController {
     }
 
     @PatchMapping(value = "/username")
-    public void configUsername() {
+    public String configUsername(@RequestBody JSONObject data, @RequestHeader(value = "Authorization") String jwt) {
         // 소환사명 변경
+        try {
+            String decodeEmail = jsonWebTokenService.decodeEmail(jwt);
+            String nextUserName = (String) data.get("nextUserName");
+            UserEntity user = userRepository.findByEmail(decodeEmail);
+            Long userId = user.getId();
+            userNameRepository.patchNextUserNameByPreUserName(nextUserName, userId);
+            return nextUserName;
+        } catch (ExpiredJwtException e) {
+            System.out.println(e);
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
 }
