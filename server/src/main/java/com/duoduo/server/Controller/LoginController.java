@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 @CrossOrigin(value = "*")
-@Controller
 @RestController
 public class LoginController {
 

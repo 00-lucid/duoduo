@@ -1,15 +1,21 @@
 import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { delay, setTimeRemoveAlarm } from "../common/api/page";
+import FilterBtn from "../components/FilterBtn";
+import FilterBtnBox from "../components/FilterBtnBox";
 import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
 import UserListSK from "../components/UserListSK";
-import { Alarm, alarmModalState } from "../state";
+import { Alarm, alarmModalState, filtersState } from "../state";
 import { userInfoState, userListCooldownState } from "../state-persist";
+import Loading from "./Loading";
 
 function Rooms() {
+  const [page, setPage] = useState<number>(1);
+  const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isSK, setIsSK] = useState<boolean>(false);
@@ -19,7 +25,7 @@ function Rooms() {
     userListCooldownState
   );
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
-
+  const filters = useRecoilValue<any[]>(filtersState);
   // 가공이 필요없는 lol 플레이어 데이터는 여기서 가져옴
   const getLeague = async (encryptedSummonerId: string) => {
     const { data } = await axios.get(
@@ -37,6 +43,14 @@ function Rooms() {
   };
 
   const addUserList = async (position: string) => {
+    if (position === "none") {
+      setAlarmModal((old) => [
+        { text: "최소 1개의 포지션이 필요합니다", type: 0 },
+        ...old,
+      ]);
+      setTimeRemoveAlarm(setAlarmModal);
+      return;
+    }
     setIsSK(true);
     setTextSK("일꾼 포로들을 소집하는 중입니다...");
     setIsModal(false);
@@ -66,12 +80,15 @@ function Rooms() {
 
     setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
     const { data } = await axios.post("http://localhost:8080/userlist", result);
-    setDummy((old) => {
-      return [data, ...old];
-    });
+    if (data.most && data.most.length > 0) {
+      setDummy((old) => {
+        return [data, ...old];
+      });
+    }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
     const dDate = new Date();
-    dDate.setMinutes(dDate.getMinutes() + 5);
+    // 쿨타임 설정
+    dDate.setMinutes(dDate.getSeconds() + 1);
     const dDateStr = dDate.toString();
     setUserListCooldown(dDateStr);
     setIsSK(false);
@@ -85,12 +102,33 @@ function Rooms() {
   };
 
   useEffect(() => {
-    console.log("change");
     axios.get("http://localhost:8080/userlist").then((res) => {
       const { data } = res;
+      console.log(data);
       setDummy(data);
     });
   }, []);
+
+  useEffect(() => {
+    console.log(page);
+    if (inView && page * 10 === dummys.length) {
+      console.log("무한스크롤 가동...");
+      // page를 보내줌
+      console.log(page);
+      axios
+        .get("http://localhost:8080/userlist/infinite", {
+          headers: { Page: page },
+        })
+        .then((res) => {
+          const { data } = res;
+          console.log(data);
+          setTimeout(() => {
+            setDummy((old) => [...old, ...data]);
+            setPage((old) => old + 1);
+          }, 500);
+        });
+    }
+  }, [inView]);
 
   return (
     <>
@@ -98,46 +136,29 @@ function Rooms() {
         <LineModal setIsModal={setIsModal} addUserList={addUserList} />
       )}
       <TopMenu />
-      <section className="flex flex-row justify-center">
-        <header
-          className="w-4/6 flex flex-row justify-start"
-          style={{ backgroundColor: "#ffffff", color: "#333d4b" }}
-        >
-          <section className="flex flex-row items-center">
-            <div className="w-16 h-16 m-2"></div>
-            <div className="m-2 w-40 text-left">
-              <p></p>
-              <p className="opacity-40"></p>
-            </div>
-            <div className="w-14 h-14 m-2 flex items-center justify-center"></div>
-            <p className="m-2"></p>
-            <div className="w-40 h-6 m-2"></div>
-            <div className="flex items-center justify-center m-2 w-32 h-16"></div>
-            {/* <div className="m-1">KDA</div> */}
-            {/* <div className="m-1">포로점수</div> */}
-            {/* <div className="m-1">시너지</div> */}
-            <div className="m-1"></div>
-          </section>
-        </header>
+      <section className="flex flex-row justify-center mb-2">
+        <div className="w-4/6 h-24 flex flex-col justify-end">
+          <FilterBtnBox />
+        </div>
       </section>
       <header className="flex flex-row justify-center items-center">
         <section
           className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden w-4/6 cursor-pointer hover:bg-white shadow-md bg-gray-50"
           onClick={() => {
             const now = new Date();
-            if (userListCooldown > now.toString()) {
-              setAlarmModal((old) => {
-                const result = [
-                  { text: "5분 후 다시 시도하세요", type: 0 },
-                  ...old,
-                ];
-                console.log(result);
-                return result;
-              });
-              setTimeRemoveAlarm(setAlarmModal);
-            } else {
-              setIsModal(true);
-            }
+            // if (userListCooldown > now.toString()) {
+            //   setAlarmModal((old) => {
+            //     const result = [
+            //       { text: "5분 후 다시 시도하세요", type: 0 },
+            //       ...old,
+            //     ];
+            //     console.log(result);
+            //     return result;
+            //   });
+            //   setTimeRemoveAlarm(setAlarmModal);
+            // } else {
+            setIsModal(true);
+            // }
           }}
         >
           <section className="flex flex-row items-center">
@@ -167,11 +188,27 @@ function Rooms() {
           className=" w-4/6"
           // style={{ height: "520px" }}
         >
-          {dummys.map((room, idx) => {
-            return <UserList key={idx} room={room} />;
-          })}
+          {dummys
+            .filter((el: any) =>
+              filters[0].length > 0 ? filters[0].includes(el.position) : true
+            )
+            .filter((el: any) =>
+              filters[1].length > 0 ? filters[1].includes(el.tier[0]) : true
+            )
+            .map((room: any, idx) => {
+              if (
+                idx === dummys.length - 1 &&
+                idx > 8 &&
+                dummys.length % 10 === 0
+              ) {
+                return <UserList key={room.id} room={room} last={ref} />;
+              } else {
+                return <UserList key={room.id} room={room} />;
+              }
+            })}
         </ul>
       </main>
+      {inView && <img></img>}
     </>
   );
 }

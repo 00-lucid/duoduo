@@ -27,12 +27,9 @@ function TopMenu() {
       )}
       {loggedIn && (
         <>
-          <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
-          <div className="bg-red-400 text-xl h-full flex items-center cursor-pointer">
-            <p className="mx-4 font-bold" onClick={destroyToken}>
-              SIGNOUT
-            </p>
-          </div>
+          <Link to="mypage">
+            <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
+          </Link>
         </>
       )}
     </Top>

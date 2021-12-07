@@ -1,5 +1,10 @@
 package com.duoduo.server;
 
+import com.duoduo.server.Entity.UserEntity;
+import com.duoduo.server.Repository.UserListRepository;
+import com.duoduo.server.Repository.UserNameRepository;
+import com.duoduo.server.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
