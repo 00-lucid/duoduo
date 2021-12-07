@@ -1,5 +1,6 @@
 package com.duoduo.server.Service;
 
+import com.duoduo.server.Entity.UserEntity;
 import com.duoduo.server.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -29,11 +30,10 @@ public class JsonWebTokenService {
             return null;
         }
     }
-    public String decodeAndVerifyEmail(String jwt) {
+    public UserEntity verifyEmail(String email) {
         try {
-            String decodeEmail = decodeEmail(jwt);
-            userRepository.findByEmail(decodeEmail);
-            return null;
+            UserEntity user = userRepository.findByEmail(email);
+            return user;
         } catch (Exception e) {
             return null;
         }

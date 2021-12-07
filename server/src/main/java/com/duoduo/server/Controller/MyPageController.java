@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(value = "*")
 @RestController
@@ -29,11 +30,18 @@ public class MyPageController {
 
     @GetMapping(value = "/mypage")
     public JSONObject getMypage(@RequestHeader(value = "Authorization") String jwt) {
+        JSONObject jsonObject = new JSONObject();
         try {
             // TODO: JsonWebTokenService 객체가 싱글톤인지, 만약 싱글톤이라면 상태를 가져서 문제가 되지 않는지 체크 필요!
-            String decodeEmail = jsonWebTokenService.decodeEmail(jwt);
+            String email = jsonWebTokenService.decodeEmail(jwt);
+            // TODO: delete password
+            UserEntity user = jsonWebTokenService.verifyEmail(email);
+            jsonObject.put("email", user.getEmail());
 
-            return null;
+            Optional<UserNameEntity> optionalUserName = userNameRepository.findById(user.getId());
+            UserNameEntity userNameEntity = optionalUserName.get();
+            jsonObject.put("username", userNameEntity.getUsername());
+            return jsonObject;
         } catch (Exception e) {
             return null;
         }
