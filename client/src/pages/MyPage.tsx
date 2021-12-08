@@ -26,6 +26,7 @@ function MyPage() {
   };
 
   useEffect(() => {
+    // TODO: config
     const data: any = getMypage();
     setEmail(data.email);
     setUserName(data.username);
