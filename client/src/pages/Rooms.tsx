@@ -3,6 +3,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { delay, setTimeRemoveAlarm } from "../common/api/page";
+import { getToken } from "../common/auth";
 import FilterBtn from "../components/FilterBtn";
 import FilterBtnBox from "../components/FilterBtnBox";
 import LineModal from "../components/LineModal";
@@ -79,7 +80,15 @@ function Rooms() {
     };
 
     setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
-    const { data } = await axios.post("http://localhost:8080/userlist", result);
+    const { data } = await axios.post(
+      "http://localhost:8080/userlist",
+      result,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken().token}`,
+        },
+      }
+    );
     if (data.most && data.most.length > 0) {
       setDummy((old) => {
         return [data, ...old];
@@ -201,9 +210,18 @@ function Rooms() {
                 idx > 8 &&
                 dummys.length % 10 === 0
               ) {
-                return <UserList key={room.id} room={room} last={ref} />;
+                return (
+                  <UserList
+                    key={room.id}
+                    room={room}
+                    last={ref}
+                    setDummy={setDummy}
+                  />
+                );
               } else {
-                return <UserList key={room.id} room={room} />;
+                return (
+                  <UserList key={room.id} room={room} setDummy={setDummy} />
+                );
               }
             })}
         </ul>

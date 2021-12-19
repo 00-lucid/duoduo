@@ -11,6 +11,7 @@ import { pathToFileURL } from "url";
 import { Alarm, alarmModalState } from "./state";
 import AlarmModal from "./components/AlarmModal";
 import MyPage from "./pages/MyPage";
+import MessageModal from "./components/MessageModal";
 
 function App() {
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
@@ -20,6 +21,7 @@ function App() {
       {alarmModals?.map((alarm, idx) => (
         <AlarmModal key={idx} alarm={alarm} idx={idx} />
       ))}
+      <MessageModal />
       <Switch>
         <Route path="/" exact component={Root}></Route>
         <Route path="/signin" exact component={Signin}></Route>

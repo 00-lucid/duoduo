@@ -1,7 +1,9 @@
 import axios from "axios";
+import { userInfo } from "os";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import moveHome from "../common/api/page";
 import { decodeJwt, destroyToken, getToken } from "../common/auth";
 import MyPageInfoBlock from "../components/MyPageInfoBlock";
 import TopMenu from "../components/TopMenu";
@@ -11,7 +13,7 @@ function MyPage() {
   const token = getToken().token;
   const [email, setEmail] = useState("");
   const [username, setUserName] = useState("");
-
+  const userInfo = useRecoilValue(userInfoState);
   const getMypage = async () => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}/mypage`,
@@ -21,15 +23,21 @@ function MyPage() {
         },
       }
     );
-
+    console.log(data);
     return data;
+  };
+
+  const signout = () => {
+    destroyToken();
+    moveHome();
   };
 
   useEffect(() => {
     // TODO: config
-    const data: any = getMypage();
-    setEmail(data.email);
-    setUserName(data.username);
+    getMypage().then((data) => {
+      setEmail(data.email);
+      setUserName(data.username);
+    });
   }, []);
   return (
     <>
@@ -46,7 +54,7 @@ function MyPage() {
               src="./logo192.png"
             ></img>
             <section className="mt-4 flex flex-row">
-              <p className="font-bold text-lg ">테스트</p>
+              <p className="font-bold text-lg ">{userInfo.nickname}</p>
               <p className="font-normal opacity-40 text-lg">님</p>
             </section>
             <div className="font-normal flex flex-row">
@@ -55,7 +63,7 @@ function MyPage() {
             <hr className="mt-2 mb-2" />
             <div
               className="bg-red-400 text-xl h-9 w-full flex items-center cursor-pointer text-white absolute bottom-0"
-              onClick={destroyToken}
+              onClick={signout}
             >
               <p className="mx-4 font-bold">SIGNOUT</p>
             </div>
