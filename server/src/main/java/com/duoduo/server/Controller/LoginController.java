@@ -5,6 +5,7 @@ import com.duoduo.server.Entity.UserNameEntity;
 import com.duoduo.server.Repository.LoginDTO;
 import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
+import com.duoduo.server.Service.JsonWebTokenService;
 import io.jsonwebtoken.*;
 import org.json.simple.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import java.util.HashMap;
 @CrossOrigin(value = "*")
 @RestController
 public class LoginController {
+
+    @Autowired
+    private JsonWebTokenService jsonWebTokenService;
 
     @Autowired
     private UserRepository userRepository;
@@ -45,7 +49,7 @@ public class LoginController {
                         .setIssuer("duoduo")
                         .setIssuedAt(now)
                         .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
-                        .claim("email", user.getEmail())
+                        .claim("id", user.getId())
                         .signWith(SignatureAlgorithm.HS256, "secret")
                         .compact();
                 jsonObject.put("token", jwt);
@@ -86,15 +90,14 @@ public class LoginController {
     @PostMapping(value = "/username")
     public UserNameEntity createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
         try{
-            String jwt = data.substring(7);
-            Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt).getBody();
-            System.out.println(claims);
-            System.out.println(claims.get("email"));
-            String decodedEmail = claims.get("email").toString();
+            // TODO: @Authorwize를 통해서 JsonWebTokenService 객체를 주입해줘야 하는지 고민이 필요함: 값 덮어씌기 문제 때문에 new 를 통한 생성이 어울리지 않을까?
+            Long id = jsonWebTokenService.decodeId(data);
+            System.out.println("decodedId: " + id);
             // createusernameentity
-            UserEntity findUser = userRepository.findByEmail(decodedEmail);
+            UserEntity user =  jsonWebTokenService.verifyId(id);
+            System.out.println(user.toString());
             UserNameEntity userName =  UserNameEntity.builder()
-                            .userId(findUser)
+                            .userId(user)
                             .username(map.get("username"))
                             .build();
             userNameRepository.save(userName);

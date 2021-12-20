@@ -33,16 +33,17 @@ public class MyPageController {
         JSONObject jsonObject = new JSONObject();
         try {
             // TODO: JsonWebTokenService 객체가 싱글톤인지, 만약 싱글톤이라면 상태를 가져서 문제가 되지 않는지 체크 필요!
-            String email = jsonWebTokenService.decodeEmail(jwt);
+            Long id = jsonWebTokenService.decodeId(jwt);
             // TODO: delete password
-            UserEntity user = jsonWebTokenService.verifyEmail(email);
+            UserEntity user = jsonWebTokenService.verifyId(id);
             jsonObject.put("email", user.getEmail());
 
-            Optional<UserNameEntity> optionalUserName = userNameRepository.findById(user.getId());
+            Optional<UserNameEntity> optionalUserName = userNameRepository.findById(id);
             UserNameEntity userNameEntity = optionalUserName.get();
             jsonObject.put("username", userNameEntity.getUsername());
             return jsonObject;
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
@@ -50,9 +51,9 @@ public class MyPageController {
     @PatchMapping(value = "/email")
     public String configEmail(@RequestBody JSONObject data, @RequestHeader(value = "Authorization") String jwt) {
         try {
-            String preEmail = jsonWebTokenService.decodeEmail(jwt);
+            Long id = jsonWebTokenService.decodeId(jwt);
             String nextEmail = (String) data.get("nextEmail");
-            userRepository.patchNextEmailByPreEmail(nextEmail, preEmail);
+            userRepository.patchNextEmailByPreEmail(nextEmail, id);
             return nextEmail;
         } catch (ExpiredJwtException e) {
             System.out.println(e);
@@ -67,11 +68,10 @@ public class MyPageController {
     public String configUsername(@RequestBody JSONObject data, @RequestHeader(value = "Authorization") String jwt) {
         // 소환사명 변경
         try {
-            String decodeEmail = jsonWebTokenService.decodeEmail(jwt);
             String nextUserName = (String) data.get("nextUserName");
-            UserEntity user = userRepository.findByEmail(decodeEmail);
-            Long userId = user.getId();
-            userNameRepository.patchNextUserNameByPreUserName(nextUserName, userId);
+            Long id = jsonWebTokenService.decodeId(jwt);
+            System.out.println("nextUserName: " + nextUserName);
+            userNameRepository.patchNextUserNameByPreUserName(nextUserName, id);
             return nextUserName;
         } catch (ExpiredJwtException e) {
             System.out.println(e);

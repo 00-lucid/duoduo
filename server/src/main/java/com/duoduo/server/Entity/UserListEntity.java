@@ -19,6 +19,10 @@ public class UserListEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private UserEntity userId;
+
     @Column
     private String username;
 
@@ -59,8 +63,9 @@ public class UserListEntity {
     private String createdAt;
 
     @Builder
-    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
+    public UserListEntity (Long id, UserEntity userId, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
         this.id = id;
+        this.userId = userId;
         this.username = username;
         this.nickname = nickname;
         this.position = position;

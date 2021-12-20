@@ -14,7 +14,7 @@ public interface UserNameRepository extends JpaRepository<UserNameEntity, Long> 
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE username un SET un.username = :nextUserName WHERE un.username = :userId", nativeQuery = true)
+    @Query(value = "UPDATE username un SET un.username = :nextUserName WHERE un.user = :userId", nativeQuery = true)
     void patchNextUserNameByPreUserName(@Param("nextUserName") String nextUserName, @Param("userId") Long userId);
 
 }
