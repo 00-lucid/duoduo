@@ -11,24 +11,21 @@ function TopMenu() {
 
   return (
     <Top>
-      <p className="text-4xl font-bold cursor-pointer" onClick={moveHome}>
+      <p className="text-4xl font-black cursor-pointer" onClick={moveHome}>
         DUODUO
       </p>
       {/* <p className="cursor-pointer">듀오 찾기</p> */}
       {/* <p className="cursor-pointer">듀오 매칭</p> */}
       {/* <p>알람</p> */}
       {!loggedIn && (
-        <Link
-          to="signin"
-          className="bg-green-400 text-2xl h-full flex items-center"
-        >
-          <p className="mx-4 font-bold">SIGNIN</p>
+        <Link to="signin" className="text-lg flex items-center text-green-400">
+          <p className="mx-4 font-extrabold	">로그인</p>
         </Link>
       )}
       {loggedIn && (
         <>
           <Link to="mypage">
-            <p className="text-2xl font-bold">{`${userInfo.nickname}`}</p>
+            <p className="text-lg font-medium">{`${userInfo.nickname}`}</p>
           </Link>
         </>
       )}
@@ -36,16 +33,20 @@ function TopMenu() {
   );
 }
 
-const Top = styled.header({
-  paddingLeft: "0.8rem",
-  width: "100%",
-  height: "4rem",
-  color: "white",
-  backgroundColor: "#4a4e4d",
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-});
+const Top = styled.header`
+  margin-left: 16.666%;
+  margin-right: 16.666%;
+  height: 4rem;
+  color: #333d4b;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 0.1rem solid #333d4b;
+  justify-content: space-between;
+  @media screen and (max-width: 767px) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+`;
 
 export default TopMenu;

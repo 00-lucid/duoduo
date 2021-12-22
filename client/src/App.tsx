@@ -21,7 +21,7 @@ function App() {
       {alarmModals?.map((alarm, idx) => (
         <AlarmModal key={idx} alarm={alarm} idx={idx} />
       ))}
-      <MessageModal />
+      {/* <MessageModal /> */}
       <Switch>
         <Route path="/" exact component={Root}></Route>
         <Route path="/signin" exact component={Signin}></Route>
