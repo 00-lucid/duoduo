@@ -17,24 +17,28 @@ function Signin() {
 
   const postSignin = async () => {
     setIsLoading(true);
-    const { data } = await axios.post("http://localhost:8080/signin", {
-      email,
-      password,
-    });
-
-    if (!data) {
+    const res = await axios.post(
+      "http://localhost:8080/signin",
+      {
+        email,
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    if (!res.data) {
       alert("invalid email or password");
       setIsLoading(false);
       return;
     }
-    // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
-    // jwt 저장 (local)
-    saveToken({ token: data.token, csrf: null });
+    console.log(res);
+    saveToken({ token: res.data.token, csrf: null });
     setUserInfo((old: object) => {
       {
         return {
           ...old,
-          nickname: data.nickname,
+          nickname: res.data.nickname,
         };
       }
     });

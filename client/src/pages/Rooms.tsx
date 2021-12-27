@@ -3,7 +3,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { delay, setTimeRemoveAlarm } from "../common/api/page";
-import { getToken } from "../common/auth";
+import { expiredJwt, getToken } from "../common/auth";
 import FilterBtn from "../components/FilterBtn";
 import FilterBtnBox from "../components/FilterBtnBox";
 import LineModal from "../components/LineModal";
@@ -104,6 +104,12 @@ function Rooms() {
       setDummy((old) => {
         return [data, ...old];
       });
+    } else {
+      // jwt expired
+      expiredJwt();
+      alert("다시 시도해주세요");
+      setIsSK(false);
+      return;
     }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
     const dDate = new Date();

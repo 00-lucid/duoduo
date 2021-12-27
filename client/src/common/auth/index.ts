@@ -1,3 +1,4 @@
+import axios from "axios";
 import Cookies from "universal-cookie";
 import packageJson from "../../../package.json";
 
@@ -35,4 +36,15 @@ export const decodeJwt: any = (jwt: string) => {
   return {};
 };
 
-export default { getToken, saveToken, destroyToken };
+export const expiredJwt: any = async () => {
+  const { data } = await axios.get(
+    `${process.env.REACT_APP_SERVER_URL}/expire`,
+    {
+      headers: { Authorization: getToken().token },
+    }
+  );
+  destroyToken();
+  saveToken({ token: data.token, csrf: null });
+};
+
+export default { getToken, saveToken, destroyToken, expiredJwt };
