@@ -8,6 +8,7 @@ import com.duoduo.server.Repository.UserListRepository;
 import com.duoduo.server.Service.FindService;
 import com.duoduo.server.Service.JsonWebTokenService;
 import com.duoduo.server.Service.RiotService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,6 +185,10 @@ public class UserListController {
             }};
 
             return userListResponse;
+        } catch (ExpiredJwtException e) {
+            return new HashMap(){{
+                put("error", "token expired");
+            }};
         } catch (Exception e) {
             System.out.println(e);
             return null;

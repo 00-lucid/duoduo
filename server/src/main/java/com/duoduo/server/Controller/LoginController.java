@@ -12,11 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 
-@CrossOrigin(value = "*")
+
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 public class LoginController {
 
@@ -35,13 +38,12 @@ public class LoginController {
     }
 
     @PostMapping(value = "/signin")
-    public JSONObject signin(@RequestBody(required = true) LoginDTO data) {
+    public JSONObject signin(@RequestBody(required = true) LoginDTO data, HttpServletResponse response) {
         try {
             Date now = new Date();
             // TODO: password에 hashing 적용해야 됨
-            if (userRepository.findByEmail(data.getEmail()) != null) {
-                UserEntity user = userRepository.findByPassword(data.getPassword());
-
+            UserEntity user = userRepository.findByEmail(data.getEmail());
+            if (user.getPassword().equals(data.getPassword())) {
                 JSONObject jsonObject = new JSONObject();
 
                 String jwt =  Jwts.builder()
@@ -52,14 +54,26 @@ public class LoginController {
                         .claim("id", user.getId())
                         .signWith(SignatureAlgorithm.HS256, "secret")
                         .compact();
-                jsonObject.put("token", jwt);
-                jsonObject.put("nickname", user.getNickname());
-                System.out.println(jsonObject);
 
+                String rfJwt = Jwts.builder()
+                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                        .setIssuer("duoduo")
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(now.getTime() + Duration.ofDays(14).toMillis()))
+                        .signWith(SignatureAlgorithm.HS256, "secret")
+                        .compact();
+
+                jsonObject.put("token", jwt);
+                Cookie rfTokenCookie = new Cookie("rfToken", rfJwt);
+                rfTokenCookie.setPath("/");
+                jsonObject.put("nickname", user.getNickname());
+                response.addCookie(rfTokenCookie);
+                System.out.println(jsonObject);
                 return jsonObject;
             }
             return null;
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
@@ -105,6 +119,30 @@ public class LoginController {
         } catch (Exception e) {
             System.out.println(e);
             return null;
+        }
+    }
+
+    @GetMapping(value = "expire")
+    public void getRefreshToken(@RequestHeader("Authorization") String jwt, @CookieValue("refreshToken") String rfJwt) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            System.out.println("expireexpireexpireexpireexpireexpireexpireexpireexpire");
+            System.out.println("rfJwt: " + rfJwt);
+            Date now = new Date();
+
+            Long id = jsonWebTokenService.decodeId(jwt);
+
+            String newJwt = Jwts.builder()
+                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                    .setIssuer("duoduo")
+                    .setIssuedAt(now)
+                    .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
+                    .claim("id", id)
+                    .signWith(SignatureAlgorithm.HS256, "secret")
+                    .compact();
+            return;
+        } catch (Exception e) {
+            return;
         }
     }
 
