@@ -107,8 +107,7 @@ function Rooms() {
     } else {
       // jwt expired
       expiredJwt();
-      alert("다시 시도해주세요");
-      setIsSK(false);
+      addUserList(position);
       return;
     }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");

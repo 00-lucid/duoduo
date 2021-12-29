@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import moveHome from "../common/api/page";
-import { decodeJwt, destroyToken, getToken } from "../common/auth";
+import { decodeJwt, destroyToken, expiredJwt, getToken } from "../common/auth";
 import MyPageInfoBlock from "../components/MyPageInfoBlock";
 import TopMenu from "../components/TopMenu";
 import { userInfoState } from "../state-persist";
@@ -24,6 +24,12 @@ function MyPage() {
       }
     );
     console.log(data);
+    if (!data) {
+      expiredJwt();
+      const data2: any = await getMypage();
+      console.log(data2);
+      return data2;
+    }
     return data;
   };
 

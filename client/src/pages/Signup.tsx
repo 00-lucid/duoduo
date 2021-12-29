@@ -93,9 +93,9 @@ function Signup() {
         </p>
       </Top>
       <main className="flex flex-row h-full items-center justify-center mt-24">
-        <Card className="flex justify-center items-center">
+        {/* <Card className="flex justify-center items-center">
           <img className="w-full" src="umi-removebg.png" alt="umi"></img>
-        </Card>
+        </Card> */}
         <Card className="bg-white rounded-xl p-10">
           <p className="text-3xl font-bold mb-6">SignUp</p>
           <Input

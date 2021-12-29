@@ -41,6 +41,7 @@ export const expiredJwt: any = async () => {
     `${process.env.REACT_APP_SERVER_URL}/expire`,
     {
       headers: { Authorization: getToken().token },
+      withCredentials: true,
     }
   );
   destroyToken();
