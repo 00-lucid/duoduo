@@ -17,11 +17,14 @@ function TopMenu() {
       {/* <p className="cursor-pointer">듀오 찾기</p> */}
       {/* <p className="cursor-pointer">듀오 매칭</p> */}
       {/* <p>알람</p> */}
-      <Link to="rooms">
-        <p className="text-lg font-medium">구인</p>
+      <Link to="/community/all?page=0">
+        <p className="text-lg font-medium">커뮤니티</p>
+      </Link>
+      <Link to="/rooms">
+        <p className="text-lg font-medium">찾기</p>
       </Link>
       {!loggedIn && (
-        <Link to="signin" className="text-lg flex items-center text-green-400">
+        <Link to="/signin" className="text-lg flex items-center text-green-400">
           <p className="mx-4 font-extrabold	">로그인</p>
         </Link>
       )}
@@ -31,7 +34,7 @@ function TopMenu() {
 
       {loggedIn && (
         <>
-          <Link to="mypage">
+          <Link to="/mypage">
             <p className="text-lg font-medium">{`${userInfo.nickname}`}</p>
           </Link>
         </>

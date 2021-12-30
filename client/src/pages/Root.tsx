@@ -75,41 +75,152 @@ function Root() {
     console.log(curScene, currentYOffset);
     switch (curScene) {
       case 1:
-        const titleOpacity_in = calcValues(
-          values.titleOpacity_in,
-          currentYOffset
-        );
-
-        const titleOpacity_out = calcValues(
-          values.titleOpacity_out,
-          currentYOffset
-        );
-
-        const titleTranslateX_in = calcValues(
-          values.titleTranslateX_in,
-          currentYOffset
-        );
-
-        const titleTranslateX_out = calcValues(
-          values.titleTranslateX_out,
-          currentYOffset
-        );
-
-        console.log(titleOpacity_out);
-
-        if (scrollRatio <= 0.3) {
-          objs.title.style.opacity = titleOpacity_in;
-          objs.title.style.transform = `translateX(${titleTranslateX_in}%)`;
+        if (scrollRatio <= 0.4) {
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_in,
+            currentYOffset
+          );
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_in,
+            currentYOffset
+          )}%)`;
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_in,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_in,
+            currentYOffset
+          )}%)`;
         } else {
-          objs.title.style.transform = `translateX(${titleTranslateX_out}%)`;
-          objs.title.style.opacity = titleOpacity_out;
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_out,
+            currentYOffset
+          )}%)`;
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_out,
+            currentYOffset
+          )}%)`;
         }
         break;
       case 2:
+        if (scrollRatio <= 0.4) {
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_in,
+            currentYOffset
+          );
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_in,
+            currentYOffset
+          )}%)`;
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_in,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_in,
+            currentYOffset
+          )}%)`;
+        } else {
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_out,
+            currentYOffset
+          )}%)`;
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_out,
+            currentYOffset
+          )}%)`;
+        }
         break;
       case 3:
+        if (scrollRatio <= 0.4) {
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_in,
+            currentYOffset
+          );
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_in,
+            currentYOffset
+          )}%)`;
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_in,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_in,
+            currentYOffset
+          )}%)`;
+        } else {
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_out,
+            currentYOffset
+          )}%)`;
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_out,
+            currentYOffset
+          )}%)`;
+        }
         break;
       case 4:
+        if (scrollRatio <= 0.4) {
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_in,
+            currentYOffset
+          );
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_in,
+            currentYOffset
+          )}%)`;
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_in,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_in,
+            currentYOffset
+          )}%)`;
+        } else {
+          objs.title.style.transform = `translateX(${calcValues(
+            values.titleTranslateX_out,
+            currentYOffset
+          )}%)`;
+          objs.title.style.opacity = calcValues(
+            values.titleOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.opacity = calcValues(
+            values.textOpacity_out,
+            currentYOffset
+          );
+          objs.text.style.transform = `translateY(${calcValues(
+            values.textTranslateY_out,
+            currentYOffset
+          )}%)`;
+        }
         break;
     }
   };
@@ -135,8 +246,8 @@ function Root() {
     sceneInfo = [
       // 0
       {
-        type: "sticky",
-        heightNum: 2,
+        type: "normal",
+        heightNum: 1.5,
         scrollHeight: 0,
         objs: {
           container: refs.current[0],
@@ -146,7 +257,7 @@ function Root() {
       // 1
       {
         type: "sticky",
-        heightNum: 4,
+        heightNum: 3.5,
         scrollHeight: 0,
         objs: {
           container: refs.current[1],
@@ -157,42 +268,86 @@ function Root() {
         values: {
           titleOpacity_in: [0, 1, { start: 0.1, end: 0.3 }],
           titleOpacity_out: [1, 0, { start: 0.7, end: 0.9 }],
-          titleTranslateX_in: [-40, 0, { start: 0.1, end: 0.3 }],
-          titleTranslateX_out: [0, -40, { start: 0.7, end: 0.9 }],
+          titleTranslateX_in: [-60, 0, { start: 0.1, end: 0.3 }],
+          titleTranslateX_out: [0, -60, { start: 0.7, end: 0.9 }],
+          textOpacity_in: [0, 1, { start: 0.3, end: 0.4 }],
+          textOpacity_out: [1, 0, { start: 0.6, end: 0.7 }],
+          textTranslateY_in: [-60, 0, { start: 0.3, end: 0.4 }],
+          textTranslateY_out: [0, -60, { start: 0.6, end: 0.7 }],
         },
       },
       // 2
       {
         type: "sticky",
-        heightNum: 4,
+        heightNum: 3.5,
         scrollHeight: 0,
         objs: {
           container: refs.current[2],
+          background: animationRefs.current[3],
+          title: animationRefs.current[4],
+          text: animationRefs.current[5],
         },
-        values: {},
+        values: {
+          titleOpacity_in: [0, 1, { start: 0.1, end: 0.3 }],
+          titleOpacity_out: [1, 0, { start: 0.7, end: 0.9 }],
+          titleTranslateX_in: [-60, 0, { start: 0.1, end: 0.3 }],
+          titleTranslateX_out: [0, -60, { start: 0.7, end: 0.9 }],
+          textOpacity_in: [0, 1, { start: 0.3, end: 0.4 }],
+          textOpacity_out: [1, 0, { start: 0.6, end: 0.7 }],
+          textTranslateY_in: [-60, 0, { start: 0.3, end: 0.4 }],
+          textTranslateY_out: [0, -60, { start: 0.6, end: 0.7 }],
+        },
       },
       // 3
       {
         type: "sticky",
-        heightNum: 4,
+        heightNum: 3.5,
         scrollHeight: 0,
         objs: {
           container: refs.current[3],
+          background: animationRefs.current[6],
+          title: animationRefs.current[7],
+          text: animationRefs.current[8],
         },
-        values: {},
+        values: {
+          titleOpacity_in: [0, 1, { start: 0.1, end: 0.3 }],
+          titleOpacity_out: [1, 0, { start: 0.7, end: 0.9 }],
+          titleTranslateX_in: [-60, 0, { start: 0.1, end: 0.3 }],
+          titleTranslateX_out: [0, -60, { start: 0.7, end: 0.9 }],
+          textOpacity_in: [0, 1, { start: 0.3, end: 0.4 }],
+          textOpacity_out: [1, 0, { start: 0.6, end: 0.7 }],
+          textTranslateY_in: [-60, 0, { start: 0.3, end: 0.4 }],
+          textTranslateY_out: [0, -60, { start: 0.6, end: 0.7 }],
+        },
       },
       // 4
       {
         type: "sticky",
-        heightNum: 4,
+        heightNum: 3.5,
         scrollHeight: 0,
         objs: {
           container: refs.current[4],
+          background: animationRefs.current[9],
+          title: animationRefs.current[10],
+          text: animationRefs.current[11],
         },
-        values: {},
+        values: {
+          titleOpacity_in: [0, 1, { start: 0.1, end: 0.3 }],
+          titleOpacity_out: [1, 0, { start: 0.7, end: 0.9 }],
+          titleTranslateX_in: [-60, 0, { start: 0.1, end: 0.3 }],
+          titleTranslateX_out: [0, -60, { start: 0.7, end: 0.9 }],
+          textOpacity_in: [0, 1, { start: 0.3, end: 0.4 }],
+          textOpacity_out: [1, 0, { start: 0.6, end: 0.7 }],
+          textTranslateY_in: [-60, 0, { start: 0.3, end: 0.4 }],
+          textTranslateY_out: [0, -60, { start: 0.6, end: 0.7 }],
+        },
       },
     ];
     window.addEventListener("scroll", () => {
+      if (window.location.href !== "http://localhost:3000/") {
+        window.addEventListener("scroll", () => {});
+        return;
+      }
       enterNewScene = false;
       yOffset = window.pageYOffset;
       prevScrollHeight = 0;
@@ -333,11 +488,22 @@ function Root() {
           style={{ color: "#1D1D1F", height: "80vh" }}
           ref={(el) => (refs.current[2] = el)}
         >
-          <section className="sticky-elem">
+          <section
+            className="sticky-elem"
+            ref={(el) => (animationRefs.current[3] = el)}
+          >
             <section className="flex flex-col items-start justify-center w-1/2">
-              <p className="md:text-5xl text-4xl font-extrabold">빠르게</p>
+              <p
+                className="md:text-5xl text-4xl font-extrabold"
+                ref={(el) => (animationRefs.current[4] = el)}
+              >
+                빠르게
+              </p>
             </section>
-            <section className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal">
+            <section
+              className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal"
+              ref={(el) => (animationRefs.current[5] = el)}
+            >
               <p>요청 또는 요청을 받았을 때, 수락하면</p>
               <p>바로 실시간 채팅이 시작됩니다</p>
               <p>귀찮게 왔다갔다 할 필요 없이 채팅이</p>
@@ -356,11 +522,22 @@ function Root() {
           style={{ color: "#1D1D1F", height: "80vh" }}
           ref={(el) => (refs.current[3] = el)}
         >
-          <section className="sticky-elem">
+          <section
+            className="sticky-elem"
+            ref={(el) => (animationRefs.current[6] = el)}
+          >
             <section className="flex flex-col items-start justify-center w-1/2">
-              <p className="md:text-5xl text-4xl font-extrabold">강력하게</p>
+              <p
+                className="md:text-5xl text-4xl font-extrabold"
+                ref={(el) => (animationRefs.current[7] = el)}
+              >
+                강력하게
+              </p>
             </section>
-            <section className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal">
+            <section
+              className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal"
+              ref={(el) => (animationRefs.current[8] = el)}
+            >
               <p>또한 웹사이트의 채팅창은 꺼지지 않고, </p>
               <p>큐가 잡혔을 때 그리고 벤픽창에서 </p>
               <p>팀원과 적군 전적 데이터를 </p>
@@ -385,11 +562,22 @@ function Root() {
           }}
           ref={(el) => (refs.current[4] = el)}
         >
-          <section className="sticky-elem">
+          <section
+            className="sticky-elem"
+            ref={(el) => (animationRefs.current[9] = el)}
+          >
             <section className="flex flex-col items-start justify-center w-1/2">
-              <p className="md:text-5xl text-4xl font-extrabold">즐겁게</p>
+              <p
+                className="md:text-5xl text-4xl font-extrabold"
+                ref={(el) => (animationRefs.current[10] = el)}
+              >
+                즐겁게
+              </p>
             </section>
-            <section className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal">
+            <section
+              className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal"
+              ref={(el) => (animationRefs.current[11] = el)}
+            >
               <p>듀오듀오의 제일 중요한 원칙은 즐겁게입니다.</p>
               <p>게임이 즐겁게 끝났다면, 서로에게 칭찬을 할 수 있습니다</p>
               <p>칭찬을 받은 유저는 포로토큰을 보상으로 받게 됩니다</p>

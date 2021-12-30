@@ -50,3 +50,17 @@ input:focus {
     transform: rotate(360deg);
   }
 }
+
+textarea::placeholder {
+  font-weight: 600;
+  font-size: "1.125rem";
+  color: #333d4b;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+textarea {
+  resize: none;
+}
