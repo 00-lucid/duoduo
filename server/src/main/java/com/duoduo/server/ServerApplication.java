@@ -1,6 +1,8 @@
 package com.duoduo.server;
 
+import com.duoduo.server.Entity.PostEntity;
 import com.duoduo.server.Entity.UserEntity;
+import com.duoduo.server.Repository.PostRepository;
 import com.duoduo.server.Repository.UserListRepository;
 import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
