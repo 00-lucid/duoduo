@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class JsonWebTokenService {
@@ -30,11 +31,39 @@ public class JsonWebTokenService {
             return null;
         }
     }
+
+    public Long decodeId(String jwt) {
+        Map<String, Object> claimMap = null;
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey("secret")
+                    .parseClaimsJws(jwt.substring(7))
+                    .getBody();
+            claimMap = claims;
+            Long decodeId = Long.valueOf(claimMap.get("id").toString());
+            return decodeId;
+        } catch (Exception e) {
+            System.out.println("ERR: " + e);
+            return null;
+        }
+    }
+
     public UserEntity verifyEmail(String email) {
         try {
             UserEntity user = userRepository.findByEmail(email);
             return user;
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public UserEntity verifyId(Long id) {
+        try {
+            Optional<UserEntity> user = userRepository.findById(id);
+            UserEntity userEntity = user.get();
+            return userEntity;
+        } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }

@@ -17,24 +17,28 @@ function Signin() {
 
   const postSignin = async () => {
     setIsLoading(true);
-    const { data } = await axios.post("http://localhost:8080/signin", {
-      email,
-      password,
-    });
-
-    if (!data) {
+    const res = await axios.post(
+      "http://localhost:8080/signin",
+      {
+        email,
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    if (!res.data) {
       alert("invalid email or password");
       setIsLoading(false);
       return;
     }
-    // 로딩이 너무 빠른 관계로 오히려 시간을 늘림
-    // jwt 저장 (local)
-    saveToken({ token: data.token, csrf: null });
+    console.log(res);
+    saveToken({ token: res.data.token, csrf: null });
     setUserInfo((old: object) => {
       {
         return {
           ...old,
-          nickname: data.nickname,
+          nickname: res.data.nickname,
         };
       }
     });
@@ -55,10 +59,11 @@ function Signin() {
           DUODUO
         </p>
       </Top>
+      '
       <main className="flex flex-row h-full items-center justify-center mt-24">
-        <Card className="flex justify-center items-center">
+        {/* <Card className="flex justify-center items-center">
           <img className="w-full" src="umi-removebg.png" alt="umi"></img>
-        </Card>
+        </Card> */}
         <Card className="bg-white rounded-xl p-10">
           <p className="text-3xl font-bold mb-6">SignIn</p>
           <Input

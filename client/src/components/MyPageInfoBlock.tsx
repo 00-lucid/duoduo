@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
 import { userInfoState } from "../state-persist";
@@ -8,9 +8,11 @@ import { userInfoState } from "../state-persist";
 function MyPageInfoBlock({ title, value, setValues, token }: any) {
   const [isInput, setIsInput] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
+  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const patchInfo = async () => {
     // api 분리가 필요할 경우 분리하자
-    let res = null;
+    let res: any = null;
+    // TODO: 정규표현식을 통한 텍스트 양식 검사를 진행해야됨 (email, username)
     if (!text) {
       return;
     }
@@ -31,7 +33,7 @@ function MyPageInfoBlock({ title, value, setValues, token }: any) {
       res = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/username`,
         {
-          nextUsername: text,
+          nextUserName: text,
         },
         {
           headers: {
@@ -39,6 +41,12 @@ function MyPageInfoBlock({ title, value, setValues, token }: any) {
           },
         }
       );
+      setUserInfo((old: any) => {
+        return {
+          nickname: old.nickname,
+          username: res.data,
+        };
+      });
     }
     if (res.data) {
       setValues(res.data);

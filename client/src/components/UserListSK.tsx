@@ -4,7 +4,7 @@ function UserListSK({ textSK }: any) {
   return (
     <div className="flex justify-center">
       <div
-        className="relative flex flex-row w-4/6 border h-20 justify-start rounded-lg mb-2 overflow-hidden shadow-md bg-gray-50"
+        className="relative flex flex-row w-full border h-20 justify-start rounded-lg mb-2 overflow-hidden shadow-md bg-gray-50"
         style={{ color: "#333d4b" }}
       >
         <section className="flex flex-row items-center ">

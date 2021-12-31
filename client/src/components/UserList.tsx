@@ -1,7 +1,13 @@
+import axios from "axios";
 import moment from "moment";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { getToken } from "../common/auth";
+import { userInfoState } from "../state-persist";
 import UserDetail from "./UserDetail";
+import { io } from "socket.io-client";
+const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 interface Room {
   createdAt: Date;
@@ -17,9 +23,43 @@ interface Room {
   username: string;
 }
 
-function UserList({ room, last }: any) {
+function UserList({ room, last, setDummy }: any) {
   const [isDetail, setIsDetail] = useState<boolean>(false);
+
   const createdAt = moment(room.createdAt).fromNow();
+
+  const { nickname, username } = useRecoilValue(userInfoState);
+
+  const requestDuo = async () => {
+    socket.emit(`join room`, { from: nickname, room: room.username });
+    // 조인한 룸 상대방에게 노티를 뿌려줘야함
+    // 상대방 socket.id를 알아야 됨
+    // userlist가 socket.id를 가지고 있어야 됨
+    socket.emit(`send notice`, {
+      room: room.username,
+      category: "duo",
+      from: username,
+    });
+  };
+
+  const deleteUserList = async () => {
+    console.log("유저리스트 삭제");
+    const { data } = await axios.delete(
+      `${process.env.REACT_APP_SERVER_URL}/userlist/${room.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken().token}`,
+        },
+      }
+    );
+    console.log(data);
+    if (data) {
+      setDummy((old: any) => {
+        return old.filter((el: any) => el.id !== room.id);
+      });
+    }
+  };
+
   return (
     <>
       <li
@@ -87,9 +127,22 @@ function UserList({ room, last }: any) {
           <p className="flex absolute text-xs opacity-40 ml-6 right-14 h-full items-end">
             {createdAt}
           </p>
-          <button className="absolute bg-green-400 w-10 h-full flex flex-row items-center justify-center inset-y-0 right-0">
-            <img className="w-4 h-4" src="icon_arrow.png"></img>
-          </button>
+          {room.username === username ? (
+            <button
+              className="absolute bg-red-400 w-10 h-full flex flex-row items-center justify-center inset-y-0 right-0"
+              onClick={deleteUserList}
+            >
+              {/* <img className="w-4 h-4" src="icon_arrow.png"></img> */}
+              <p className="font-bold text-white">X</p>
+            </button>
+          ) : (
+            <button
+              className="absolute bg-green-400 w-10 h-full flex flex-row items-center justify-center inset-y-0 right-0"
+              onClick={requestDuo}
+            >
+              <img className="w-4 h-4" src="icon_arrow.png"></img>
+            </button>
+          )}
         </section>
       </li>
       {isDetail && <UserDetail></UserDetail>}

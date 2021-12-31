@@ -4,10 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Entity(name = "userlist")
@@ -18,6 +15,10 @@ public class UserListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user")
+    private UserEntity userId;
 
     @Column
     private String username;
@@ -59,8 +60,9 @@ public class UserListEntity {
     private String createdAt;
 
     @Builder
-    public UserListEntity (Long id, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
+    public UserListEntity (Long id, UserEntity userId, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
         this.id = id;
+        this.userId = userId;
         this.username = username;
         this.nickname = nickname;
         this.position = position;
@@ -73,7 +75,7 @@ public class UserListEntity {
         this.total_rate = total_rate;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         this.createdAt = simpleDateFormat.format(new Date());
     }
 

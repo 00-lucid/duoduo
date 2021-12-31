@@ -5,19 +5,26 @@ import com.duoduo.server.Entity.UserNameEntity;
 import com.duoduo.server.Repository.LoginDTO;
 import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
+import com.duoduo.server.Service.JsonWebTokenService;
 import io.jsonwebtoken.*;
 import org.json.simple.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 
-@CrossOrigin(value = "*")
+
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 public class LoginController {
+
+    @Autowired
+    private JsonWebTokenService jsonWebTokenService;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,13 +38,12 @@ public class LoginController {
     }
 
     @PostMapping(value = "/signin")
-    public JSONObject signin(@RequestBody(required = true) LoginDTO data) {
+    public JSONObject signin(@RequestBody(required = true) LoginDTO data, HttpServletResponse response) {
         try {
             Date now = new Date();
             // TODO: password에 hashing 적용해야 됨
-            if (userRepository.findByEmail(data.getEmail()) != null) {
-                UserEntity user = userRepository.findByPassword(data.getPassword());
-
+            UserEntity user = userRepository.findByEmail(data.getEmail());
+            if (user.getPassword().equals(data.getPassword())) {
                 JSONObject jsonObject = new JSONObject();
 
                 String jwt =  Jwts.builder()
@@ -45,17 +51,29 @@ public class LoginController {
                         .setIssuer("duoduo")
                         .setIssuedAt(now)
                         .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
-                        .claim("email", user.getEmail())
+                        .claim("id", user.getId())
                         .signWith(SignatureAlgorithm.HS256, "secret")
                         .compact();
-                jsonObject.put("token", jwt);
-                jsonObject.put("nickname", user.getNickname());
-                System.out.println(jsonObject);
 
+                String rfJwt = Jwts.builder()
+                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                        .setIssuer("duoduo")
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(now.getTime() + Duration.ofDays(14).toMillis()))
+                        .signWith(SignatureAlgorithm.HS256, "secret")
+                        .compact();
+
+                jsonObject.put("token", jwt);
+                Cookie rfTokenCookie = new Cookie("rfToken", rfJwt);
+                rfTokenCookie.setPath("/");
+                jsonObject.put("nickname", user.getNickname());
+                response.addCookie(rfTokenCookie);
+                System.out.println(jsonObject);
                 return jsonObject;
             }
             return null;
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
@@ -86,15 +104,14 @@ public class LoginController {
     @PostMapping(value = "/username")
     public UserNameEntity createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
         try{
-            String jwt = data.substring(7);
-            Claims claims = Jwts.parser().setSigningKey("secret").parseClaimsJws(jwt).getBody();
-            System.out.println(claims);
-            System.out.println(claims.get("email"));
-            String decodedEmail = claims.get("email").toString();
+            // TODO: @Authorwize를 통해서 JsonWebTokenService 객체를 주입해줘야 하는지 고민이 필요함: 값 덮어씌기 문제 때문에 new 를 통한 생성이 어울리지 않을까?
+            Long id = jsonWebTokenService.decodeId(data);
+            System.out.println("decodedId: " + id);
             // createusernameentity
-            UserEntity findUser = userRepository.findByEmail(decodedEmail);
+            UserEntity user =  jsonWebTokenService.verifyId(id);
+            System.out.println(user.toString());
             UserNameEntity userName =  UserNameEntity.builder()
-                            .userId(findUser)
+                            .userId(user)
                             .username(map.get("username"))
                             .build();
             userNameRepository.save(userName);
@@ -102,6 +119,30 @@ public class LoginController {
         } catch (Exception e) {
             System.out.println(e);
             return null;
+        }
+    }
+
+    @GetMapping(value = "expire")
+    public void getRefreshToken(@RequestHeader("Authorization") String jwt, @CookieValue("refreshToken") String rfJwt) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            System.out.println("expireexpireexpireexpireexpireexpireexpireexpireexpire");
+            System.out.println("rfJwt: " + rfJwt);
+            Date now = new Date();
+
+            Long id = jsonWebTokenService.decodeId(jwt);
+
+            String newJwt = Jwts.builder()
+                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                    .setIssuer("duoduo")
+                    .setIssuedAt(now)
+                    .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
+                    .claim("id", id)
+                    .signWith(SignatureAlgorithm.HS256, "secret")
+                    .compact();
+            return;
+        } catch (Exception e) {
+            return;
         }
     }
 

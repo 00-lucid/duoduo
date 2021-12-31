@@ -1,14 +1,18 @@
 package com.duoduo.server.Controller;
 
+import com.duoduo.server.Entity.UserEntity;
 import com.duoduo.server.Entity.UserListEntity;
 import com.duoduo.server.Repository.MostDTO;
 import com.duoduo.server.Repository.UserListDTO;
 import com.duoduo.server.Repository.UserListRepository;
 import com.duoduo.server.Service.FindService;
+import com.duoduo.server.Service.JsonWebTokenService;
 import com.duoduo.server.Service.RiotService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +32,9 @@ public class UserListController {
 
     @Autowired
     private UserListRepository userListRepository;
+
+    @Autowired
+    private JsonWebTokenService jsonWebTokenService;
 
     @GetMapping(value = "/userlist/infinite")
     public List<HashMap> getUserListInfinite(@RequestHeader("Page") int id) {
@@ -93,7 +100,7 @@ public class UserListController {
     }
 
     @PostMapping(value = "/userlist")
-    public HashMap createUserList(@RequestBody(required = true) UserListDTO userListDTO) {
+    public HashMap createUserList(@RequestBody(required = true) UserListDTO userListDTO, @RequestHeader("Authorization") String jwt) {
         ArrayList<MostDTO> championMost = new ArrayList<MostDTO>();
         try {
             int win = 0;
@@ -142,7 +149,11 @@ public class UserListController {
             }
             String result = String.join(" ", resultMost);
 
+            Long id = jsonWebTokenService.decodeId(jwt);
+            UserEntity user = jsonWebTokenService.verifyId(id);
+
             UserListEntity userList = UserListEntity.builder()
+                    .userId(user)
                     .username(userListDTO.getUsername())
                     .nickname(userListDTO.getNickname())
                     .position(userListDTO.getPosition())
@@ -174,10 +185,28 @@ public class UserListController {
             }};
 
             return userListResponse;
+        } catch (ExpiredJwtException e) {
+            return new HashMap(){{
+                put("error", "token expired");
+            }};
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
 
+    @DeleteMapping(value = "userlist/{id}")
+    public UserListEntity removeUserList(@PathVariable("id") Long listId, @RequestHeader("Authorization") String jwt) {
+        // TODO: validation
+        try {
+            Long userId = jsonWebTokenService.decodeId(jwt);
+            UserListEntity target = userListRepository.findByIdAndId(userId, listId);
+            System.out.println(target.toString());
+            userListRepository.delete(target);
+            return target;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
 }
