@@ -1,13 +1,12 @@
 package com.duoduo.server.Entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @Entity(name = "post")
 @Getter
@@ -36,7 +35,7 @@ public class PostEntity {
         this.title = title;
         this.nickname = nickname;
         this.body = body;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         this.createdAt = simpleDateFormat.format(new Date());
     }
 }

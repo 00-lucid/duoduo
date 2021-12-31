@@ -4,10 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Entity(name = "userlist")
@@ -78,7 +75,7 @@ public class UserListEntity {
         this.total_rate = total_rate;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         this.createdAt = simpleDateFormat.format(new Date());
     }
 

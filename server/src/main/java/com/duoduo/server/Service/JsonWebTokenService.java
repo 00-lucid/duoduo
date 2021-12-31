@@ -43,7 +43,7 @@ public class JsonWebTokenService {
             Long decodeId = Long.valueOf(claimMap.get("id").toString());
             return decodeId;
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("ERR: " + e);
             return null;
         }
     }
@@ -63,6 +63,7 @@ public class JsonWebTokenService {
             UserEntity userEntity = user.get();
             return userEntity;
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
