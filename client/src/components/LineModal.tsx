@@ -13,6 +13,7 @@ function LineModal({ setIsModal, addUserList }: any) {
     const x = e.nativeEvent.offsetX;
     const y = e.nativeEvent.offsetY;
   };
+
   const logicPostion = (position: string) => {
     setPosition(position);
   };

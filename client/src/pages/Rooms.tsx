@@ -2,7 +2,7 @@ import axios from "axios";
 import { SetStateAction, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { delay, setTimeRemoveAlarm } from "../common/api/page";
+import { delay, movePage, setTimeRemoveAlarm } from "../common/api/page";
 import { expiredJwt, getToken } from "../common/auth";
 import FilterBtn from "../components/FilterBtn";
 import FilterBtnBox from "../components/FilterBtnBox";
@@ -14,6 +14,7 @@ import { Alarm, alarmModalState, filtersState } from "../state";
 import { userInfoState, userListCooldownState } from "../state-persist";
 import Loading from "./Loading";
 import { io } from "socket.io-client";
+import styled from "styled-components";
 const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 function Rooms() {
@@ -28,6 +29,7 @@ function Rooms() {
   const [userListCooldown, setUserListCooldown] = useRecoilState<string>(
     userListCooldownState
   );
+  const signIn = getToken().token ? true : false;
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
   const filters = useRecoilValue<any[]>(filtersState);
   // 가공이 필요없는 lol 플레이어 데이터는 여기서 가져옴
@@ -161,90 +163,105 @@ function Rooms() {
         <LineModal setIsModal={setIsModal} addUserList={addUserList} />
       )}
       <TopMenu />
-      <section className="flex flex-row justify-center mb-2">
-        <div className="w-4/6 h-24 flex flex-col justify-end">
-          <FilterBtnBox />
-        </div>
-      </section>
-      <header className="flex flex-row justify-center items-center">
-        <section
-          className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden w-4/6 cursor-pointer hover:bg-white shadow-md bg-gray-50"
-          onClick={() => {
-            const now = new Date();
-            // if (userListCooldown > now.toString()) {
-            //   setAlarmModal((old) => {
-            //     const result = [
-            //       { text: "5분 후 다시 시도하세요", type: 0 },
-            //       ...old,
-            //     ];
-            //     console.log(result);
-            //     return result;
-            //   });
-            //   setTimeRemoveAlarm(setAlarmModal);
-            // } else {
-            setIsModal(true);
-            // }
-          }}
-        >
-          <section className="flex flex-row items-center">
-            {/* <div className="border-2 border-green-300 w-16 h-16 rounded-full m-2"></div> */}
-            {/* <div className="m-2 w-40 text-left"> */}
-            {/* <p>{""}</p> */}
-            {/* <p className="opacity-50">{""}</p> */}
-            {/* </div> */}
-            {/* <div className="border w-14 h-14 ml-2"></div> */}
-            {/* <p className="w-4 m-3 font-black">{"S2"}</p> */}
-            {/* <div className="w-40 bg-gray-200 h-6 m-2"></div> */}
-            {/* <div className="m-2 border w-40 h-16"></div> */}
-            {/* <div className="w-4 m-3">{""}</div> */}
-            {/* <div className="w-4 m-3">{""}</div> */}
-            {/* <div className="w-4 m-3">{""}</div> */}
-            {/* <div className="w-4 m-3"></div> */}
-            {/* <button className="absolute bg-green-400 ml-10 w-10 h-full flex flex-row items-center justify-center index-y-0 right-0"> */}
-            {/* <img className="w-6 h-6" src="icon_arrow.png"></img> */}
-            {/* </button> */}
-          </section>
+      <Con>
+        <section className="flex flex-row justify-center mb-2">
+          <div className="w-full h-24 flex flex-col justify-end">
+            <FilterBtnBox />
+          </div>
         </section>
-        <p className="absolute font-bold mb-3 text-xl cursor-pointer">+</p>
-      </header>
-      {isSK && <UserListSK textSK={textSK}></UserListSK>}
-      <main className="flex items-center justify-center">
-        <ul
-          className=" w-4/6"
-          // style={{ height: "520px" }}
-        >
-          {dummys
-            .filter((el: any) =>
-              filters[0].length > 0 ? filters[0].includes(el.position) : true
-            )
-            .filter((el: any) =>
-              filters[1].length > 0 ? filters[1].includes(el.tier[0]) : true
-            )
-            .map((room: any, idx) => {
-              if (
-                idx === dummys.length - 1 &&
-                idx > 8 &&
-                dummys.length % 10 === 0
-              ) {
-                return (
-                  <UserList
-                    key={room.id}
-                    room={room}
-                    last={ref}
-                    setDummy={setDummy}
-                  />
-                );
-              } else {
-                return (
-                  <UserList key={room.id} room={room} setDummy={setDummy} />
-                );
+        <header className="flex flex-row justify-center items-center">
+          <section
+            className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden w-full cursor-pointer hover:bg-white shadow-md bg-gray-50"
+            onClick={() => {
+              if (!signIn) {
+                movePage("/signin");
+                return;
               }
-            })}
-        </ul>
-      </main>
-      {inView && <img></img>}
+              const now = new Date();
+              // if (userListCooldown > now.toString()) {
+              //   setAlarmModal((old) => {
+              //     const result = [
+              //       { text: "5분 후 다시 시도하세요", type: 0 },
+              //       ...old,
+              //     ];
+              //     console.log(result);
+              //     return result;
+              //   });
+              //   setTimeRemoveAlarm(setAlarmModal);
+              // } else {
+              setIsModal(true);
+              // }
+            }}
+          >
+            <section className="flex flex-row items-center">
+              {/* <div className="border-2 border-green-300 w-16 h-16 rounded-full m-2"></div> */}
+              {/* <div className="m-2 w-40 text-left"> */}
+              {/* <p>{""}</p> */}
+              {/* <p className="opacity-50">{""}</p> */}
+              {/* </div> */}
+              {/* <div className="border w-14 h-14 ml-2"></div> */}
+              {/* <p className="w-4 m-3 font-black">{"S2"}</p> */}
+              {/* <div className="w-40 bg-gray-200 h-6 m-2"></div> */}
+              {/* <div className="m-2 border w-40 h-16"></div> */}
+              {/* <div className="w-4 m-3">{""}</div> */}
+              {/* <div className="w-4 m-3">{""}</div> */}
+              {/* <div className="w-4 m-3">{""}</div> */}
+              {/* <div className="w-4 m-3"></div> */}
+              {/* <button className="absolute bg-green-400 ml-10 w-10 h-full flex flex-row items-center justify-center index-y-0 right-0"> */}
+              {/* <img className="w-6 h-6" src="icon_arrow.png"></img> */}
+              {/* </button> */}
+            </section>
+          </section>
+          <p className="absolute font-bold mb-3 text-xl cursor-pointer">+</p>
+        </header>
+        {isSK && <UserListSK textSK={textSK}></UserListSK>}
+        <main className="flex items-center justify-center">
+          <ul
+            className="w-full"
+            // style={{ height: "520px" }}
+          >
+            {dummys
+              .filter((el: any) =>
+                filters[0].length > 0 ? filters[0].includes(el.position) : true
+              )
+              .filter((el: any) =>
+                filters[1].length > 0 ? filters[1].includes(el.tier[0]) : true
+              )
+              .map((room: any, idx) => {
+                if (
+                  idx === dummys.length - 1 &&
+                  idx > 8 &&
+                  dummys.length % 10 === 0
+                ) {
+                  return (
+                    <UserList
+                      key={room.id}
+                      room={room}
+                      last={ref}
+                      setDummy={setDummy}
+                    />
+                  );
+                } else {
+                  return (
+                    <UserList key={room.id} room={room} setDummy={setDummy} />
+                  );
+                }
+              })}
+          </ul>
+        </main>
+        {inView && <img></img>}
+      </Con>
     </>
   );
 }
+
+const Con = styled.section`
+  margin-left: 16.666%;
+  margin-right: 16.666%;
+  @media screen and (max-width: 767px) {
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+`;
 
 export default Rooms;

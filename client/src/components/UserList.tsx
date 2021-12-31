@@ -25,7 +25,9 @@ interface Room {
 
 function UserList({ room, last, setDummy }: any) {
   const [isDetail, setIsDetail] = useState<boolean>(false);
+
   const createdAt = moment(room.createdAt).fromNow();
+
   const { nickname, username } = useRecoilValue(userInfoState);
 
   const requestDuo = async () => {

@@ -410,28 +410,30 @@ function Root() {
             }}
           >
             <p className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center">
-              베스트 듀오
+              베스트 듀오 🛠
               <p className="text-sm font-medium text-gray-400 cursor-pointer">
                 전체보기
               </p>
             </p>
-            <ul className="flex flex-col w-full">
-              <RankList idx={0} />
-              <RankList idx={1} />
-              <RankList idx={2} />
-              <RankList idx={3} />
-              <RankList idx={4} />
-            </ul>
+            <section className="w-full h-full border bg-black">
+              <ul className="flex flex-col w-full opacity-90">
+                <RankList idx={0} />
+                <RankList idx={1} />
+                <RankList idx={2} />
+                <RankList idx={3} />
+                <RankList idx={4} />
+              </ul>
+            </section>
             <p
               className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center"
               style={{ marginTop: "18px" }}
             >
-              베스트 게시글
+              베스트 게시글 🔥
               <p className="text-sm font-medium text-gray-400 cursor-pointer">
                 전체보기
               </p>
             </p>
-            <section className="border h-full w-full flex flex-row">
+            <section className="h-full w-full flex flex-row">
               <ul className="w-1/2 border-r">
                 <RankPostList idx={0} />
                 <RankPostList idx={1} />
@@ -606,13 +608,8 @@ function Root() {
   );
 }
 
-const GreenBtn = styled.button({
-  padding: "0.7rem",
-});
-
 const Screen = styled.div({
   height: "100vh",
-  border: "1px solid pink",
 });
 
 const Main = styled.main`

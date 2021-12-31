@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useRef, useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { userInfoState } from "../state-persist";
 import PostBtn from "./PostBtn";
 
 function PostWrite({ setIsWrite, setPosts }: any) {
   const [textTitle, setTextTitle] = useState("");
   const [textBody, setTextBody] = useState("");
+  const { nickname } = useRecoilValue(userInfoState);
 
   const clickLike = () => {
     console.log("like");
@@ -37,15 +40,14 @@ function PostWrite({ setIsWrite, setPosts }: any) {
     const obj = {
       title: textTitle,
       body: textBody,
-      nickname: "test",
+      nickname: nickname,
     };
-    setPosts((old: any) => [obj, ...old]);
-    setIsWrite(false);
+
     const { data } = await axios.post(
       `${process.env.REACT_APP_SERVER_URL}/community`,
       obj
     );
-    console.log(data);
+
     if (!data) {
       setPosts((old: any) => {
         const arr = old.shift();
@@ -53,11 +55,14 @@ function PostWrite({ setIsWrite, setPosts }: any) {
       });
       alert("오류입니다 다시 시도해주세요");
       setIsWrite(true);
+      return;
     }
+    setPosts((old: any) => [data, ...old]);
+    setIsWrite(false);
   };
   return (
     <>
-      <section className="flex flex-col shadow-sm h-48 p-4 mb-2 bg-white ">
+      <section className="flex flex-col shadow-sm h-48 p-4 mb-2 bg-white border border-green-400 shadow-sm">
         <section className="flex font-bold text-sm text-gray-400 justify-between items-center">
           <input
             type="text"

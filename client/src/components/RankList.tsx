@@ -8,25 +8,25 @@ function RankList({ idx }: any) {
           <section className="flex-1">{idx + 1}.</section>
           <section className="flex-1 h-auto flex justify-center ">
             <img
-              src="./logo512.png"
+              src="./profile.png"
               className="rounded-full"
               width="48px"
               height="48px"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p>잘해보자 화이팅</p>
+            <p></p>
           </section>
           <section className="flex-1 h-auto flex justify-center">
             <img
-              src="./logo512.png"
+              src="./profile.png"
               className="rounded-full"
               width="48px"
               height="48px"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p>잘해보자 화이팅</p>
+            <p></p>
           </section>
         </li>
       ) : (
@@ -34,25 +34,25 @@ function RankList({ idx }: any) {
           <section className="flex-1">{idx + 1}.</section>
           <section className="flex-1 h-auto flex justify-center ">
             <img
-              src="./logo512.png"
+              src="./profile.png"
               width="48px"
               height="48px"
               className="rounded-full"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p>퀸나물</p>
+            <p></p>
           </section>
           <section className="flex-1 h-auto flex justify-center">
             <img
-              src="./logo512.png"
+              src="./profile.png"
               className="rounded-full"
               width="48px"
               height="48px"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p>잘해보자 화이팅</p>
+            <p></p>
           </section>
         </li>
       )}

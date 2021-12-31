@@ -13,6 +13,7 @@ import AlarmModal from "./components/AlarmModal";
 import MyPage from "./pages/MyPage";
 import MessageModal from "./components/MessageModal";
 import Community from "./pages/Community";
+import PostComment from "./pages/PostComment";
 
 function App() {
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
@@ -31,6 +32,7 @@ function App() {
         <Route path="/bells" exact component={Bells}></Route>
         <Route path="/mypage" exact component={MyPage}></Route>
         <Route path="/community/all" exact component={Community}></Route>
+        <Route path="/community/free" exact component={PostComment}></Route>
       </Switch>
     </div>
   );

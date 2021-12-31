@@ -25,7 +25,7 @@ function TopMenu() {
       </Link>
       {!loggedIn && (
         <Link to="/signin" className="text-lg flex items-center text-green-400">
-          <p className="mx-4 font-extrabold	">로그인</p>
+          <p className="font-extrabold">로그인</p>
         </Link>
       )}
       {/* <Link to="rooms">
@@ -35,7 +35,13 @@ function TopMenu() {
       {loggedIn && (
         <>
           <Link to="/mypage">
-            <p className="text-lg font-medium">{`${userInfo.nickname}`}</p>
+            <section className="w-12 h-12 rounded-full overflow-hidden">
+              {window.location.href.includes("community") ? (
+                <img className="w-full h-full" src="../profile.png" />
+              ) : (
+                <img className="w-full h-full" src="./profile.png" />
+              )}
+            </section>
           </Link>
         </>
       )}
@@ -54,8 +60,8 @@ const Top = styled.header`
   border-bottom: 0.1rem solid #333d4b;
   justify-content: space-between;
   @media screen and (max-width: 767px) {
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: 2%;
+    margin-right: 2%;
   }
 `;
 

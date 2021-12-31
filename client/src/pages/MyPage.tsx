@@ -75,7 +75,7 @@ function MyPage() {
             </div>
           </div>
           {/* 우측 */}
-          <div className="w-full p-10 flex flex-col justify-between">
+          <div className="w-full md:p-10 p-4 flex flex-col justify-between">
             {/* black */}
             <MyPageInfoBlock
               title={"이메일"}
