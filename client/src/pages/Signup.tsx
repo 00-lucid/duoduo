@@ -6,6 +6,7 @@ import styled from "styled-components";
 import moveHome from "../common/api/page";
 import { setCookie } from "../common/auth";
 import Modal from "../components/Modal";
+import TopMenu from "../components/TopMenu";
 import { isLoadingState } from "../state";
 import Loading from "./Loading";
 
@@ -45,8 +46,7 @@ function Signup() {
 
   const feedback = (callback: Function, style: any) => {
     if (!callback()) {
-      console.log("잘못된 " + callback.name + "");
-      style.border = "3px solid red";
+      style.border = "2px solid red";
     } else {
       style.border = "none";
     }
@@ -61,7 +61,6 @@ function Signup() {
         nickname,
       });
 
-      console.log(data);
       if (!data) {
         // 실패시
         alert("exist account of email");
@@ -84,19 +83,9 @@ function Signup() {
 
   return (
     <>
-      <Top>
-        <p
-          className="text-4xl flex-1 font-bold cursor-pointer"
-          onClick={moveHome}
-        >
-          DUODUO
-        </p>
-      </Top>
+      <TopMenu />
       <main className="flex flex-row h-full items-center justify-center mt-24">
-        {/* <Card className="flex justify-center items-center">
-          <img className="w-full" src="umi-removebg.png" alt="umi"></img>
-        </Card> */}
-        <Card className="bg-white rounded-xl p-10">
+        <Card className="bg-white rounded-xl">
           <p className="text-3xl font-bold mb-6">SignUp</p>
           <Input
             type="text"
@@ -121,37 +110,31 @@ function Signup() {
           ></Input>
           <Input
             type="text"
-            placeholder="nickname"
+            placeholder="nickname (not game name)"
             onChange={(e) => {
               setNickname(e.target.value);
               feedback(isNickname, e.target.style);
             }}
           ></Input>
-
-          <SocialLoginBtn
-            className="bg-green-400 flex justify-center items-center"
-            onClick={postSignup}
-          >
-            {isLoading ? <Loading></Loading> : "OK"}
-          </SocialLoginBtn>
-          <Link to="/signin">i have account or social login</Link>
+          <section>
+            <SocialLoginBtn
+              className="bg-green-400 flex justify-center items-center w-full"
+              onClick={postSignup}
+            >
+              {isLoading ? <Loading></Loading> : "완료"}
+            </SocialLoginBtn>
+            <Link to="/signin" className="font-semibold">
+              i have account or social login
+            </Link>
+          </section>
         </Card>
       </main>
     </>
   );
 }
 
-const Top = styled.header({
-  width: "100%",
-  height: "4rem",
-  color: "white",
-  backgroundColor: "#2b2d42",
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-});
-
 const Card = styled.div({
+  padding: "2.5rem",
   width: "30rem",
   height: "30rem",
   display: "flex",
@@ -170,7 +153,7 @@ const Input = styled.input({
 
 const SocialLoginBtn = styled.button({
   color: "white",
-  height: "60px",
+  height: "55.17px",
   cursor: "pointer",
   marginBottom: "0.3rem",
   fontSize: "1.1rem",

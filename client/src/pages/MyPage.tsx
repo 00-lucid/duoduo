@@ -1,12 +1,13 @@
 import axios from "axios";
 import { userInfo } from "os";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import moveHome from "../common/api/page";
+import moveHome, { movePage } from "../common/api/page";
 import { decodeJwt, destroyToken, expiredJwt, getToken } from "../common/auth";
 import MyPageInfoBlock from "../components/MyPageInfoBlock";
 import TopMenu from "../components/TopMenu";
+import { Alarm, alarmModalState } from "../state";
 import { userInfoState } from "../state-persist";
 
 function MyPage() {
@@ -23,12 +24,10 @@ function MyPage() {
         },
       }
     );
-    console.log(data);
     if (!data) {
-      expiredJwt();
-      const data2: any = await getMypage();
-      console.log(data2);
-      return data2;
+      destroyToken();
+      movePage("/signin");
+      return;
     }
     return data;
   };
@@ -49,26 +48,27 @@ function MyPage() {
     <>
       <TopMenu />
       <main
-        className="flex flex-row justify-center pt-24"
+        className="flex flex-row justify-center md:pt-24 pt-12"
         style={{ height: "calc(100vh - 4rem - 6rem)" }}
       >
         <Page>
           {/* 좌측 */}
-          <div className="relative w-full flex flex-col items-center border-r pt-10">
+          <div className="relative md:w-1/3 flex flex-col items-center pt-10 h-auto ">
             <img
               className="rounded-full w-24 h-24 border"
-              src="./logo192.png"
+              src="./profile.png"
             ></img>
             <section className="mt-4 flex flex-row">
               <p className="font-bold text-lg ">{userInfo.nickname}</p>
               <p className="font-normal opacity-40 text-lg">님</p>
             </section>
-            <div className="font-normal flex flex-row">
-              <p className="text-gray-400 text-sm">300 🚀</p>
-            </div>
-            <hr className="mt-2 mb-2" />
+            <section className="mb-4">
+              <div className="font-normal flex flex-row">
+                <p className="text-gray-400 text-sm">300 🚀</p>
+              </div>
+            </section>
             <div
-              className="bg-red-400 text-xl h-9 w-full flex items-center cursor-pointer text-white absolute bottom-0"
+              className="bg-red-400 text-xl h-9 w-full flex items-center cursor-pointer text-white md:absolute md:bottom-0"
               onClick={signout}
             >
               <p className="mx-4 font-bold">SIGNOUT</p>
@@ -99,7 +99,6 @@ function MyPage() {
 
 const Page = styled.div`
   width: 66.6%;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   display: flex;
   flex-direction: row;
   @media screen and (max-width: 767px) {

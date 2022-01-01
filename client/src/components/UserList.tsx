@@ -43,7 +43,6 @@ function UserList({ room, last, setDummy }: any) {
   };
 
   const deleteUserList = async () => {
-    console.log("유저리스트 삭제");
     const { data } = await axios.delete(
       `${process.env.REACT_APP_SERVER_URL}/userlist/${room.id}`,
       {
@@ -52,7 +51,6 @@ function UserList({ room, last, setDummy }: any) {
         },
       }
     );
-    console.log(data);
     if (data) {
       setDummy((old: any) => {
         return old.filter((el: any) => el.id !== room.id);
@@ -76,7 +74,7 @@ function UserList({ room, last, setDummy }: any) {
           <div className="ml-2 w-36 text-left">
             <p
               className="font-bold cursor-pointer"
-              onClick={() => setIsDetail((old) => !old)}
+              // onClick={() => setIsDetail((old) => !old)}
             >
               {room.username}
             </p>
