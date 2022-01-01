@@ -50,24 +50,24 @@ public class LoginController {
                         .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                         .setIssuer("duoduo")
                         .setIssuedAt(now)
-                        .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
+                        .setExpiration(new Date(now.getTime() + Duration.ofHours(12).toMillis()))
                         .claim("id", user.getId())
                         .signWith(SignatureAlgorithm.HS256, "secret")
                         .compact();
 
-                String rfJwt = Jwts.builder()
-                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                        .setIssuer("duoduo")
-                        .setIssuedAt(now)
-                        .setExpiration(new Date(now.getTime() + Duration.ofDays(14).toMillis()))
-                        .signWith(SignatureAlgorithm.HS256, "secret")
-                        .compact();
+//                String rfJwt = Jwts.builder()
+//                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+//                        .setIssuer("duoduo")
+//                        .setIssuedAt(now)
+//                        .setExpiration(new Date(now.getTime() + Duration.ofDays(14).toMillis()))
+//                        .signWith(SignatureAlgorithm.HS256, "secret")
+//                        .compact();
 
                 jsonObject.put("token", jwt);
-                Cookie rfTokenCookie = new Cookie("rfToken", rfJwt);
-                rfTokenCookie.setPath("/");
+//                Cookie rfTokenCookie = new Cookie("rfToken", rfJwt);
+//                rfTokenCookie.setPath("/");
                 jsonObject.put("nickname", user.getNickname());
-                response.addCookie(rfTokenCookie);
+//                response.addCookie(rfTokenCookie);
                 System.out.println(jsonObject);
                 return jsonObject;
             }
@@ -122,28 +122,28 @@ public class LoginController {
         }
     }
 
-    @GetMapping(value = "expire")
-    public void getRefreshToken(@RequestHeader("Authorization") String jwt, @CookieValue("refreshToken") String rfJwt) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            System.out.println("expireexpireexpireexpireexpireexpireexpireexpireexpire");
-            System.out.println("rfJwt: " + rfJwt);
-            Date now = new Date();
-
-            Long id = jsonWebTokenService.decodeId(jwt);
-
-            String newJwt = Jwts.builder()
-                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                    .setIssuer("duoduo")
-                    .setIssuedAt(now)
-                    .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
-                    .claim("id", id)
-                    .signWith(SignatureAlgorithm.HS256, "secret")
-                    .compact();
-            return;
-        } catch (Exception e) {
-            return;
-        }
-    }
+//    @GetMapping(value = "expire")
+//    public void getRefreshToken(@RequestHeader("Authorization") String jwt, @CookieValue("refreshToken") String rfJwt) {
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            System.out.println("expireexpireexpireexpireexpireexpireexpireexpireexpire");
+//            System.out.println("rfJwt: " + rfJwt);
+//            Date now = new Date();
+//
+//            Long id = jsonWebTokenService.decodeId(jwt);
+//
+//            String newJwt = Jwts.builder()
+//                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+//                    .setIssuer("duoduo")
+//                    .setIssuedAt(now)
+//                    .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
+//                    .claim("id", id)
+//                    .signWith(SignatureAlgorithm.HS256, "secret")
+//                    .compact();
+//            return;
+//        } catch (Exception e) {
+//            return;
+//        }
+//    }
 
 }
