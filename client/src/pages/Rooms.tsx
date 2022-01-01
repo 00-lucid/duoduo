@@ -3,7 +3,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { delay, movePage, setTimeRemoveAlarm } from "../common/api/page";
-import { expiredJwt, getToken } from "../common/auth";
+import { destroyToken, expiredJwt, getToken } from "../common/auth";
 import FilterBtn from "../components/FilterBtn";
 import FilterBtnBox from "../components/FilterBtnBox";
 import LineModal from "../components/LineModal";
@@ -108,8 +108,8 @@ function Rooms() {
       });
     } else {
       // jwt expired
-      expiredJwt();
-      addUserList(position);
+      destroyToken();
+      movePage("/signin");
       return;
     }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
@@ -131,28 +131,20 @@ function Rooms() {
   useEffect(() => {
     axios.get("http://localhost:8080/userlist").then((res) => {
       const { data } = res;
-      console.log(data);
       setDummy(data);
     });
   }, []);
 
   useEffect(() => {
-    console.log(page);
     if (inView && page * 10 === dummys.length) {
-      console.log("무한스크롤 가동...");
-      // page를 보내줌
-      console.log(page);
       axios
         .get("http://localhost:8080/userlist/infinite", {
           headers: { Page: page },
         })
         .then((res) => {
           const { data } = res;
-          console.log(data);
-          setTimeout(() => {
-            setDummy((old) => [...old, ...data]);
-            setPage((old) => old + 1);
-          }, 500);
+          setDummy((old) => [...old, ...data]);
+          setPage((old) => old + 1);
         });
     }
   }, [inView]);
@@ -178,19 +170,18 @@ function Rooms() {
                 return;
               }
               const now = new Date();
-              // if (userListCooldown > now.toString()) {
-              //   setAlarmModal((old) => {
-              //     const result = [
-              //       { text: "5분 후 다시 시도하세요", type: 0 },
-              //       ...old,
-              //     ];
-              //     console.log(result);
-              //     return result;
-              //   });
-              //   setTimeRemoveAlarm(setAlarmModal);
-              // } else {
-              setIsModal(true);
-              // }
+              if (userListCooldown > now.toString()) {
+                setAlarmModal((old) => {
+                  const result = [
+                    { text: "5분 후 다시 시도하세요", type: 0 },
+                    ...old,
+                  ];
+                  return result;
+                });
+                setTimeRemoveAlarm(setAlarmModal);
+              } else {
+                setIsModal(true);
+              }
             }}
           >
             <section className="flex flex-row items-center">

@@ -5,7 +5,7 @@ function RankList({ idx }: any) {
     <>
       {idx % 2 === 0 ? (
         <li className="flex flex-row bg-gray-50 w-full h-20 items-center text-xs md:text-base">
-          <section className="flex-1">{idx + 1}.</section>
+          <section className="flex-1">{idx + 1}</section>
           <section className="flex-1 h-auto flex justify-center ">
             <img
               src="./profile.png"
@@ -31,7 +31,7 @@ function RankList({ idx }: any) {
         </li>
       ) : (
         <li className="flex flex-row bg-white w-full h-20 items-center text-xs md:text-base">
-          <section className="flex-1">{idx + 1}.</section>
+          <section className="flex-1">{idx + 1}</section>
           <section className="flex-1 h-auto flex justify-center ">
             <img
               src="./profile.png"

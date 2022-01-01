@@ -42,14 +42,14 @@ public class CommunityController {
     }
 
     @GetMapping(value = "/community/all")
-    private List<JSONObject> getPost(@RequestParam("page") int page, @RequestHeader("Authorization") String jwt) {
+    private List<JSONObject> getPost(@RequestParam("page") Long page, @RequestHeader("Authorization") String jwt) {
         try {
-            System.out.println(page);
             if (jwt != null) {
                 JsonWebTokenService jsonWebTokenService = new JsonWebTokenService();
                 Long userId = jsonWebTokenService.decodeId(jwt);
 
                 if (page != 0) {
+                    System.out.println(page * 10);
                     return postRepository.findMoreTenWithLike(userId,page * 10);
                 } else {
                     List postDTOList = postRepository.findRecentTenWithLike(userId);
@@ -136,6 +136,16 @@ public class CommunityController {
             return commentRepository.save(commentEntity);
         } catch (Exception e) {
             System.out.println(e);
+            return null;
+        }
+    }
+
+    @GetMapping(value = "/community/all/best")
+    private List<JSONObject> getBestAll() {
+        try {
+            System.out.println("BEST POSTS");
+            return postRepository.findBestAll();
+        } catch (Exception e) {
             return null;
         }
     }

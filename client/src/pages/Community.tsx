@@ -30,7 +30,6 @@ function Community() {
         },
       })
       .then(({ data }) => {
-        console.log(data);
         setPosts(data);
       });
   }, []);
@@ -56,11 +55,8 @@ function Community() {
           },
         })
         .then(({ data }) => {
-          setTimeout(() => {
-            console.log(data);
-            setPosts((old: any) => [...old, ...data]);
-            setPage((old: any) => old + 1);
-          }, 500);
+          setPosts((old: any) => [...old, ...data]);
+          setPage((old: any) => old + 1);
         });
     }
   }, [inView]);
@@ -70,7 +66,7 @@ function Community() {
       <TopMenu />
       <Main className="flex flex-row">
         {width > 767 ? (
-          <section className="shadow-md w-1/3 h-80 sticky border-l border-t border-b bg-white">
+          <section className="shadow-md w-1/3 h-80 sticky top-16 border-l border-t border-b bg-white">
             <div className="w-full h-80 flex flex-col text-left p-4 font-bold">
               {isAll ? (
                 <>
@@ -113,13 +109,11 @@ function Community() {
                   >
                     자유
                   </div>
-                  <div className="w-full flex flex-col font-bold items-center">
-                    <img
-                      src="../icon_down.png"
-                      width="32"
-                      height="32"
-                      onClick={() => setIsConsole(false)}
-                    />
+                  <div
+                    className="w-full flex flex-col font-bold items-center "
+                    onClick={() => setIsConsole(false)}
+                  >
+                    <img src="../icon_down.png" width="32" height="32" />
                   </div>
                 </>
               ) : (
@@ -133,7 +127,10 @@ function Community() {
                   <div className="cursor-pointer text-white bg-green-400 rounded p-2 mb-1">
                     자유
                   </div>
-                  <div className="w-full flex flex-col font-bold items-center">
+                  <div
+                    className="w-full flex flex-col font-bold items-center"
+                    onClick={() => setIsConsole(false)}
+                  >
                     <img
                       src="../icon_down.png"
                       width="32"
@@ -147,18 +144,16 @@ function Community() {
           </section>
         ) : (
           <section className="shadow-md w-full h-auto border-l border-t border-b fixed bottom-0 z-20 bg-white">
-            <div className="w-full flex flex-col p-1 font-bold items-center">
-              <img
-                src="../icon_up.png"
-                width="32"
-                height="32"
-                onClick={() => setIsConsole(true)}
-              />
+            <div
+              className="w-full flex flex-col p-1 font-bold items-center"
+              onClick={() => setIsConsole(true)}
+            >
+              <img src="../icon_up.png" width="32" height="32" />
             </div>
           </section>
         )}
         <section className="flex flex-col flex-1 bg-gray-100 min-h-screen border">
-          <div className="bg-white w-full h-12 mb-2 shadow-md sticky top-0 flex flex-row justify-between">
+          <div className="bg-white w-full h-12 mb-2 shadow-md sticky top-16 flex flex-row justify-between">
             <section className="flex flex-row items-center h-full p-4 justify-between w-24 text-base font-extrabold text-gray-400">
               {/* {link === "http://localhost:3000/community/all?sort=hot" ? (
                 <Link

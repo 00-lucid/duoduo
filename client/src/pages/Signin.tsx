@@ -8,6 +8,7 @@ import { isLoadingState } from "../state";
 import { saveToken } from "../common/auth";
 import { userInfoState } from "../state-persist";
 import moveHome from "../common/api/page";
+import TopMenu from "../components/TopMenu";
 
 function Signin() {
   const [email, setEmail] = useState("");
@@ -32,7 +33,6 @@ function Signin() {
       setIsLoading(false);
       return;
     }
-    console.log(res);
     saveToken({ token: res.data.token, csrf: null });
     setUserInfo((old: object) => {
       {
@@ -49,17 +49,7 @@ function Signin() {
 
   return (
     <>
-      {/* 로딩을 이렇게 구현하는게 효율적이지 않다 왜냐하면 로딩이 필요한 페이지마다 아래 코드 한줄을 삽입해야 하기 때문이다 다른 방법이 없을까? */}
-      {/* {isLoading && <Loading></Loading>} */}
-      <Top>
-        <p
-          className="text-4xl flex-1 font-bold cursor-pointer"
-          onClick={moveHome}
-        >
-          DUODUO
-        </p>
-      </Top>
-      '
+      <TopMenu />
       <main className="flex flex-row h-full items-center justify-center mt-24">
         {/* <Card className="flex justify-center items-center">
           <img className="w-full" src="umi-removebg.png" alt="umi"></img>
@@ -76,18 +66,22 @@ function Signin() {
             placeholder="password"
             onChange={(e) => setPassword(e.target.value)}
           ></Input>
-          <SocialLoginBtn
-            className="bg-green-400 flex justify-center items-center"
-            onClick={postSignin}
-          >
-            {isLoading ? <Loading></Loading> : "OK"}
-          </SocialLoginBtn>
-          <p>or</p>
-          <SocialLoginBtn className="bg-yellow-300">Kakao</SocialLoginBtn>
-          <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
-            Google
-          </SocialLoginBtn>
-          <Link to="/signup">create duoduo account</Link>
+          <section className="flex flex-col">
+            <SocialLoginBtn
+              className="bg-green-400 flex justify-center items-center"
+              onClick={postSignin}
+            >
+              {isLoading ? <Loading></Loading> : "OK"}
+            </SocialLoginBtn>
+            <p className="font-semibold">or</p>
+            <SocialLoginBtn className="bg-yellow-300">Kakao</SocialLoginBtn>
+            <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
+              Google
+            </SocialLoginBtn>
+            <Link to="/signup" className="font-semibold">
+              create duoduo account
+            </Link>
+          </section>
         </Card>
       </main>
     </>
@@ -123,7 +117,7 @@ const Input = styled.input({
 
 const SocialLoginBtn = styled.button({
   color: "white",
-  height: "60px",
+  height: "55.17px",
   cursor: "pointer",
   marginBottom: "0.3rem",
   fontSize: "1.1rem",

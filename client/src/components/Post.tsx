@@ -48,9 +48,12 @@ function Post({
         }
       );
       if (data) {
-        setLikeCount((old) => old + 1);
+        if (likeCount) {
+          setLikeCount((old) => old + 1);
+        } else {
+          setLikeCount(1);
+        }
       }
-      console.log(data);
     } else {
       const { data } = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/community/like/${urlLike}?postId=${postId}`,
@@ -63,7 +66,6 @@ function Post({
       if (data) {
         setLikeCount((old) => old - 1);
       }
-      console.log(data);
     }
   };
 
@@ -80,7 +82,6 @@ function Post({
           },
         }
       );
-      console.log(data);
       if (data) {
         setComments(data);
       }
@@ -107,7 +108,6 @@ function Post({
         },
       }
     );
-    console.log(data);
     if (data) {
       clickAddComment();
       setComments((old) => [data, ...old]);
@@ -162,7 +162,7 @@ function Post({
               <section className="flex items-center justify-between h-10 border-t border-b mt-4 mb-4">
                 <section className="flex flex-row cursor-pointer items-center ">
                   <div className="rounded-full w-2 h-2 bg-green-400 mr-1 "></div>
-                  <p className="font-semibold text-sm">최신순</p>
+                  <p className="font-semibold text-sm">등록순</p>
                 </section>
                 <button
                   className="font-semibold text-sm text-gray-400"

@@ -1,7 +1,10 @@
 import axios from "axios";
 import { useRef, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { movePage, setTimeRemoveAlarm } from "../common/api/page";
+import { destroyToken, getToken } from "../common/auth";
+import { Alarm, alarmModalState } from "../state";
 import { userInfoState } from "../state-persist";
 import PostBtn from "./PostBtn";
 
@@ -9,14 +12,11 @@ function PostWrite({ setIsWrite, setPosts }: any) {
   const [textTitle, setTextTitle] = useState("");
   const [textBody, setTextBody] = useState("");
   const { nickname } = useRecoilValue(userInfoState);
+  const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
 
-  const clickLike = () => {
-    console.log("like");
-  };
+  const clickLike = () => {};
 
-  const clickComment = () => {
-    console.log("comment");
-  };
+  const clickComment = () => {};
 
   const title: any = useRef();
   const body: any = useRef();
@@ -37,6 +37,10 @@ function PostWrite({ setIsWrite, setPosts }: any) {
   };
 
   const addPost = async () => {
+    if (!getToken().token) {
+      movePage("/signin");
+      return;
+    }
     const obj = {
       title: textTitle,
       body: textBody,
@@ -49,16 +53,14 @@ function PostWrite({ setIsWrite, setPosts }: any) {
     );
 
     if (!data) {
-      setPosts((old: any) => {
-        const arr = old.shift();
-        return arr;
-      });
-      alert("오류입니다 다시 시도해주세요");
-      setIsWrite(true);
-      return;
+      destroyToken();
+      movePage("/signin");
     }
+
     setPosts((old: any) => [data, ...old]);
     setIsWrite(false);
+    setAlarmModal((old) => [{ text: "포스트 생성 완료", type: 1 }, ...old]);
+    setTimeRemoveAlarm(setAlarmModal);
   };
   return (
     <>

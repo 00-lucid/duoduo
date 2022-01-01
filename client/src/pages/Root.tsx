@@ -13,6 +13,7 @@ import { isLoadingState } from "../state";
 import { userInfoState } from "../state-persist";
 import "../interaction.css";
 import { ElementAccessExpression } from "typescript";
+import axios from "axios";
 
 interface SceneInfo {
   type: string;
@@ -22,10 +23,70 @@ interface SceneInfo {
   values: any;
 }
 
+const dummyRankPostList = [
+  {
+    id: 2,
+    title: "세상에서 가장 귀여운 새 그리고 새 그리고",
+    likeCount: 208,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 3,
+    title: "세상에서 가장 귀여운 개",
+    likeCount: 173,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 4,
+    title: "세상에서 가장 귀여운 해",
+    likeCount: 141,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 5,
+    title: "세상에서 가장 귀여운 달",
+    likeCount: 99,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 6,
+    title: "세상에서 가장 귀여운 뱀",
+    likeCount: 77,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 7,
+    title: "세상에서 가장 귀여운 애",
+    likeCount: 45,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 8,
+    title: "세상에서 가장 귀여운 매",
+    likeCount: 28,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+  {
+    id: 9,
+    title: "세상에서 가장 귀여운 캣",
+    likeCount: 9,
+    nickname: "개발자인데요",
+    createdAt: "2021-12-31 12:12:20 PM",
+  },
+];
+
 function Root() {
   let loggedIn = !!getToken().token;
   let isUsername = getCookie("isUsername");
   const userInfo = useRecoilValue(userInfoState);
+  const [bestPosts, setBestPosts] = useState<any[]>([]);
   // let [curScene, setCurScene] = useState(0);
   let curScene = 0;
   let yOffset = 0;
@@ -36,7 +97,12 @@ function Root() {
   const mainRef: any = useRef();
 
   let sceneInfo: SceneInfo[] = [];
-
+  const getBestAll = async () => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}/community/all/best`
+    );
+    setBestPosts(data);
+  };
   const calcValues = (values: any, currentYOffset: any) => {
     let rv;
     const scrollHeight = sceneInfo[curScene].scrollHeight;
@@ -66,13 +132,12 @@ function Root() {
   };
 
   const playAnimation = () => {
-    const objs = sceneInfo[curScene].objs;
-    const values = sceneInfo[curScene].values;
+    const objs = sceneInfo[curScene]?.objs;
+    const values = sceneInfo[curScene]?.values;
     const currentYOffset = yOffset + window.innerHeight - prevScrollHeight;
-    const scrollHeight = sceneInfo[curScene].scrollHeight;
+    const scrollHeight = sceneInfo[curScene]?.scrollHeight;
     const scrollRatio = currentYOffset / scrollHeight;
 
-    console.log(curScene, currentYOffset);
     switch (curScene) {
       case 1:
         if (scrollRatio <= 0.4) {
@@ -243,6 +308,7 @@ function Root() {
   };
 
   useEffect(() => {
+    getBestAll();
     sceneInfo = [
       // 0
       {
@@ -356,7 +422,7 @@ function Root() {
       }
       if (
         yOffset + window.innerHeight >
-        prevScrollHeight + sceneInfo[curScene].scrollHeight
+        prevScrollHeight + sceneInfo[curScene]?.scrollHeight
       ) {
         curScene++;
         enterNewScene = true;
@@ -409,7 +475,7 @@ function Root() {
               marginTop: "18px",
             }}
           >
-            <p className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center">
+            <p className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center p-2">
               베스트 듀오 🛠
               <p className="text-sm font-medium text-gray-400 cursor-pointer">
                 전체보기
@@ -425,27 +491,38 @@ function Root() {
               </ul>
             </section>
             <p
-              className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center"
+              className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center p-2"
               style={{ marginTop: "18px" }}
             >
               베스트 게시글 🔥
-              <p className="text-sm font-medium text-gray-400 cursor-pointer">
-                전체보기
-              </p>
+              <Link
+                to="/community/all?page=0"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                <p className="text-sm font-medium text-gray-400 cursor-pointer">
+                  전체보기
+                </p>
+              </Link>
             </p>
-            <section className="h-full w-full flex flex-row">
-              <ul className="w-1/2 border-r">
-                <RankPostList idx={0} />
-                <RankPostList idx={1} />
-                <RankPostList idx={2} />
-                <RankPostList idx={3} />
-              </ul>
-              <ul className="w-1/2 border-l">
-                <RankPostList idx={4} />
-                <RankPostList idx={5} />
-                <RankPostList idx={6} />
-                <RankPostList idx={7} />
-              </ul>
+            <section className="h-full w-full flex flex-row ">
+              {bestPosts.length > 0 ? (
+                <>
+                  <ul className="w-1/2 border-r">
+                    {bestPosts.slice(0, 4)?.map((el, idx) => (
+                      <RankPostList idx={idx} rank={el} />
+                    ))}
+                  </ul>
+                  <ul className="w-1/2 border-l">
+                    {bestPosts.slice(4).map((el, idx) => (
+                      <RankPostList idx={idx + 4} rank={el} />
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p className="text-center text-gray-400 w-full mt-6">
+                  베스트 게시글이 없습니다
+                </p>
+              )}
             </section>
           </Screen>
         </section>
@@ -577,16 +654,16 @@ function Root() {
               </p>
             </section>
             <section
-              className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal"
+              className="flex flex-col items-start justify-center w-1/2 md:text-base text-xs font-normal text-left"
               ref={(el) => (animationRefs.current[11] = el)}
             >
-              <p>듀오듀오의 제일 중요한 원칙은 즐겁게입니다.</p>
-              <p>게임이 즐겁게 끝났다면, 서로에게 칭찬을 할 수 있습니다</p>
+              <p>듀오듀오의 제일 중요한 </p>
+              <p>원칙은 즐겁게입니다.</p>
+              <p>게임이 즐겁게 끝났다면,</p>
+              <p>서로에게 칭찬을 할 수 있습니다</p>
               <p>칭찬을 받은 유저는 포로토큰을 보상으로 받게 됩니다</p>
-              <p>
-                반대로 악성유저와 함께해서 피해를 보았다면 신고를 통해 제제할 수
-                있습니다
-              </p>
+              <p>반대로 악성유저와 함께해서 피해를</p>
+              <p>봤다면 신고를 통해 제제할 수 있습니다</p>
               <Link to="rooms">
                 <p className="font-medium cursor-pointer text-green-400">
                   시작하기
@@ -604,6 +681,45 @@ function Root() {
           </GreenBtn>
         </Screen> */}
       </Main>
+      <section
+        className="flex flex-col w-full h-40"
+        style={{ backgroundColor: "#28303D" }}
+      >
+        <div className="flex flex-row w-full h-full text-white border justify-center items-center">
+          <section className="flex flex-col text-left text-gray-200 text-sm">
+            <section className="font-semibold mb-2">
+              <p>Contact to developer</p>
+              <p>📧 - namhj315@gmail.com</p>
+              <p>📱 - 010-5313-0460</p>
+            </section>
+            <section className="flex flex-row">
+              <a
+                className="cursor-pointer"
+                href="https://github.com/0xNSKY"
+                target="_blank"
+              >
+                <img
+                  className="w-8 h-8 rounded-lg mr-2"
+                  src="https://cdn3.iconfinder.com/data/icons/inficons/512/github.png"
+                />
+              </a>
+              <a
+                className="cursor-pointer"
+                href="https://www.instagram.com/00_nhj/?hl=ko"
+                target="_blank"
+              >
+                <img
+                  className="w-8 h-8 mr-2"
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png"
+                ></img>
+              </a>
+            </section>
+          </section>
+          <section className="">
+            <img className="w-32 h-32" src="./icon_me.png"></img>
+          </section>
+        </div>
+      </section>
     </>
   );
 }
