@@ -680,46 +680,46 @@ function Root() {
             <p className="text-white font-bold text-2xl">매칭하기</p>
           </GreenBtn>
         </Screen> */}
+        <section
+          className="flex flex-col w-full h-40"
+          style={{ backgroundColor: "#28303D" }}
+        >
+          <div className="flex flex-row w-full h-full text-white justify-center items-center">
+            <section className="flex flex-col text-left text-gray-200 text-sm">
+              <section className="font-semibold mb-2">
+                <p>Contact to developer</p>
+                <p>📧 - namhj315@gmail.com</p>
+                <p>📱 - 010-5313-0460</p>
+              </section>
+              <section className="flex flex-row">
+                <a
+                  className="cursor-pointer"
+                  href="https://github.com/0xNSKY"
+                  target="_blank"
+                >
+                  <img
+                    className="w-8 h-8 rounded-lg mr-2"
+                    src="https://cdn3.iconfinder.com/data/icons/inficons/512/github.png"
+                  />
+                </a>
+                <a
+                  className="cursor-pointer"
+                  href="https://www.instagram.com/00_nhj/?hl=ko"
+                  target="_blank"
+                >
+                  <img
+                    className="w-8 h-8 mr-2"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png"
+                  ></img>
+                </a>
+              </section>
+            </section>
+            <section className="">
+              <img className="w-32 h-32" src="./icon_me.png"></img>
+            </section>
+          </div>
+        </section>
       </Main>
-      <section
-        className="flex flex-col w-full h-40"
-        style={{ backgroundColor: "#28303D" }}
-      >
-        <div className="flex flex-row w-full h-full text-white border justify-center items-center">
-          <section className="flex flex-col text-left text-gray-200 text-sm">
-            <section className="font-semibold mb-2">
-              <p>Contact to developer</p>
-              <p>📧 - namhj315@gmail.com</p>
-              <p>📱 - 010-5313-0460</p>
-            </section>
-            <section className="flex flex-row">
-              <a
-                className="cursor-pointer"
-                href="https://github.com/0xNSKY"
-                target="_blank"
-              >
-                <img
-                  className="w-8 h-8 rounded-lg mr-2"
-                  src="https://cdn3.iconfinder.com/data/icons/inficons/512/github.png"
-                />
-              </a>
-              <a
-                className="cursor-pointer"
-                href="https://www.instagram.com/00_nhj/?hl=ko"
-                target="_blank"
-              >
-                <img
-                  className="w-8 h-8 mr-2"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png"
-                ></img>
-              </a>
-            </section>
-          </section>
-          <section className="">
-            <img className="w-32 h-32" src="./icon_me.png"></img>
-          </section>
-        </div>
-      </section>
     </>
   );
 }
