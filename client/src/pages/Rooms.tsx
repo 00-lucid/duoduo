@@ -129,7 +129,7 @@ function Rooms() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:8080/userlist").then((res) => {
+    axios.get(`${process.env.REACT_APP_SERVER_URL}/userlist`).then((res) => {
       const { data } = res;
       setDummy(data);
     });
@@ -138,7 +138,7 @@ function Rooms() {
   useEffect(() => {
     if (inView && page * 10 === dummys.length) {
       axios
-        .get("http://localhost:8080/userlist/infinite", {
+        .get(`${process.env.REACT_APP_CLIENT_SERVER}/userlist/infinite`, {
           headers: { Page: page },
         })
         .then((res) => {

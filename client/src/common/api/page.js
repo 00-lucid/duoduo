@@ -7,7 +7,7 @@ export const movePage = (page) => {
   window.history.pushState(
     window.location.href,
     "",
-    `http://localhost:3000${page}`
+    `${process.env.REACT_APP_CLIENT_URL}${page}`
   );
   window.history.go(0);
 };

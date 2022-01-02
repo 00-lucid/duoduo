@@ -167,7 +167,8 @@ function Community() {
                   인기
                 </Link>
               )} */}
-              {link === "http://localhost:3000/community/all?page=0" ? (
+              {link ===
+              `${process.env.REACT_APP_CLIENT_URL}/community/all?page=0` ? (
                 <Link
                   to="/community/all?page=0"
                   className="cursor-pointer text-green-400"
