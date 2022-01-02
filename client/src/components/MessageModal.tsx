@@ -4,26 +4,26 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { userInfoState } from "../state-persist";
 
-const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
+// const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 function MessageModal() {
   const [text, setText] = useState("");
   const userInfo = useRecoilValue(userInfoState);
 
   useEffect(() => {
-    socket.on("receive message", ({ from, message }) => {
-      console.log(`${from}님의 메시지 "${message}"`);
-    });
-    socket.on("receive notice", (notice) => {
-      console.log(notice);
-    });
+    // socket.on("receive message", ({ from, message }) => {
+    //   console.log(`${from}님의 메시지 "${message}"`);
+    // });
+    // socket.on("receive notice", (notice) => {
+    //   console.log(notice);
+    // });
   });
 
   const submitMessage = () => {
-    socket.emit("send message", {
-      message: text,
-      from: userInfo.nickname,
-    });
+    // socket.emit("send message", {
+    //   message: text,
+    //   from: userInfo.nickname,
+    // });
     setText("");
   };
 

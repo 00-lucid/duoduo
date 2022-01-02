@@ -15,7 +15,7 @@ import { userInfoState, userListCooldownState } from "../state-persist";
 import Loading from "./Loading";
 import { io } from "socket.io-client";
 import styled from "styled-components";
-const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
+// const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 function Rooms() {
   const [socketId, setSocketId] = useState();
@@ -97,10 +97,10 @@ function Rooms() {
     if (data.most && data.most.length > 0) {
       // 유저리스트를 생성하면 룸을 생선한다.
       // 룸 이름은 리스트 생성자 롤 닉네임
-      socket.emit(`join room`, {
-        from: userInfo.nickname,
-        room: userInfo.username,
-      });
+      // socket.emit(`join room`, {
+      //   from: userInfo.nickname,
+      //   room: userInfo.username,
+      // });
       // 다른 유저가 해당 유저리스트 듀오 요청시, 룸에 참가 및 노티를 보낸다.
       // 노티를 받은 유저가 수락하면 채팅을 할 수 있게 된다.
       setDummy((old) => {
