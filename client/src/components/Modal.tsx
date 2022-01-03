@@ -15,7 +15,7 @@ function Modal() {
     const token = getToken().token;
 
     const { data } = await axios.post(
-      "http://localhost:8080/username",
+      `${process.env.REACT_APP_SERVER_URL}/username`,
       {
         username,
       },

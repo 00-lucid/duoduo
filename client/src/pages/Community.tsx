@@ -19,6 +19,7 @@ function Community() {
   const [isAll, setIsAll] = useState(true);
   const [isConsole, setIsConsole] = useState(false);
   useEffect(() => {
+    window.scrollTo(0, 0);
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
     });
@@ -38,7 +39,7 @@ function Community() {
     if (getToken().token) {
       setIsWrite((old) => !old);
     } else {
-      movePage("/signin");
+      movePage("signin");
     }
   };
 
@@ -168,7 +169,7 @@ function Community() {
                 </Link>
               )} */}
               {link ===
-              `${process.env.REACT_APP_CLIENT_URL}/community/all?page=0` ? (
+              `${process.env.REACT_APP_CLIENT_URL}community/all?page=0` ? (
                 <Link
                   to="/community/all?page=0"
                   className="cursor-pointer text-green-400"

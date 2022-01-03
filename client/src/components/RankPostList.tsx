@@ -4,7 +4,7 @@ import styled from "styled-components";
 function RankPostList({ idx, rank }: any) {
   const createdAt = moment(rank.createdAt).fromNow();
   return (
-    <li className="h-1/4 border-b-2 flex flex-row items-center cursor-pointer">
+    <li className="h-1/4 flex flex-row items-center cursor-pointer">
       <section className="w-1/6">{idx + 1}</section>
       <section className="bg-gray-300 h-full md:w-24">
         <img></img>

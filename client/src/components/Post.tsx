@@ -31,7 +31,7 @@ function Post({
 
   const clickLike = async () => {
     if (!signIn) {
-      movePage("/signin");
+      movePage("signin");
       return;
     }
     const urlLike = like ? 0 : 1;
@@ -71,7 +71,6 @@ function Post({
 
   const clickComment = async () => {
     setComment((old: any) => (old ? 0 : 1));
-    // movePage(`/community/free?post=${postId}`);
     setIsComment((old) => !old);
     if (!isComment) {
       const { data } = await axios.get(
@@ -90,7 +89,7 @@ function Post({
 
   const clickAddComment = async () => {
     if (!signIn) {
-      movePage("/signin");
+      movePage("signin");
       return;
     }
     setIsAddComment((old) => !old);

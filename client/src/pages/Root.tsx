@@ -23,6 +23,39 @@ interface SceneInfo {
   values: any;
 }
 
+const dummyRankList = [
+  {
+    username1: "qwjqonl",
+    profileIconId1: 1298,
+    username2: "MIDGOD 12",
+    profileIconId2: 29,
+  },
+  {
+    username1: "Shrimp Shark",
+    profileIconId1: 22,
+    username2: "빨간강타 삭제좀",
+    profileIconId2: 26,
+  },
+  {
+    username1: "Cc3cC",
+    profileIconId1: 70,
+    username2: "우제우스",
+    profileIconId2: 68,
+  },
+  {
+    username1: "대포미니언 압수",
+    profileIconId1: 69,
+    username2: "꿈에 보이다",
+    profileIconId2: 71,
+  },
+  {
+    username1: "어쩌라고맞짱뜰까",
+    profileIconId1: 55,
+    username2: "KT Castle",
+    profileIconId2: 3,
+  },
+];
+
 function Root() {
   let loggedIn = !!getToken().token;
   let isUsername = getCookie("isUsername");
@@ -249,6 +282,7 @@ function Root() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     getBestAll();
     sceneInfo = [
       // 0
@@ -417,29 +451,22 @@ function Root() {
             }}
           >
             <p className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center p-2">
-              베스트 듀오 🛠
+              베스트 듀오 💞
               <p className="text-sm font-medium text-gray-400 cursor-pointer">
                 전체보기
               </p>
             </p>
-            <section className="w-full h-full border bg-black">
-              <ul className="flex flex-col w-full opacity-90">
-                <RankList idx={0} />
-                <RankList idx={1} />
-                <RankList idx={2} />
-                <RankList idx={3} />
-                <RankList idx={4} />
-              </ul>
-            </section>
+            <ul className="flex flex-col w-full">
+              {dummyRankList?.map((el: any, idx: number) => {
+                return <RankList idx={idx} rank={el} />;
+              })}
+            </ul>
             <p
               className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center p-2"
               style={{ marginTop: "18px" }}
             >
               베스트 게시글 🔥
-              <Link
-                to="/community/all?page=0"
-                onClick={() => window.scrollTo(0, 0)}
-              >
+              <Link to="/community/all?page=0">
                 <p className="text-sm font-medium text-gray-400 cursor-pointer">
                   전체보기
                 </p>
@@ -448,12 +475,12 @@ function Root() {
             <section className="h-full w-full flex flex-row ">
               {bestPosts.length > 0 ? (
                 <>
-                  <ul className="w-1/2 border-r">
+                  <ul className="w-1/2">
                     {bestPosts.slice(0, 4)?.map((el, idx) => (
                       <RankPostList idx={idx} rank={el} />
                     ))}
                   </ul>
-                  <ul className="w-1/2 border-l">
+                  <ul className="w-1/2">
                     {bestPosts.slice(4).map((el, idx) => (
                       <RankPostList idx={idx + 4} rank={el} />
                     ))}

@@ -3,25 +3,27 @@ import styled from "styled-components";
 function AlarmModal({ alarm, idx }: any) {
   return (
     <>
-      <Alarm interval={idx} className="border">
-        {window.location.href.includes("community") ? (
-          <img
-            src={`../icon_${alarm.type}.png`}
-            width="32"
-            height="32"
-            className="mb-1"
-          ></img>
-        ) : (
-          <img
-            src={`./icon_${alarm.type}.png`}
-            width="32"
-            height="32"
-            className="mb-1"
-          ></img>
-        )}
+      <section className="w-full flex flex-row justify-center items-center">
+        <Alarm interval={idx} className="md:w-1/3 w-5/6">
+          {window.location.href.includes("community") ? (
+            <img
+              src={`../icon_${alarm.type}.png`}
+              width="32"
+              height="32"
+              className="mb-1"
+            ></img>
+          ) : (
+            <img
+              src={`./icon_${alarm.type}.png`}
+              width="32"
+              height="32"
+              className="mb-1"
+            ></img>
+          )}
 
-        <p className="text-sm font-medium">{alarm?.text}</p>
-      </Alarm>
+          <p className="text-sm font-medium">{alarm?.text}</p>
+        </Alarm>
+      </section>
     </>
   );
 }
@@ -31,12 +33,10 @@ const Alarm = styled.div<{ interval: number }>`
   position: fixed;
   flex-direction: column;
   background-color: white;
-  width: 33%;
   height: 10%;
   align-items: center;
   justify-content: center;
   border-radius: 0.5rem;
-  left: 33%;
   z-index: 50;
   --tw-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);

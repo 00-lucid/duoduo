@@ -26,7 +26,7 @@ function MyPage() {
     );
     if (!data) {
       destroyToken();
-      movePage("/signin");
+      movePage("signin");
       return;
     }
     return data;

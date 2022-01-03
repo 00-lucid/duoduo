@@ -15,6 +15,7 @@ import { userInfoState, userListCooldownState } from "../state-persist";
 import Loading from "./Loading";
 import { io } from "socket.io-client";
 import styled from "styled-components";
+import moment from "moment";
 // const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 function Rooms() {
@@ -79,6 +80,8 @@ function Rooms() {
       nickname: userInfo.nickname,
       position: position,
       tier: league.tier[0] + rankToNumber[league.rank],
+      total_wins: league.wins,
+      total_losses: league.losses,
       total_rate: logicWinRate(league.wins, league.losses),
       profileIconId: summoner.profileIconId,
       summonerLevel: summoner.summonerLevel,
@@ -86,7 +89,7 @@ function Rooms() {
 
     setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
     const { data } = await axios.post(
-      "http://localhost:8080/userlist",
+      `${process.env.REACT_APP_SERVER_URL}/userlist`,
       result,
       {
         headers: {
@@ -109,13 +112,13 @@ function Rooms() {
     } else {
       // jwt expired
       destroyToken();
-      movePage("/signin");
+      movePage("signin");
       return;
     }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
     const dDate = new Date();
     // 쿨타임 설정
-    dDate.setMinutes(dDate.getSeconds() + 1);
+    dDate.setMinutes(dDate.getSeconds() + 5);
     const dDateStr = dDate.toString();
     setUserListCooldown(dDateStr);
     setIsSK(false);
@@ -129,8 +132,10 @@ function Rooms() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     axios.get(`${process.env.REACT_APP_SERVER_URL}/userlist`).then((res) => {
       const { data } = res;
+      console.log(data);
       setDummy(data);
     });
   }, []);
@@ -138,7 +143,7 @@ function Rooms() {
   useEffect(() => {
     if (inView && page * 10 === dummys.length) {
       axios
-        .get(`${process.env.REACT_APP_CLIENT_SERVER}/userlist/infinite`, {
+        .get(`${process.env.REACT_APP_SERVER_URL}/userlist/infinite`, {
           headers: { Page: page },
         })
         .then((res) => {
@@ -166,11 +171,12 @@ function Rooms() {
             className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden w-full cursor-pointer hover:bg-white shadow-md bg-gray-50"
             onClick={() => {
               if (!signIn) {
-                movePage("/signin");
+                movePage("signin");
                 return;
               }
-              const now = new Date();
-              if (userListCooldown > now.toString()) {
+              const nowMoment = moment(new Date());
+              const coolMoment = moment(userListCooldown);
+              if (coolMoment > nowMoment) {
                 setAlarmModal((old) => {
                   const result = [
                     { text: "5분 후 다시 시도하세요", type: 0 },
@@ -207,10 +213,7 @@ function Rooms() {
         </header>
         {isSK && <UserListSK textSK={textSK}></UserListSK>}
         <main className="flex items-center justify-center">
-          <ul
-            className="w-full"
-            // style={{ height: "520px" }}
-          >
+          <ul className="w-full">
             {dummys
               .filter((el: any) =>
                 filters[0].length > 0 ? filters[0].includes(el.position) : true
