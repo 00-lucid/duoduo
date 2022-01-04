@@ -75,7 +75,7 @@ function UserList({ room, last, setDummy }: any) {
   return (
     <>
       <li
-        className="flex flex-row h-20 rounded-lg mb-2 w-full overflow-hidden shadow-md bg-gray-50 hover:bg-white hover:scale-105 transform transition duration-500"
+        className="flex flex-row h-20 rounded-lg mb-2 w-full overflow-x-scroll shadow-md bg-gray-50 hover:bg-white hover:scale-105 transform transition duration-500"
         style={{ color: "#333d4b" }}
         ref={last}
       >
@@ -99,7 +99,7 @@ function UserList({ room, last, setDummy }: any) {
             </div>
           </section>
           {/* MID */}
-          <section className="flex flex-row justify-center items-center h-full min-w-max">
+          <section className="flex flex-row justify-center items-center h-full min-w-max px-4">
             <div className="w-12 h-12">
               <img src={`./${room.position}.png`} />
             </div>
@@ -169,8 +169,8 @@ function UserList({ room, last, setDummy }: any) {
           {/* BOTTOM */}
           <section className="flex flex-row justify-center items-center h-full min-w-max">
             <section className="h-full py-2">
-              <section className="px-2 h-full text-center border text-xs font-semibold border w-32 flex justify-center items-center bg-gray-200">
-                일이삼사오육칠팔구십십일십이십삼ㄴㅁㅇㅁㅇㅁㄴㅇㅁㅁㅇㅁㄴㅇ
+              <section className="px-2 h-full text-center border text-xs font-semibold border w-32 flex justify-center items-center bg-gray-200 rounded">
+                {room.text}
               </section>
             </section>
             <p className="flex text-xs opacity-40 mx-2">{createdAt}</p>

@@ -6,7 +6,7 @@ import { getToken, setCookie } from "../common/auth";
 import { isLoadingState } from "../state";
 import { userInfoState } from "../state-persist";
 
-function LineModal({ setIsModal, addUserList }: any) {
+function LineModal({ setIsModal, addUserList, setText }: any) {
   const [positions, setPosition] = useState<any>("none");
 
   const xy = (e: MouseEvent) => {
@@ -40,7 +40,7 @@ function LineModal({ setIsModal, addUserList }: any) {
           </span>
 
           <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex itmes-center justify-center flex-col">
               <div className="sm:text-center flex flex-col items-center">
                 <h3
                   className="mt-4 text-xl leading-6 font-medium text-gray-900"
@@ -103,6 +103,12 @@ function LineModal({ setIsModal, addUserList }: any) {
                     href="javascript:void(0);"
                   ></area>
                 </map>
+                <Input
+                  onChange={(e) => setText(e.target.value)}
+                  className=""
+                  type="text"
+                  placeholder="메모(최대30글자)"
+                />
               </div>
             </div>
             <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
@@ -129,13 +135,14 @@ function LineModal({ setIsModal, addUserList }: any) {
 }
 
 const Input = styled.input({
+  width: "250px",
   outline: "none",
   color: "#343a40",
   backgroundColor: "#e9ecef",
-  fontSize: "1.1rem",
-  padding: "0.9rem",
+  fontSize: "1rem",
+  padding: "0.7rem",
   borderRadius: "0.375rem",
-  marginBottom: "0.7rem",
+  marginTop: "0.7rem",
 });
 
 export default LineModal;

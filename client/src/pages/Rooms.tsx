@@ -30,6 +30,7 @@ function Rooms() {
   const [userListCooldown, setUserListCooldown] = useRecoilState<string>(
     userListCooldownState
   );
+  const [text, setText] = useState("");
   const signIn = getToken().token ? true : false;
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
   const filters = useRecoilValue<any[]>(filtersState);
@@ -85,6 +86,7 @@ function Rooms() {
       total_rate: logicWinRate(league.wins, league.losses),
       profileIconId: summoner.profileIconId,
       summonerLevel: summoner.summonerLevel,
+      text,
     };
 
     setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
@@ -157,7 +159,11 @@ function Rooms() {
   return (
     <>
       {isModal && (
-        <LineModal setIsModal={setIsModal} addUserList={addUserList} />
+        <LineModal
+          setIsModal={setIsModal}
+          addUserList={addUserList}
+          setText={setText}
+        />
       )}
       <TopMenu />
       <Con>
