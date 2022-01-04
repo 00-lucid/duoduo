@@ -23,65 +23,6 @@ interface SceneInfo {
   values: any;
 }
 
-const dummyRankPostList = [
-  {
-    id: 2,
-    title: "세상에서 가장 귀여운 새 그리고 새 그리고",
-    likeCount: 208,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 3,
-    title: "세상에서 가장 귀여운 개",
-    likeCount: 173,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 4,
-    title: "세상에서 가장 귀여운 해",
-    likeCount: 141,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 5,
-    title: "세상에서 가장 귀여운 달",
-    likeCount: 99,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 6,
-    title: "세상에서 가장 귀여운 뱀",
-    likeCount: 77,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 7,
-    title: "세상에서 가장 귀여운 애",
-    likeCount: 45,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 8,
-    title: "세상에서 가장 귀여운 매",
-    likeCount: 28,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-  {
-    id: 9,
-    title: "세상에서 가장 귀여운 캣",
-    likeCount: 9,
-    nickname: "개발자인데요",
-    createdAt: "2021-12-31 12:12:20 PM",
-  },
-];
-
 function Root() {
   let loggedIn = !!getToken().token;
   let isUsername = getCookie("isUsername");
@@ -410,7 +351,7 @@ function Root() {
       },
     ];
     window.addEventListener("scroll", () => {
-      if (window.location.href !== "http://localhost:3000/") {
+      if (window.location.href !== `${process.env.REACT_APP_CLIENT_URL}`) {
         window.addEventListener("scroll", () => {});
         return;
       }
