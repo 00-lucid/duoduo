@@ -54,10 +54,16 @@ public class UserListController {
                         put("tier", obj.getTier());
                         put("recent_rate", obj.getRecent_rate());
                         put("most", next);
+                        put("most_kda", obj.getMost_kda());
+                        put("most_rate", obj.getMost_rate());
+                        put("total_wins", obj.getTotal_wins());
+                        put("total_losses", obj.getTotal_losses());
                         put("total_rate", obj.getTotal_rate());
                         put("profileIconId", obj.getProfileIconId());
                         put("summonerLevel", obj.getSummonerLevel());
                         put("createdAt",obj.getCreatedAt());
+                        put("text", obj.getText());
+
                     }};
                     result.add(userListResponse);
                 }
@@ -80,7 +86,11 @@ public class UserListController {
             int finalI = i;
             UserListEntity obj = list.get(finalI);
             String pre = obj.getMost();
+            String most_kda = obj.getMost_kda();
+            String most_rate = obj.getMost_rate();
             String[] next = pre.split(" ");
+            String[] next_kda = most_kda.split(" ");
+            String[] next_rate = most_rate.split(" ");
             HashMap userListResponse = new HashMap(){{
                 put("id", obj.getId());
                 put("username", obj.getUsername());
@@ -89,10 +99,16 @@ public class UserListController {
                 put("tier", obj.getTier());
                 put("recent_rate", obj.getRecent_rate());
                 put("most", next);
+                put("most_kda", next_kda);
+                put("most_rate", next_rate);
+                put("total_wins", obj.getTotal_wins());
+                put("total_losses", obj.getTotal_losses());
                 put("total_rate", obj.getTotal_rate());
                 put("profileIconId", obj.getProfileIconId());
                 put("summonerLevel", obj.getSummonerLevel());
                 put("createdAt",obj.getCreatedAt());
+                put("text", obj.getText());
+
             }};
             result.add(userListResponse);
         }
@@ -107,13 +123,11 @@ public class UserListController {
             System.out.println(userListDTO.toString());
             // 모듈 객체를 활용해서 ript api와 http 통신을 진행한 뒤 결과를 userlist에 담아 생성한다.
             JSONArray arrMatches = riotService.getMatches(userListDTO.getPuuid());
-            System.out.println(arrMatches.size());
 
             for (int i = 0; i < arrMatches.size(); i++) {
                 String match = arrMatches.get(i).toString();
-                System.out.println(match);
                 JSONObject objMatch = riotService.getMatch(match);
-                // info / teams(2) / win
+
                 JSONObject objMetadata =  (JSONObject) objMatch.get("metadata");
                 JSONArray arrPlayer = (JSONArray) objMetadata.get("participants");
                 int idxPlayer = arrPlayer.indexOf(userListDTO.getPuuid());
@@ -122,32 +136,65 @@ public class UserListController {
                 JSONObject player = (JSONObject) arrPlayerInfo.get(idxPlayer);
                 boolean isWin = (boolean) player.get("win");
                 if (isWin) win++;
-                // championId 또는 championName 통한 모스트 산출
                 String championName = (String) player.get("championName");
-                System.out.println(championName);
+                Long championKill = (Long) player.get("kills");
+                Long championDeaths = (Long) player.get("deaths");
+                Long championAssists = (Long) player.get("assists");
+                Boolean championWin = (Boolean) player.get("win");
+
                 int idxChampion = findService.findChampionMost(championMost, championName);
-                System.out.println(idxChampion);
                 if (idxChampion == -1) {
-                    MostDTO mostDTO = new MostDTO(championName, 1);
+                    MostDTO mostDTO = null;
+                    if (championWin) {
+                        mostDTO = new MostDTO(championName, 1, 1, championKill, championDeaths, championAssists);
+                    } else {
+                        mostDTO = new MostDTO(championName, 1, 0, championKill, championDeaths, championAssists);
+                    }
                     championMost.add(mostDTO);
+
                 } else {
                     MostDTO pre = championMost.get(idxChampion);
                     pre.setCount(pre.getCount() + 1);
+                    if (championWin) {
+                        pre.setWins(pre.getWins() + 1);
+                    }
+                    pre.setKills(pre.getKills() + championKill);
+                    pre.setDeaths(pre.getDeaths() + championDeaths);
+                    pre.setAssists(pre.getAssists() + championAssists);
                     championMost.set(idxChampion, pre);
                 }
             }
 
-            System.out.println("championMost: " + championMost.toString());
+            System.out.println(championMost);
+
 
             // 산출한 모스트를 count 값에 따라서 정렬해줘야 됨
             // TODO:
             Collections.sort(championMost, Collections.reverseOrder());
             List<MostDTO> onlyMost = championMost.subList(0, 3);
+            // cp_kda "2.75 3.45 15.00"
+            // cp_win_rate "45 75 62"
+            List<String> cp_kda = new ArrayList();
+            List<String> cp_win_rate = new ArrayList();
+            for (int i = 0; i < onlyMost.size(); i++) {
+                MostDTO mostDTO = onlyMost.get(i);
+                double kills = (double) mostDTO.getKills();
+                Double kda = Math.round(((kills  + mostDTO.getAssists()) / mostDTO.getDeaths()) * 100) / 100.0;
+                cp_kda.add(String.valueOf(kda));
+                double wins = (double) mostDTO.getWins();
+                long win_rate = Math.round((wins / mostDTO.getCount()) * 100);
+                cp_win_rate.add(String.valueOf(win_rate));
+            }
+
             List resultMost = new ArrayList();
             for (int i = 0; i < onlyMost.size(); i++) {
                 resultMost.add(onlyMost.get(i).getChampionName());
             }
             String result = String.join(" ", resultMost);
+            String result_kda = String.join(" ", cp_kda);
+            String result_win_rate = String.join(" ", cp_win_rate);
+
+            System.out.println("all done");
 
             Long id = jsonWebTokenService.decodeId(jwt);
             UserEntity user = jsonWebTokenService.verifyId(id);
@@ -163,9 +210,14 @@ public class UserListController {
                     .kda(5)
                     .poro(50)
                     .synergy(50)
+                    .most_kda(result_kda)
+                    .most_rate(result_win_rate)
+                    .total_wins(userListDTO.getTotal_wins())
+                    .total_losses(userListDTO.getTotal_losses())
                     .total_rate(userListDTO.getTotal_rate())
                     .profileIconId(userListDTO.getProfileIconId())
                     .summonerLevel(userListDTO.getSummonerLevel())
+                    .text(userListDTO.getText())
                     .build();
 
             userListRepository.save(userList);
@@ -178,10 +230,15 @@ public class UserListController {
                 put("tier", userListDTO.getTier());
                 put("recent_rate", finalWin * 10);
                 put("most", resultMost);
+                put("most_kda", cp_kda);
+                put("most_rate", cp_win_rate);
+                put("total_wins", userListDTO.getTotal_wins());
+                put("total_losses", userListDTO.getTotal_losses());
                 put("total_rate", userListDTO.getTotal_rate());
                 put("profileIconId", userListDTO.getProfileIconId());
                 put("summonerLevel", userListDTO.getSummonerLevel());
                 put("createdAt", userList.getCreatedAt());
+                put("text", userListDTO.getText());
             }};
 
             return userListResponse;

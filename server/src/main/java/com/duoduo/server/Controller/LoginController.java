@@ -6,6 +6,7 @@ import com.duoduo.server.Repository.LoginDTO;
 import com.duoduo.server.Repository.UserNameRepository;
 import com.duoduo.server.Repository.UserRepository;
 import com.duoduo.server.Service.JsonWebTokenService;
+import com.duoduo.server.Service.SecurityService;
 import io.jsonwebtoken.*;
 import org.json.simple.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,14 @@ public class LoginController {
 
     @PostMapping(value = "/signin")
     public JSONObject signin(@RequestBody(required = true) LoginDTO data, HttpServletResponse response) {
+        SecurityService securityService = new SecurityService();
+
         try {
             Date now = new Date();
             // TODO: password에 hashing 적용해야 됨
             UserEntity user = userRepository.findByEmail(data.getEmail());
-            if (user.getPassword().equals(data.getPassword())) {
+            boolean isOk = securityService.matches(data.getPassword(), user.getPassword());
+            if (isOk) {
                 JSONObject jsonObject = new JSONObject();
 
                 String jwt =  Jwts.builder()
@@ -55,19 +59,9 @@ public class LoginController {
                         .signWith(SignatureAlgorithm.HS256, "secret")
                         .compact();
 
-//                String rfJwt = Jwts.builder()
-//                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-//                        .setIssuer("duoduo")
-//                        .setIssuedAt(now)
-//                        .setExpiration(new Date(now.getTime() + Duration.ofDays(14).toMillis()))
-//                        .signWith(SignatureAlgorithm.HS256, "secret")
-//                        .compact();
 
                 jsonObject.put("token", jwt);
-//                Cookie rfTokenCookie = new Cookie("rfToken", rfJwt);
-//                rfTokenCookie.setPath("/");
                 jsonObject.put("nickname", user.getNickname());
-//                response.addCookie(rfTokenCookie);
                 System.out.println(jsonObject);
                 return jsonObject;
             }
@@ -79,24 +73,24 @@ public class LoginController {
     }
 
     @PostMapping(value = "/signup")
-    public UserEntity signup(@RequestBody(required = true) LoginDTO data) {
+    public String signup(@RequestBody(required = true) LoginDTO data) {
+        SecurityService securityService = new SecurityService();
         try {
 
-            // 중복계정의 조건
-            // 1. 같은 이메일
-            // 2. 같은 닉네임
             if (userRepository.findByEmail(data.getEmail()) != null || userRepository.findByNickname(data.getNickname()) != null) {
                 return null;
             }
 
             UserEntity user = UserEntity.builder()
                     .email(data.getEmail())
-                    .password(data.getPassword())
+                    .password(securityService.hashing(data.getPassword()))
                     .nickname(data.getNickname())
                     .build();
 
-            return userRepository.save(user);
+            userRepository.save(user);
+            return "success";
         } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
     }
@@ -117,7 +111,6 @@ public class LoginController {
             userNameRepository.save(userName);
             return userName;
         } catch (Exception e) {
-            System.out.println(e);
             return null;
         }
     }

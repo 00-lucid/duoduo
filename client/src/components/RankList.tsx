@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-function RankList({ idx }: any) {
+function RankList({ idx, rank }: any) {
   return (
     <>
       {idx % 2 === 0 ? (
@@ -8,25 +8,25 @@ function RankList({ idx }: any) {
           <section className="flex-1">{idx + 1}</section>
           <section className="flex-1 h-auto flex justify-center ">
             <img
-              src="./profile.png"
+              src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/profileicon/${rank.profileIconId1}.png`}
               className="rounded-full"
               width="48px"
               height="48px"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p></p>
+            <p>{rank.username1}</p>
           </section>
           <section className="flex-1 h-auto flex justify-center">
             <img
-              src="./profile.png"
+              src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/profileicon/${rank.profileIconId2}.png`}
               className="rounded-full"
               width="48px"
               height="48px"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p></p>
+            <p>{rank.username2}</p>
           </section>
         </li>
       ) : (
@@ -34,25 +34,25 @@ function RankList({ idx }: any) {
           <section className="flex-1">{idx + 1}</section>
           <section className="flex-1 h-auto flex justify-center ">
             <img
-              src="./profile.png"
+              src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/profileicon/${rank.profileIconId1}.png`}
               width="48px"
               height="48px"
               className="rounded-full"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p></p>
+            <p>{rank.username1}</p>
           </section>
           <section className="flex-1 h-auto flex justify-center">
             <img
-              src="./profile.png"
+              src={`http://ddragon.leagueoflegends.com/cdn/11.21.1/img/profileicon/${rank.profileIconId2}.png`}
               className="rounded-full"
               width="48px"
               height="48px"
             ></img>
           </section>
           <section className="w-1/3 justify-center items-center">
-            <p></p>
+            <p>{rank.username2}</p>
           </section>
         </li>
       )}

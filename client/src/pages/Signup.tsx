@@ -55,11 +55,14 @@ function Signup() {
   const postSignup = async () => {
     if (isPasswordCheck() && isAll()) {
       setIsLoading(true);
-      const { data } = await axios.post("http://localhost:8080/signup", {
-        email,
-        password,
-        nickname,
-      });
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/signup`,
+        {
+          email,
+          password,
+          nickname,
+        }
+      );
 
       if (!data) {
         // 실패시

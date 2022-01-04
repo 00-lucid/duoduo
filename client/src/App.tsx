@@ -23,6 +23,11 @@ function App() {
       {alarmModals?.map((alarm, idx) => (
         <AlarmModal key={idx} alarm={alarm} idx={idx} />
       ))}
+      <AlarmModal
+        key={123}
+        alarm={{ type: 0, text: "테스트입니다" }}
+        idx={123}
+      />
       {/* <MessageModal /> */}
       <Switch>
         <Route path="/" exact component={Root}></Route>

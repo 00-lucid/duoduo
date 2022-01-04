@@ -38,7 +38,15 @@ function PostWrite({ setIsWrite, setPosts }: any) {
 
   const addPost = async () => {
     if (!getToken().token) {
-      movePage("/signin");
+      movePage("signin");
+      return;
+    }
+    if (!(textBody.length > 0 && textTitle.length > 0)) {
+      setAlarmModal((old) => [
+        { text: "내용을 입력해주세요", type: 0 },
+        ...old,
+      ]);
+      setTimeRemoveAlarm(setAlarmModal);
       return;
     }
     const obj = {

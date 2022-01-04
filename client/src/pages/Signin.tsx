@@ -19,7 +19,7 @@ function Signin() {
   const postSignin = async () => {
     setIsLoading(true);
     const res = await axios.post(
-      "http://localhost:8080/signin",
+      `${process.env.REACT_APP_SERVER_URL}/signin`,
       {
         email,
         password,
