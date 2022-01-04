@@ -6,10 +6,18 @@ import lombok.Data;
 public class MostDTO implements Comparable<MostDTO>{
     private String championName;
     private int count;
+    private int wins;
+    private Long kills;
+    private Long deaths;
+    private Long assists;
 
-    public MostDTO(String championName, int count) {
+    public MostDTO(String championName, int count, int wins, Long kills, Long deaths, Long assists) {
         this.championName = championName;
         this.count = count;
+        this.wins = wins;
+        this.kills = kills;
+        this.deaths = deaths;
+        this.assists = assists;
     }
 
     @Override

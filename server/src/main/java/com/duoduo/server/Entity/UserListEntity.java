@@ -48,6 +48,18 @@ public class UserListEntity {
     private Integer synergy;
 
     @Column
+    private String most_kda;
+
+    @Column
+    private String most_rate;
+
+    @Column
+    private Integer total_wins;
+
+    @Column
+    private Integer total_losses;
+
+    @Column
     private Integer total_rate;
 
     @Column
@@ -59,8 +71,11 @@ public class UserListEntity {
     @Column
     private String createdAt;
 
+    @Column
+    private String text;
+
     @Builder
-    public UserListEntity (Long id, UserEntity userId, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_rate, Integer profileIconId, Integer summonerLevel){
+    public UserListEntity (Long id, UserEntity userId, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_wins, Integer total_losses, Integer total_rate, Integer profileIconId, Integer summonerLevel, String most_kda, String most_rate, String text){
         this.id = id;
         this.userId = userId;
         this.username = username;
@@ -72,11 +87,16 @@ public class UserListEntity {
         this.kda = kda;
         this.poro = poro;
         this.synergy = synergy;
+        this.most_kda = most_kda;
+        this.most_rate = most_rate;
+        this.total_wins = total_wins;
+        this.total_losses = total_losses;
         this.total_rate = total_rate;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         this.createdAt = simpleDateFormat.format(new Date());
+        this.text = text;
     }
 
 }
