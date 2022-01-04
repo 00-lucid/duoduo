@@ -10,7 +10,7 @@ import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
 import UserListSK from "../components/UserListSK";
-import { Alarm, alarmModalState, filtersState } from "../state";
+import { Alarm, alarmModalState, filtersState, isLoadingState } from "../state";
 import { userInfoState, userListCooldownState } from "../state-persist";
 import Loading from "./Loading";
 import { io } from "socket.io-client";
@@ -27,6 +27,7 @@ function Rooms() {
   const [isSK, setIsSK] = useState<boolean>(false);
   const [textSK, setTextSK] = useState<string>("");
   const userInfo = useRecoilValue(userInfoState);
+  const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
   const [userListCooldown, setUserListCooldown] = useRecoilState<string>(
     userListCooldownState
   );
@@ -135,10 +136,13 @@ function Rooms() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setIsLoading(true);
     axios.get(`${process.env.REACT_APP_SERVER_URL}/userlist`).then((res) => {
       const { data } = res;
-      console.log(data);
-      setDummy(data);
+      if (data) {
+        setDummy(data);
+        setIsLoading(false);
+      }
     });
   }, []);
 
@@ -220,33 +224,47 @@ function Rooms() {
         {isSK && <UserListSK textSK={textSK}></UserListSK>}
         <main className="flex items-center justify-center">
           <ul className="w-full">
-            {dummys
-              .filter((el: any) =>
-                filters[0].length > 0 ? filters[0].includes(el.position) : true
-              )
-              .filter((el: any) =>
-                filters[1].length > 0 ? filters[1].includes(el.tier[0]) : true
-              )
-              .map((room: any, idx) => {
-                if (
-                  idx === dummys.length - 1 &&
-                  idx > 8 &&
-                  dummys.length % 10 === 0
-                ) {
-                  return (
-                    <UserList
-                      key={room.id}
-                      room={room}
-                      last={ref}
-                      setDummy={setDummy}
-                    />
-                  );
-                } else {
-                  return (
-                    <UserList key={room.id} room={room} setDummy={setDummy} />
-                  );
-                }
-              })}
+            {isLoading && (
+              <>
+                <UserListSK />
+                <UserListSK />
+                <UserListSK />
+                <UserListSK />
+                <UserListSK />
+                <UserListSK />
+                <UserListSK />
+              </>
+            )}
+            {!isLoading &&
+              dummys
+                .filter((el: any) =>
+                  filters[0].length > 0
+                    ? filters[0].includes(el.position)
+                    : true
+                )
+                .filter((el: any) =>
+                  filters[1].length > 0 ? filters[1].includes(el.tier[0]) : true
+                )
+                .map((room: any, idx) => {
+                  if (
+                    idx === dummys.length - 1 &&
+                    idx > 8 &&
+                    dummys.length % 10 === 0
+                  ) {
+                    return (
+                      <UserList
+                        key={room.id}
+                        room={room}
+                        last={ref}
+                        setDummy={setDummy}
+                      />
+                    );
+                  } else {
+                    return (
+                      <UserList key={room.id} room={room} setDummy={setDummy} />
+                    );
+                  }
+                })}
           </ul>
         </main>
         {inView && <img></img>}

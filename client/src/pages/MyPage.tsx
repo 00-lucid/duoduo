@@ -6,12 +6,14 @@ import styled from "styled-components";
 import moveHome, { movePage } from "../common/api/page";
 import { decodeJwt, destroyToken, expiredJwt, getToken } from "../common/auth";
 import MyPageInfoBlock from "../components/MyPageInfoBlock";
+import MyPageInfoBlockSK from "../components/MypageInfoBlockSK";
 import TopMenu from "../components/TopMenu";
-import { Alarm, alarmModalState } from "../state";
+import { Alarm, alarmModalState, isLoadingState } from "../state";
 import { userInfoState } from "../state-persist";
 
 function MyPage() {
   const token = getToken().token;
+  const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
   const [email, setEmail] = useState("");
   const [username, setUserName] = useState("");
   const userInfo = useRecoilValue(userInfoState);
@@ -39,9 +41,14 @@ function MyPage() {
 
   useEffect(() => {
     // TODO: config
+    window.scrollTo(0, 0);
+    setIsLoading(true);
     getMypage().then((data) => {
-      setEmail(data.email);
-      setUserName(data.username);
+      if (data) {
+        setEmail(data.email);
+        setUserName(data.username);
+        setIsLoading(false);
+      }
     });
   }, []);
   return (
@@ -76,19 +83,29 @@ function MyPage() {
           </div>
           {/* 우측 */}
           <div className="w-full md:p-10 p-4 flex flex-col justify-between">
-            {/* black */}
-            <MyPageInfoBlock
-              title={"이메일"}
-              value={email}
-              setValues={setEmail}
-              token={token}
-            />
-            <MyPageInfoBlock
-              title={"소환사명"}
-              value={username}
-              setValues={setUserName}
-              token={token}
-            />
+            {isLoading && (
+              <>
+                <MyPageInfoBlockSK />
+                <MyPageInfoBlockSK />
+              </>
+            )}
+            {!isLoading && (
+              <>
+                <MyPageInfoBlock
+                  title={"이메일"}
+                  value={email}
+                  setValues={setEmail}
+                  token={token}
+                />
+                <MyPageInfoBlock
+                  title={"소환사명"}
+                  value={username}
+                  setValues={setUserName}
+                  token={token}
+                />
+              </>
+            )}
+
             <MyPageInfoBlock title={"훈장"} value={"🎉"} token={token} />
           </div>
         </Page>

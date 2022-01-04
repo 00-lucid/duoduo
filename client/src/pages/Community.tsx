@@ -2,12 +2,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { movePage } from "../common/api/page";
 import { getToken } from "../common/auth";
 import Post from "../components/Post";
+import PostSK from "../components/PostSK";
 import PostWrite from "../components/PostWrite";
 import TopMenu from "../components/TopMenu";
+import { isLoadingState } from "../state";
 
 function Community() {
   const [width, setWidth] = useState(window.innerWidth);
@@ -18,8 +21,10 @@ function Community() {
   const [page, setPage] = useState(1);
   const [isAll, setIsAll] = useState(true);
   const [isConsole, setIsConsole] = useState(false);
+  const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
   useEffect(() => {
     window.scrollTo(0, 0);
+    setIsLoading(true);
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
     });
@@ -31,7 +36,10 @@ function Community() {
         },
       })
       .then(({ data }) => {
-        setPosts(data);
+        if (data) {
+          setPosts(data);
+          setIsLoading(false);
+        }
       });
   }, []);
 
@@ -196,42 +204,51 @@ function Community() {
             </section>
           </div>
           {isWrite && <PostWrite setIsWrite={setIsWrite} setPosts={setPosts} />}
-          {posts.map((el: any, idx) => {
-            if (
-              idx === posts.length - 1 &&
-              idx > 8 &&
-              posts.length % 10 === 0
-            ) {
-              return (
-                <Post
-                  key={el.id}
-                  postId={el.id}
-                  title={el.title}
-                  body={el.body}
-                  nickname={el.nickname}
-                  liked={el.liked}
-                  commented={el.commented}
-                  likeCount={el.like}
-                  createdAt={el.createdAt}
-                  last={ref}
-                />
-              );
-            } else {
-              return (
-                <Post
-                  key={el.id}
-                  postId={el.id}
-                  title={el.title}
-                  body={el.body}
-                  nickname={el.nickname}
-                  liked={el.liked}
-                  commented={el.commented}
-                  likeCount={el.likeCount}
-                  createdAt={el.createdAt}
-                />
-              );
-            }
-          })}
+          {isLoading && (
+            <>
+              <PostSK />
+              <PostSK />
+              <PostSK />
+              <PostSK />
+            </>
+          )}
+          {!isLoading &&
+            posts.map((el: any, idx) => {
+              if (
+                idx === posts.length - 1 &&
+                idx > 8 &&
+                posts.length % 10 === 0
+              ) {
+                return (
+                  <Post
+                    key={el.id}
+                    postId={el.id}
+                    title={el.title}
+                    body={el.body}
+                    nickname={el.nickname}
+                    liked={el.liked}
+                    commented={el.commented}
+                    likeCount={el.like}
+                    createdAt={el.createdAt}
+                    last={ref}
+                  />
+                );
+              } else {
+                return (
+                  <Post
+                    key={el.id}
+                    postId={el.id}
+                    title={el.title}
+                    body={el.body}
+                    nickname={el.nickname}
+                    liked={el.liked}
+                    commented={el.commented}
+                    likeCount={el.likeCount}
+                    createdAt={el.createdAt}
+                  />
+                );
+              }
+            })}
         </section>
       </Main>
       {inView && <p>로딩중</p>}
