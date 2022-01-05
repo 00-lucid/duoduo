@@ -4,20 +4,20 @@ import { useRecoilValue } from "recoil";
 import { userInfoState } from "../state-persist";
 import { getToken } from "../common/auth";
 import { socketState } from "../state";
+import Chat from "./Chat";
 
 function MessageModal({ setIsMessage }: any) {
   const socket = useRecoilValue(socketState);
   const [text, setText] = useState("");
   const userInfo = useRecoilValue(userInfoState);
   const isLogin = getToken().token ? true : false;
+  const [chats, setChats] = useState<any[]>([]);
 
   useEffect(() => {
     socket.on("receive message", ({ from, message }: any) => {
       console.log(`${from}님의 메시지 "${message}"`);
+      setChats((old) => [{ text: `${from}: ${message}` }, ...old]);
     });
-    // socket.on("receive notice", (notice) => {
-    //   console.log(notice);
-    // });
   }, []);
 
   const submitMessage = () => {
@@ -39,7 +39,11 @@ function MessageModal({ setIsMessage }: any) {
         ></button>
         <ul className="flex flex-col items-start p-4 overflow-y-scroll w-full flex-1 justify-center items-center">
           {isLogin ? (
-            <p className="text-gray-400">매칭된 유저가 없습니다 :D</p>
+            !(chats.length > 0) ? (
+              <p className="text-gray-400">매칭된 유저가 없습니다 :D</p>
+            ) : (
+              chats.map((el: any) => <Chat text={el.text} />)
+            )
           ) : (
             <p className="text-gray-400">로그인이 필요한 서비스입니다</p>
           )}

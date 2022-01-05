@@ -76,7 +76,7 @@ function UserList({ room, last, setDummy }: any) {
   return (
     <>
       <li
-        className="flex flex-row h-20 rounded-lg mb-2 w-full overflow-x-scroll shadow-md bg-gray-50 hover:bg-white hover:scale-105 transform transition duration-500"
+        className="flex flex-row h-20 rounded-lg mb-2 w-full overflow-x-scroll overflow-y-hidden shadow-md bg-gray-50 hover:bg-white hover:scale-105 transform transition duration-500"
         style={{ color: "#333d4b" }}
         ref={last}
       >
