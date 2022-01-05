@@ -39,6 +39,7 @@ function Signin() {
         return {
           ...old,
           nickname: res.data.nickname,
+          username: res.data.username,
         };
       }
     });
