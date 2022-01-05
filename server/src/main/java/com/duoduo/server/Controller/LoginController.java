@@ -10,10 +10,9 @@ import com.duoduo.server.Service.SecurityService;
 import io.jsonwebtoken.*;
 import org.json.simple.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Date;
@@ -115,28 +114,10 @@ public class LoginController {
         }
     }
 
-//    @GetMapping(value = "expire")
-//    public void getRefreshToken(@RequestHeader("Authorization") String jwt, @CookieValue("refreshToken") String rfJwt) {
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            System.out.println("expireexpireexpireexpireexpireexpireexpireexpireexpire");
-//            System.out.println("rfJwt: " + rfJwt);
-//            Date now = new Date();
-//
-//            Long id = jsonWebTokenService.decodeId(jwt);
-//
-//            String newJwt = Jwts.builder()
-//                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-//                    .setIssuer("duoduo")
-//                    .setIssuedAt(now)
-//                    .setExpiration(new Date(now.getTime() + Duration.ofMinutes(60).toMillis()))
-//                    .claim("id", id)
-//                    .signWith(SignatureAlgorithm.HS256, "secret")
-//                    .compact();
-//            return;
-//        } catch (Exception e) {
-//            return;
-//        }
-//    }
+    @PostMapping("/emailConfirm")
+    public ResponseEntity emailConfirm(@RequestBody(required = true) JSONObject data) throws Exception {
+        return null;
+    };
 
 }
+
