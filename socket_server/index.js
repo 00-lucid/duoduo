@@ -32,8 +32,8 @@ io.on("connection", (socket) => {
 
   socket.on("send message", ({ message, from }) => {
     const room = rooms.find((el) => el.joiner === from);
-    console.log(`send message ${socket.id} to ${room.name}`);
-    socket.to(room.name).emit("receive message", { from, message: message });
+    console.log(`send message ${from} to ${room.name}`);
+    socket.to(room.name).emit("receive message", { from, message });
   });
 
   socket.on("send notice", ({ room, category, from }) => {
