@@ -19,6 +19,10 @@ const rooms = [];
 io.on("connection", (socket) => {
   console.log("connection info: " + socket.request.connection._peername);
 
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+
   socket.on("req socket id", () => {
     socket.emit("res socket id", socket.id);
   });
@@ -28,6 +32,12 @@ io.on("connection", (socket) => {
     rooms.push({ name: room, joiner: from });
     socket.join(room);
     console.log(rooms);
+  });
+
+  socket.on("leave room", () => {
+    socket.leave("", () => {
+      console.log("leave room");
+    });
   });
 
   socket.on("send message", ({ message, from }) => {
