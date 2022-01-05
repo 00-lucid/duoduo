@@ -16,7 +16,7 @@ function MessageModal({ setIsMessage }: any) {
   useEffect(() => {
     socket.on("receive message", ({ from, message }: any) => {
       console.log(`${from}님의 메시지 "${message}"`);
-      setChats((old) => [{ text: `${from}: ${message}` }, ...old]);
+      setChats((old) => [...old, { text: `${from}: ${message}` }]);
     });
   }, []);
 
@@ -37,7 +37,7 @@ function MessageModal({ setIsMessage }: any) {
           className="bg-green-400 h-10"
           onClick={() => setIsMessage(false)}
         ></button>
-        <ul className="flex flex-col items-start p-4 overflow-y-scroll w-full flex-1 justify-center items-center">
+        <ul className="flex flex-col items-start justify-start p-4 overflow-y-scroll w-full flex-1 justify-center items-center text-left">
           {isLogin ? (
             !(chats.length > 0) ? (
               <p className="text-gray-400">매칭된 유저가 없습니다 :D</p>
