@@ -34,8 +34,11 @@ io.on("connection", (socket) => {
     console.log(rooms);
   });
 
-  socket.on("leave room", () => {
-    socket.leave("", () => {});
+  socket.on("leave room", ({ from }) => {
+    const room = rooms.find((el) => el.joiner === from);
+    socket.leave(room.name, () => {
+      console.log(`${from} leave ${room.name}`);
+    });
   });
 
   socket.on("send message", ({ message, from }) => {
