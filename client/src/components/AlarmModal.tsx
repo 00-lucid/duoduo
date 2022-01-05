@@ -3,8 +3,8 @@ import styled from "styled-components";
 function AlarmModal({ alarm, idx }: any) {
   return (
     <>
-      <section className="w-full flex flex-row justify-center items-center">
-        <Alarm interval={idx} className="md:w-1/3 w-5/6">
+      <section className="w-full flex flex-row justify-center items-center z-50">
+        <Alarm interval={idx} className="md:w-1/3 w-5/6 mt-16">
           {window.location.href.includes("community") ? (
             <img
               src={`../icon_${alarm.type}.png`}

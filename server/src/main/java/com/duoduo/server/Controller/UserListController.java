@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpHeaders;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @CrossOrigin(value = "*")
@@ -174,13 +175,14 @@ public class UserListController {
             List<MostDTO> onlyMost = championMost.subList(0, 3);
             // cp_kda "2.75 3.45 15.00"
             // cp_win_rate "45 75 62"
+            DecimalFormat df = new DecimalFormat("#.##");
             List<String> cp_kda = new ArrayList();
             List<String> cp_win_rate = new ArrayList();
             for (int i = 0; i < onlyMost.size(); i++) {
                 MostDTO mostDTO = onlyMost.get(i);
                 double kills = (double) mostDTO.getKills();
-                Double kda = Math.round(((kills  + mostDTO.getAssists()) / mostDTO.getDeaths()) * 100) / 100.0;
-                cp_kda.add(String.valueOf(kda));
+                String kda = df.format((kills + mostDTO.getAssists()) / mostDTO.getDeaths());
+                cp_kda.add(kda);
                 double wins = (double) mostDTO.getWins();
                 long win_rate = Math.round((wins / mostDTO.getCount()) * 100);
                 cp_win_rate.add(String.valueOf(win_rate));

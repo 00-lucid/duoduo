@@ -23,36 +23,25 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 
-  socket.on("req socket id", () => {
-    socket.emit("res socket id", socket.id);
-  });
-
   socket.on("join room", ({ from, room }) => {
     console.log(`${from} join ${room} room`);
     rooms.push({ name: room, joiner: from });
     socket.join(room);
+    io.to(room).emit("receive message", {
+      from,
+      message: `${from} 님이 채팅에 참가했습니다`,
+    });
     console.log(rooms);
   });
 
   socket.on("leave room", () => {
-    socket.leave("", () => {
-      console.log("leave room");
-    });
+    socket.leave("", () => {});
   });
 
   socket.on("send message", ({ message, from }) => {
     const room = rooms.find((el) => el.joiner === from);
     console.log(`send message ${from} to ${room.name}`);
-    socket.to(room.name).emit("receive message", { from, message });
-  });
-
-  socket.on("send notice", ({ room, category, from }) => {
-    if (category === "duo") {
-      console.log(`send notice the other`);
-      socket
-        .to(room)
-        .emit("receive notice", `${from} 님이 듀오 요청을 보냈습니다.`);
-    }
+    io.to(room.name).emit("receive message", { from, message });
   });
 });
 

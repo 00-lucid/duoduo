@@ -4,10 +4,9 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
+import { socketState } from "../state";
 import { userInfoState } from "../state-persist";
 import UserDetail from "./UserDetail";
-// import { io } from "socket.io-client";
-// const socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 interface Room {
   createdAt: Date;
@@ -24,6 +23,8 @@ interface Room {
 }
 
 function UserList({ room, last, setDummy }: any) {
+  const socket = useRecoilValue(socketState);
+
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
   const createdAt = moment(room.createdAt).fromNow();
@@ -45,7 +46,7 @@ function UserList({ room, last, setDummy }: any) {
   };
 
   const requestDuo = async () => {
-    // socket.emit(`join room`, { from: nickname, room: room.username });
+    socket.emit(`join room`, { from: nickname, room: room.username });
     // // 조인한 룸 상대방에게 노티를 뿌려줘야함
     // // 상대방 socket.id를 알아야 됨
     // // userlist가 socket.id를 가지고 있어야 됨
@@ -176,7 +177,7 @@ function UserList({ room, last, setDummy }: any) {
             <p className="flex text-xs opacity-40 mx-2">{createdAt}</p>
             {room.username === username ? (
               <button
-                className=" bg-red-400 w-8 h-full flex flex-row items-center justify-center"
+                className=" bg-red-400 w-10 h-full flex flex-row items-center justify-center"
                 onClick={deleteUserList}
               >
                 {/* <img className="w-4 h-4" src="icon_arrow.png"></img> */}
@@ -239,8 +240,10 @@ const KdaText = styled.div<{ kda: number }>`
       return "gray";
     } else if (kda > 1) {
       return "gray";
-    } else {
+    } else if (kda > 0) {
       return "#F77171";
+    } else {
+      return "#FACC14";
     }
   }};
 `;

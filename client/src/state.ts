@@ -24,5 +24,10 @@ const filtersState = atom<any[]>({
   default: [[], []],
 });
 
-export { isLoadingState, alarmModalState, filtersState };
+const socketState = atom<any>({
+  key: "socket",
+  default: null,
+});
+
+export { isLoadingState, alarmModalState, filtersState, socketState };
 export type { Alarm };
