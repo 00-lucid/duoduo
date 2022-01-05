@@ -107,7 +107,7 @@ function Rooms() {
     if (data.most && data.most.length > 0) {
       // 유저리스트를 생성하면 룸을 생선한다.
       // 룸 이름은 리스트 생성자 롤 닉네임
-      socket.emit(`join room`, {
+      socket.emit("join room", {
         from: userInfo.nickname,
         room: userInfo.username,
       });
