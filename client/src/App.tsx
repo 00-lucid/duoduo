@@ -16,7 +16,8 @@ import Community from "./pages/Community";
 import PostComment from "./pages/PostComment";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-let socket;
+// 이렇게 해야 두명이 다 볼 수 있음
+let socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
 
 function App() {
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
@@ -24,7 +25,6 @@ function App() {
   const setSocket = useSetRecoilState(socketState);
 
   useEffect(() => {
-    socket = io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`);
     setSocket(socket);
   });
 
