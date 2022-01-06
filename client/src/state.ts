@@ -49,4 +49,10 @@ const socketState = atom<any>({
 });
 
 export { isLoadingState, alarmModalState, filtersState, socketState };
-export type { Alarm };
+export type {
+  Alarm,
+  ServerToClientEvents,
+  ClientToServerEvents,
+  InterServerEvents,
+  SocketData,
+};
