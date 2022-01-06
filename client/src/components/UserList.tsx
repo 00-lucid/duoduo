@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
-import { socketState } from "../state";
 import { userInfoState } from "../state-persist";
 import UserDetail from "./UserDetail";
 
@@ -22,9 +21,7 @@ interface Room {
   username: string;
 }
 
-function UserList({ room, last, setDummy }: any) {
-  const socket = useRecoilValue(socketState);
-
+function UserList({ room, last, setDummy, socket }: any) {
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
   const createdAt = moment(room.createdAt).fromNow();

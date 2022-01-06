@@ -6,15 +6,15 @@ import { getToken } from "../common/auth";
 import { socketState } from "../state";
 import Chat from "./Chat";
 
-function MessageModal({ setIsMessage }: any) {
-  const socket = useRecoilValue(socketState);
+function MessageModal({ setIsMessage, socket }: any) {
+  // const socket = useRecoilValue(socketState);
   const [text, setText] = useState("");
   const userInfo = useRecoilValue(userInfoState);
   const isLogin = getToken().token ? true : false;
   const [chats, setChats] = useState<any[]>([]);
 
   useEffect(() => {
-    socket.on("receive message", ({ from, message }: any) => {
+    socket.on("receiveMessage", ({ from, message }: any) => {
       console.log(`${from}님의 메시지 "${message}"`);
       setChats((old) => [...old, { text: `${from}: ${message}` }]);
     });
