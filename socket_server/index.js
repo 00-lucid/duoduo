@@ -27,13 +27,16 @@ io.on("connection", (socket) => {
     console.log(`${from} join ${room} room`);
     rooms.push({ name: room, joiner: from });
     socket.join(room);
-    io.to(room).emit("receive message", {
+    io.to(room).emit("receiveMessage", {
       from,
       message: `${from} 님이 채팅에 참가했습니다`,
     });
     console.log(rooms);
   });
 
+  // 실행조건:
+  // - 다른 룸에 조인할 때
+  // - 룸에서 나가기 버튼을 눌렀을 때
   socket.on("leave room", ({ from }) => {
     const room = rooms.find((el) => el.joiner === from);
     socket.leave(room.name, () => {
@@ -44,7 +47,19 @@ io.on("connection", (socket) => {
   socket.on("send message", ({ message, from }) => {
     const room = rooms.find((el) => el.joiner === from);
     console.log(`send message ${from} to ${room.name}`);
-    io.to(room.name).emit("receive message", { from, message });
+    io.to(room.name).emit("receiveMessage", { from, message });
+  });
+
+  // 매칭 시작과 매칭 중 매칭 종료 세가지의 이벤트가 필요함
+  // 생성자 / 참여자
+  // 매칭시작 / ...
+  // 매칭중 / 매칭시작
+  // 성공 / 성공
+
+  socket.on("start", ({ from, room }) => {
+    rooms.push({ name: room, joiner: from });
+    socket.join(room);
+    socket.emit("loading", false);
   });
 });
 
