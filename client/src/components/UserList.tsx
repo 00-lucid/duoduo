@@ -43,15 +43,8 @@ function UserList({ room, last, setDummy, socket }: any) {
   };
 
   const requestDuo = async () => {
-    socket.emit(`join room`, { from: nickname, room: room.username });
-    // // 조인한 룸 상대방에게 노티를 뿌려줘야함
-    // // 상대방 socket.id를 알아야 됨
-    // // userlist가 socket.id를 가지고 있어야 됨
-    // socket.emit(`send notice`, {
-    //   room: room.username,
-    //   category: "duo",
-    //   from: username,
-    // });
+    // socket.emit(`join room`, { from: nickname, room: room.username });
+    socket.emit("start", { from: nickname, room: room.username });
   };
 
   const deleteUserList = async () => {

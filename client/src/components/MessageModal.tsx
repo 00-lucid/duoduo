@@ -7,7 +7,8 @@ import { socketState } from "../state";
 import Chat from "./Chat";
 
 function MessageModal({ setIsMessage, socket }: any) {
-  // const socket = useRecoilValue(socketState);
+  const [isMode, setIsMode] = useState<string>("none");
+
   const [text, setText] = useState("");
   const userInfo = useRecoilValue(userInfoState);
   const isLogin = getToken().token ? true : false;
@@ -37,10 +38,12 @@ function MessageModal({ setIsMessage, socket }: any) {
           className="bg-green-400 h-10"
           onClick={() => setIsMessage(false)}
         ></button>
-        <ul className="flex flex-col items-start justify-start p-4 overflow-y-scroll w-full flex-1 justify-center items-center text-left">
+        <ul className="flex flex-col p-4 overflow-y-scroll w-full flex-1 text-left">
           {isLogin ? (
-            !(chats.length > 0) ? (
+            isMode === "none" ? (
               <p className="text-gray-400">매칭된 유저가 없습니다 :D</p>
+            ) : isMode == "loading" ? (
+              <p className="text-gray-400">상대를 기다리는 중입니다...</p>
             ) : (
               chats.map((el: any) => <Chat text={el.text} />)
             )
