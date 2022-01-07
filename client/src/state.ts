@@ -9,6 +9,28 @@ interface Alarm {
   type: number;
 }
 
+interface ServerToClientEvents {
+  noArg: () => void;
+  basicEmit: (a: number, b: string, c: Buffer) => void;
+  withAck: (d: string, callback: (e: number) => void) => void;
+  // evnet
+  receiveMessage: ({ from, message }: any) => void;
+}
+
+interface ClientToServerEvents {
+  // event
+  hello: () => void;
+}
+
+interface InterServerEvents {
+  ping: () => void;
+}
+
+interface SocketData {
+  name: string;
+  age: number;
+}
+
 const isLoadingState = atom({
   key: "isLoading",
   default: false,
@@ -30,4 +52,10 @@ const socketState = atom<any>({
 });
 
 export { isLoadingState, alarmModalState, filtersState, socketState };
-export type { Alarm };
+export type {
+  Alarm,
+  ServerToClientEvents,
+  ClientToServerEvents,
+  InterServerEvents,
+  SocketData,
+};

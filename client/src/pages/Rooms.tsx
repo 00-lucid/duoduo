@@ -10,20 +10,13 @@ import LineModal from "../components/LineModal";
 import TopMenu from "../components/TopMenu";
 import UserList from "../components/UserList";
 import UserListSK from "../components/UserListSK";
-import {
-  Alarm,
-  alarmModalState,
-  filtersState,
-  isLoadingState,
-  socketState,
-} from "../state";
+import { Alarm, alarmModalState, filtersState, isLoadingState } from "../state";
 import { userInfoState, userListCooldownState } from "../state-persist";
 import Loading from "./Loading";
 import styled from "styled-components";
 import moment from "moment";
 
-function Rooms() {
-  const socket = useRecoilValue(socketState);
+function Rooms({ socket }: any) {
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
@@ -260,12 +253,18 @@ function Rooms() {
                         key={room.id}
                         room={room}
                         last={ref}
+                        socket={socket}
                         setDummy={setDummy}
                       />
                     );
                   } else {
                     return (
-                      <UserList key={room.id} room={room} setDummy={setDummy} />
+                      <UserList
+                        key={room.id}
+                        room={room}
+                        setDummy={setDummy}
+                        socket={socket}
+                      />
                     );
                   }
                 })}

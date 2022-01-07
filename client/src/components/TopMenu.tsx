@@ -11,9 +11,9 @@ function TopMenu() {
 
   return (
     <Top>
-      <p className="text-4xl font-black cursor-pointer" onClick={moveHome}>
-        DUODUO
-      </p>
+      <Link to="/">
+        <p className="text-4xl font-black cursor-pointer">DUODUO</p>
+      </Link>
       {/* <p className="cursor-pointer">듀오 찾기</p> */}
       {/* <p className="cursor-pointer">듀오 매칭</p> */}
       {/* <p>알람</p> */}
