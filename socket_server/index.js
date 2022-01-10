@@ -50,6 +50,7 @@ io.on("connection", (socket) => {
     io.to(room.name).emit("receiveMessage", { from, message });
   });
 
+  // TODO: 매칭을 통해 사용자가 연결되어 채팅이 가능하게 해줘야 됨 각각의 단계에서는 사용자가 그 단계를 인지할 수 있는 피드백이 필요함
   // 매칭 시작과 매칭 중 매칭 종료 세가지의 이벤트가 필요함
   // 생성자 / 참여자
   // 매칭시작 / ...
