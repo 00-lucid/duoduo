@@ -47,7 +47,6 @@ function UserList({ room, last, setDummy, socket }: any) {
     socket.emit("start", { from: nickname, room: room.username });
   };
 
-  // TODO: fuctional 방식을 계속해서 고수하는가가 문제
   const deleteUserList = async () => {
     const { data } = await axios.delete(
       `${process.env.REACT_APP_SERVER_URL}/userlist/${room.id}`,
