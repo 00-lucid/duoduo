@@ -19,6 +19,25 @@ function MessageModal({ setIsMessage, socket }: any) {
       console.log(`${from}님의 메시지 "${message}"`);
       setChats((old) => [...old, { text: `${from}: ${message}` }]);
     });
+
+    socket.on("loading", () => {
+      // 매칭중
+      console.log("ld");
+      setIsMode("loading");
+    });
+
+    socket.on("end", () => {
+      setIsMode("end");
+    });
+
+    socket.on("notice", ({ message }: any) => {
+      setChats((old) => [...old, { text: `⚠️ 새로고침시 채팅이 종료됩니다` }]);
+      setChats((old) => [
+        ...old,
+        { text: `${userInfo.nickname} 님이 채팅에 참가했습니다` },
+      ]);
+      setChats((old) => [...old, { text: message }]);
+    });
   }, []);
 
   const submitMessage = () => {
