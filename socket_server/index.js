@@ -27,8 +27,8 @@ io.on("connection", (socket) => {
     console.log(`${from} join ${room} room`);
     rooms.push({ name: room, joiner: from });
     socket.join(room);
-    io.to(room).emit("receiveMessage", {
-      from,
+    io.to(room).emit("end");
+    io.to(room).emit("notice", {
       message: `${from} 님이 채팅에 참가했습니다`,
     });
     console.log(rooms);
@@ -62,6 +62,8 @@ io.on("connection", (socket) => {
     rooms.push({ name: room, joiner: from });
     socket.join(room);
     socket.emit("loading", false);
+    console.log(rooms);
+    console.log("start");
   });
 });
 
