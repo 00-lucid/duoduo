@@ -46,6 +46,10 @@ public class UserListController {
                 for (int i = 0; i < userListEntities.size(); i++) {
                     UserListEntity obj = userListEntities.get(i);
                     String pre = obj.getMost();
+                    String most_kda = obj.getMost_kda();
+                    String most_rate = obj.getMost_rate();
+                    String[] next_kda = most_kda.split(" ");
+                    String[] next_rate = most_rate.split(" ");
                     String[] next = pre.split(" ");
                     HashMap userListResponse = new HashMap(){{
                         put("id", obj.getId());
@@ -55,8 +59,8 @@ public class UserListController {
                         put("tier", obj.getTier());
                         put("recent_rate", obj.getRecent_rate());
                         put("most", next);
-                        put("most_kda", obj.getMost_kda());
-                        put("most_rate", obj.getMost_rate());
+                        put("most_kda", next_kda);
+                        put("most_rate", next_rate);
                         put("total_wins", obj.getTotal_wins());
                         put("total_losses", obj.getTotal_losses());
                         put("total_rate", obj.getTotal_rate());
