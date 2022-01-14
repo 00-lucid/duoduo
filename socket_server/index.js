@@ -26,11 +26,21 @@ io.on("connection", (socket) => {
   socket.on("join room", ({ from, room }) => {
     console.log(`${from} join ${room} room`);
     rooms.push({ name: room, joiner: from });
+    const elRoom = rooms.find((el) => el.name === room);
+
     socket.join(room);
+
     io.to(room).emit("end");
+    io.to(room).emit("notice", {
+      message: `⚠️ 새로고침시 채팅이 종료됩니다`,
+    });
+    io.to(room).emit("notice", {
+      message: `${elRoom.joiner} 님이 채팅에 참가했습니다`,
+    });
     io.to(room).emit("notice", {
       message: `${from} 님이 채팅에 참가했습니다`,
     });
+
     console.log(rooms);
   });
 
@@ -41,6 +51,9 @@ io.on("connection", (socket) => {
     const room = rooms.find((el) => el.joiner === from);
     socket.leave(room.name, () => {
       console.log(`${from} leave ${room.name}`);
+    });
+    io.to(room.name).emit("notice", {
+      message: `${from} 님이 채팅에서 나가셨습니다`,
     });
   });
 
