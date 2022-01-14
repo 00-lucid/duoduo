@@ -151,6 +151,7 @@ function Rooms({ socket }: any) {
         })
         .then((res) => {
           const { data } = res;
+          console.log(data);
           setDummy((old) => [...old, ...data]);
           setPage((old) => old + 1);
         });
