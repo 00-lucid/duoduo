@@ -26,11 +26,21 @@ io.on("connection", (socket) => {
   socket.on("join room", ({ from, room }) => {
     console.log(`${from} join ${room} room`);
     rooms.push({ name: room, joiner: from });
+    const elRoom = rooms.find((el) => el.name === room);
+
     socket.join(room);
-    io.to(room).emit("receiveMessage", {
-      from,
+
+    io.to(room).emit("end");
+    io.to(room).emit("notice", {
+      message: `⚠️ 새로고침시 채팅이 종료됩니다`,
+    });
+    io.to(room).emit("notice", {
+      message: `${elRoom.joiner} 님이 채팅에 참가했습니다`,
+    });
+    io.to(room).emit("notice", {
       message: `${from} 님이 채팅에 참가했습니다`,
     });
+
     console.log(rooms);
   });
 
@@ -42,6 +52,9 @@ io.on("connection", (socket) => {
     socket.leave(room.name, () => {
       console.log(`${from} leave ${room.name}`);
     });
+    io.to(room.name).emit("notice", {
+      message: `${from} 님이 채팅에서 나가셨습니다`,
+    });
   });
 
   socket.on("send message", ({ message, from }) => {
@@ -50,6 +63,7 @@ io.on("connection", (socket) => {
     io.to(room.name).emit("receiveMessage", { from, message });
   });
 
+  // TODO: 생성자가 참여자를 선별할 수 있게 해야됨
   // TODO: 매칭을 통해 사용자가 연결되어 채팅이 가능하게 해줘야 됨 각각의 단계에서는 사용자가 그 단계를 인지할 수 있는 피드백이 필요함
   // TODO: 소켓서버는 이미 인증이된 연결만 가능하므로 잘못된 접근이 발생할 경우 예외처리가 필요함
   // 매칭 시작과 매칭 중 매칭 종료 세가지의 이벤트가 필요함
@@ -62,6 +76,8 @@ io.on("connection", (socket) => {
     rooms.push({ name: room, joiner: from });
     socket.join(room);
     socket.emit("loading", false);
+    console.log(rooms);
+    console.log("start");
   });
 });
 

@@ -43,8 +43,7 @@ function UserList({ room, last, setDummy, socket }: any) {
   };
 
   const requestDuo = async () => {
-    // socket.emit(`join room`, { from: nickname, room: room.username });
-    socket.emit("start", { from: nickname, room: room.username });
+    socket.emit(`join room`, { from: nickname, room: room.username });
   };
 
   const deleteUserList = async () => {

@@ -15,4 +15,16 @@ const userListCooldownState = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export { userInfoState, userListCooldownState };
+const isModeState = atom({
+  key: "isMode",
+  default: "none",
+  effects_UNSTABLE: [persistAtom],
+});
+
+const chatsState = atom({
+  key: "chats",
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export { userInfoState, userListCooldownState, isModeState, chatsState };
