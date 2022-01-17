@@ -26,6 +26,7 @@ import { chatsState, isModeState } from "./state-persist";
 import MessageModalNone from "./components/MessageModalNone";
 
 function App() {
+  // 매칭이 시작되면 자동으로 채팅창이 열려야됨
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
   const [isMode, setIsMode] = useRecoilState<string>(isModeState);
   const [chats, setChats] = useRecoilState<any[]>(chatsState);
