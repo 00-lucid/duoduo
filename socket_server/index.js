@@ -79,6 +79,13 @@ io.on("connection", (socket) => {
     console.log(rooms);
     console.log("start");
   });
+
+  socket.on("req permission", ({ from, fromUser, room }) => {
+    console.log(fromUser, room);
+    io.to(room).emit("res permission", {
+      username: fromUser,
+    });
+  });
 });
 
 app.get("/", (req, res) => {
