@@ -21,7 +21,7 @@ interface Room {
   username: string;
 }
 
-function UserList({ room, last, setDummy, socket }: any) {
+function UserList({ room, last, setDummy, socket, setIsMessage }: any) {
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
   const createdAt = moment(room.createdAt).fromNow();
@@ -43,7 +43,16 @@ function UserList({ room, last, setDummy, socket }: any) {
   };
 
   const requestDuo = async () => {
-    socket.emit(`join room`, { from: nickname, room: room.username });
+    // req permission
+    socket.emit(`req permission`, {
+      from: nickname,
+      fromUser: username,
+      room: room.username,
+    });
+    // res permission
+
+    // socket.emit(`join room`, { from: nickname, room: room.username });
+    setIsMessage(true);
   };
 
   const deleteUserList = async () => {

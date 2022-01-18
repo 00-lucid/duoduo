@@ -28,6 +28,7 @@ import MessageModalNone from "./components/MessageModalNone";
 function App() {
   // 매칭이 시작되면 자동으로 채팅창이 열려야됨
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
+  // none -> loading -> permission -> end
   const [isMode, setIsMode] = useRecoilState<string>(isModeState);
   const [chats, setChats] = useRecoilState<any[]>(chatsState);
 
@@ -40,8 +41,6 @@ function App() {
     setIsMode("none");
     setChats([]);
   }, []);
-
-  useEffect(() => {}, []);
 
   return (
     <div className="App">
@@ -77,7 +76,7 @@ function App() {
         <Route
           path="/rooms"
           exact
-          render={() => <Rooms socket={socket} />}
+          render={() => <Rooms socket={socket} setIsMessage={setIsMessage} />}
         ></Route>
         <Route path="/bells" exact component={Bells}></Route>
         <Route path="/mypage" exact component={MyPage}></Route>

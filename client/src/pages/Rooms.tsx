@@ -16,7 +16,7 @@ import Loading from "./Loading";
 import styled from "styled-components";
 import moment from "moment";
 
-function Rooms({ socket }: any) {
+function Rooms({ socket, setIsMessage }: any) {
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
@@ -116,6 +116,8 @@ function Rooms({ socket }: any) {
       return;
     }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
+    setIsMessage(true);
+
     const dDate = new Date();
     // 쿨타임 설정
     dDate.setSeconds(dDate.getSeconds() + 5);
@@ -256,6 +258,7 @@ function Rooms({ socket }: any) {
                         last={ref}
                         socket={socket}
                         setDummy={setDummy}
+                        setIsMessage={setIsMessage}
                       />
                     );
                   } else {
@@ -265,6 +268,7 @@ function Rooms({ socket }: any) {
                         room={room}
                         setDummy={setDummy}
                         socket={socket}
+                        setIsMessage={setIsMessage}
                       />
                     );
                   }
