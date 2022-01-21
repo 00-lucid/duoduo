@@ -76,7 +76,13 @@ function App() {
         <Route
           path="/rooms"
           exact
-          render={() => <Rooms socket={socket} setIsMessage={setIsMessage} />}
+          render={() => (
+            <Rooms
+              socket={socket}
+              setIsMessage={setIsMessage}
+              setIsMode={setIsMode}
+            />
+          )}
         ></Route>
         <Route path="/bells" exact component={Bells}></Route>
         <Route path="/mypage" exact component={MyPage}></Route>

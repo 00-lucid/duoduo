@@ -21,7 +21,14 @@ interface Room {
   username: string;
 }
 
-function UserList({ room, last, setDummy, socket, setIsMessage }: any) {
+function UserList({
+  room,
+  last,
+  setDummy,
+  socket,
+  setIsMessage,
+  setIsMode,
+}: any) {
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
   const createdAt = moment(room.createdAt).fromNow();
@@ -50,7 +57,7 @@ function UserList({ room, last, setDummy, socket, setIsMessage }: any) {
       room: room.username,
     });
     // res permission
-
+    setIsMode("loading_permission");
     // socket.emit(`join room`, { from: nickname, room: room.username });
     setIsMessage(true);
   };

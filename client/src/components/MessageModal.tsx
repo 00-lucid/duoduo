@@ -43,14 +43,24 @@ function MessageModal({
     socket.on("end", () => {
       setIsMode("end");
     });
+
+    socket.on("res reject permission", () => {
+      alert("요청을 거절했습니다");
+      setIsMode("none");
+    });
   }, []);
 
   useEffect(() => {
-    if (permissions.length > 0) {
+    if (!(permissions.length === 0)) {
       setIsMode("permission");
+    } else if (permissions.length === 0 && isMode === "permission") {
+      setIsMode("loading");
     }
-    socket.on("res permission", ({ username }: any) => {
-      setPermissions((old: any) => [...old, username]);
+    socket.on("res permission", ({ username, fromSocket }: any) => {
+      setPermissions((old: any) => [
+        ...old,
+        { username, socketId: fromSocket },
+      ]);
     });
   }, [permissions]);
 
@@ -90,8 +100,15 @@ function MessageModal({
                 </section>
               ) : isMode === "permission" ? (
                 <>
-                  {permissions.map((el: any) => (
-                    <PermissionList username={el} />
+                  {permissions.map((el: any, idx) => (
+                    <PermissionList
+                      id={idx}
+                      idx={idx}
+                      username={el.username}
+                      socket={socket}
+                      socketId={el.socketId}
+                      setPermissions={setPermissions}
+                    />
                   ))}
                   <section className="flex flex-col justify-center items-center h-full">
                     <div className="loadingio-spinner-ripple-pv7k9jcs3qq">
@@ -102,6 +119,16 @@ function MessageModal({
                     </div>
                   </section>
                 </>
+              ) : isMode === "loading_permission" ? (
+                <section className="flex flex-col justify-center items-center h-full">
+                  <p className="text-gray-400">수락을 기다리는 중...</p>
+                  <div className="loadingio-spinner-ripple-pv7k9jcs3qq">
+                    <div className="ldio-2d8mpw24xf9">
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </div>
+                </section>
               ) : (
                 chats.map((el: any) => <Chat text={el.text} />)
               )

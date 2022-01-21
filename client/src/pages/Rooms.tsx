@@ -16,7 +16,7 @@ import Loading from "./Loading";
 import styled from "styled-components";
 import moment from "moment";
 
-function Rooms({ socket, setIsMessage }: any) {
+function Rooms({ socket, setIsMessage, setIsMode }: any) {
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
@@ -259,6 +259,7 @@ function Rooms({ socket, setIsMessage }: any) {
                         socket={socket}
                         setDummy={setDummy}
                         setIsMessage={setIsMessage}
+                        setIsMode={setIsMode}
                       />
                     );
                   } else {
@@ -269,6 +270,7 @@ function Rooms({ socket, setIsMessage }: any) {
                         setDummy={setDummy}
                         socket={socket}
                         setIsMessage={setIsMessage}
+                        setIsMode={setIsMode}
                       />
                     );
                   }
