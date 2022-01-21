@@ -13,8 +13,11 @@ const io = require("socket.io")(server, {
 // express 서버 cors 설정
 app.use(cors());
 
-// 임시 메모리 룸 관리용
+// { name, creator, joiner }
 const rooms = [];
+
+// { room, list }
+const reqs = [];
 
 io.on("connection", (socket) => {
   console.log("connection info: " + socket.request.connection._peername);
@@ -25,8 +28,9 @@ io.on("connection", (socket) => {
 
   socket.on("join room", ({ from, room }) => {
     console.log(`${from} join ${room} room`);
-    rooms.push({ name: room, joiner: from });
     const elRoom = rooms.find((el) => el.name === room);
+
+    elRoom.joiner = from;
 
     socket.join(room);
 
@@ -73,7 +77,7 @@ io.on("connection", (socket) => {
   // 성공 / 성공
 
   socket.on("start", ({ from, room }) => {
-    rooms.push({ name: room, joiner: from });
+    rooms.push({ name: room, creator: from, joiner: null });
     socket.join(room);
     socket.emit("loading", false);
     console.log(rooms);
@@ -81,10 +85,40 @@ io.on("connection", (socket) => {
   });
 
   socket.on("req permission", ({ from, fromUser, room }) => {
-    console.log(fromUser, room);
-    io.to(room).emit("res permission", {
-      username: fromUser,
-    });
+    const elReq = reqs.find((el) => el.room === room);
+
+    if (!elReq) {
+      reqs.push({ room: room, list: [fromUser] });
+      io.to(room).emit("res permission", {
+        username: fromUser,
+        fromSocket: socket.id,
+      });
+    } else {
+      if (!elReq.list.includes(fromUser)) {
+        elReq.list.push(fromUser);
+        io.to(room).emit("res permission", {
+          username: fromUser,
+          fromSocket: socket.id,
+        });
+      } else {
+        return;
+      }
+    }
+
+    console.log(reqs);
+  });
+
+  socket.on("req reject permission", ({ username, socketId }) => {
+    // TODO: list에서 해당하는 요청자를 삭제해줘야됨
+    const { list } = reqs.find((el) => el.room === room);
+
+    const idx = list.indexof({ username, socketId });
+
+    liet = list.slice(0, idx).concat(idx + 1);
+
+    console.log(reqs);
+
+    io.to(socketId).emit("res reject permission", {});
   });
 });
 
