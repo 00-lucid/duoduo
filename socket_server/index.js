@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
       message: `⚠️ 새로고침시 채팅이 종료됩니다`,
     });
     io.to(room).emit("notice", {
-      message: `${elRoom.joiner} 님이 채팅에 참가했습니다`,
+      message: `${elRoom.creator} 님이 채팅에 참가했습니다`,
     });
     io.to(room).emit("notice", {
       message: `${from} 님이 채팅에 참가했습니다`,
@@ -62,7 +62,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send message", ({ message, from }) => {
-    const room = rooms.find((el) => el.joiner === from);
+    console.log("FROM : " + from);
+    const room = rooms.find((el) => {
+      return el.joiner === from || el.creator === from;
+    });
     console.log(`send message ${from} to ${room.name}`);
     io.to(room.name).emit("receiveMessage", { from, message });
   });
@@ -110,15 +113,27 @@ io.on("connection", (socket) => {
 
   socket.on("req reject permission", ({ username, socketId }) => {
     // TODO: list에서 해당하는 요청자를 삭제해줘야됨
-    const { list } = reqs.find((el) => el.room === room);
+    // let { list } = reqs.find((el) => el.room === username);
 
-    const idx = list.indexof({ username, socketId });
+    // const idx = list.indexof({ username, socketId });
 
-    liet = list.slice(0, idx).concat(idx + 1);
+    // list = list.slice(0, idx).concat(idx + 1);
 
     console.log(reqs);
 
     io.to(socketId).emit("res reject permission", {});
+  });
+
+  socket.on("req accept permisson", ({ username, socketId }) => {
+    // let idx = reqs.indexOf((el) => el.room === username);
+
+    // reqs = reqs.slice(0, idx).concat(idx + 1);
+
+    console.log(username);
+
+    console.log(reqs);
+
+    io.to(socketId).emit("res accept permisson", { username });
   });
 });
 
