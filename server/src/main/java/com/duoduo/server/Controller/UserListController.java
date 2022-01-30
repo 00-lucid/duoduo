@@ -272,4 +272,17 @@ public class UserListController {
             return null;
         }
     }
+
+    @DeleteMapping(value = "userlist/username/{username}")
+    public JSONObject removeUserListOfName(@PathVariable("username") String username, @RequestHeader("Authorization") String jwt) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            userListRepository.deleteAllByName(username);
+            jsonObject.put("state", "success");
+            return jsonObject;
+        } catch (Exception e) {
+            jsonObject.put("state", "fail");
+            return jsonObject;
+        }
+    }
 }

@@ -2,10 +2,12 @@ package com.duoduo.server.Repository;
 
 import com.duoduo.server.Entity.UserListEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -21,4 +23,9 @@ public interface UserListRepository extends JpaRepository<UserListEntity, Long> 
 
     @Query(value = "SELECT * FROM userlist ul WHERE ul.user = :userId AND ul.id = :id", nativeQuery = true)
     UserListEntity findByIdAndId(@Param("userId") Long userId, @Param("id") Long id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM userlist ul WHERE ul.username = :username", nativeQuery = true)
+    void deleteAllByName(@Param("username") String username);
 }
