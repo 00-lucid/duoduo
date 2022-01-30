@@ -16,7 +16,7 @@ import Loading from "./Loading";
 import styled from "styled-components";
 import moment from "moment";
 
-function Rooms({ socket }: any) {
+function Rooms({ socket, setIsMessage, setIsMode }: any) {
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
@@ -37,7 +37,7 @@ function Rooms({ socket }: any) {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
     );
-
+    console.log(data);
     return data[0].queueType === "RANKED_TFT_PAIRS" ? data[1] : data[0];
   };
 
@@ -64,6 +64,7 @@ function Rooms({ socket }: any) {
     const summoner = await getSummoner();
     setTextSK("소환사님의 리그정보를 가져옵니다...");
     const league = await getLeague(summoner.id);
+
     // typescript는 string type으로 객체 값 접근을 허용하지 않는다. 때문에 허용하는 객체라고 타입을 지정하거나 string-literal 타입을 이용해서 접근한다.
     const rankToNumber: { [index: string]: number } = {
       I: 1,
@@ -116,6 +117,8 @@ function Rooms({ socket }: any) {
       return;
     }
     setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
+    setIsMessage(true);
+
     const dDate = new Date();
     // 쿨타임 설정
     dDate.setSeconds(dDate.getSeconds() + 5);
@@ -256,6 +259,8 @@ function Rooms({ socket }: any) {
                         last={ref}
                         socket={socket}
                         setDummy={setDummy}
+                        setIsMessage={setIsMessage}
+                        setIsMode={setIsMode}
                       />
                     );
                   } else {
@@ -265,6 +270,8 @@ function Rooms({ socket }: any) {
                         room={room}
                         setDummy={setDummy}
                         socket={socket}
+                        setIsMessage={setIsMessage}
+                        setIsMode={setIsMode}
                       />
                     );
                   }

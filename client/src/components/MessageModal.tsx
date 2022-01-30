@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userInfoState } from "../state-persist";
 import { getToken } from "../common/auth";
-import { socketState } from "../state";
+import { permissionListState, socketState } from "../state";
 import Chat from "./Chat";
 import "../App.css";
+import PermissionList from "./PermissionList";
 
 function MessageModal({
   setIsMessage,
@@ -15,6 +16,8 @@ function MessageModal({
   chats,
   setChats,
 }: any) {
+  const [permissions, setPermissions] =
+    useRecoilState<any[]>(permissionListState);
   const [text, setText] = useState("");
   const userInfo = useRecoilValue(userInfoState);
   const isLogin = getToken().token ? true : false;
@@ -40,7 +43,29 @@ function MessageModal({
     socket.on("end", () => {
       setIsMode("end");
     });
+
+    socket.on("res reject permission", () => {
+      setIsMode("none");
+    });
+
+    socket.on("res accept permisson", ({ username }: any) => {
+      socket.emit("join room", { from: userInfo.nickname, room: username });
+    });
   }, []);
+
+  useEffect(() => {
+    if (!(permissions.length === 0)) {
+      setIsMode("permission");
+    } else if (permissions.length === 0 && isMode === "permission") {
+      setIsMode("loading");
+    }
+    socket.on("res permission", ({ username, fromSocket }: any) => {
+      setPermissions((old: any) => [
+        ...old,
+        { username, socketId: fromSocket },
+      ]);
+    });
+  }, [permissions]);
 
   const submitMessage = () => {
     if (text) {
@@ -68,7 +93,39 @@ function MessageModal({
                 </section>
               ) : isMode === "loading" ? (
                 <section className="flex flex-col justify-center items-center h-full">
-                  <p className="text-gray-400">유저를 기다리는 중</p>
+                  <p className="text-gray-400">듀오를 찾는 중...</p>
+                  <div className="loadingio-spinner-ripple-pv7k9jcs3qq">
+                    <div className="ldio-2d8mpw24xf9">
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </div>
+                </section>
+              ) : isMode === "permission" ? (
+                <>
+                  {permissions.map((el: any, idx) => (
+                    <PermissionList
+                      id={idx}
+                      idx={idx}
+                      username={el.username}
+                      socket={socket}
+                      socketId={el.socketId}
+                      setPermissions={setPermissions}
+                      setIsMode={setIsMode}
+                    />
+                  ))}
+                  <section className="flex flex-col justify-center items-center h-full">
+                    <div className="loadingio-spinner-ripple-pv7k9jcs3qq">
+                      <div className="ldio-2d8mpw24xf9">
+                        <div></div>
+                        <div></div>
+                      </div>
+                    </div>
+                  </section>
+                </>
+              ) : isMode === "loading_permission" ? (
+                <section className="flex flex-col justify-center items-center h-full">
+                  <p className="text-gray-400">수락을 기다리는 중...</p>
                   <div className="loadingio-spinner-ripple-pv7k9jcs3qq">
                     <div className="ldio-2d8mpw24xf9">
                       <div></div>

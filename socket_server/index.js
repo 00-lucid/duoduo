@@ -13,8 +13,13 @@ const io = require("socket.io")(server, {
 // express 서버 cors 설정
 app.use(cors());
 
-// 임시 메모리 룸 관리용
-const rooms = [];
+// { name, creator, joiner }
+let rooms = [];
+
+// { room, list }
+let reqs = [];
+
+//TODO: 참여자일 때 생성하는 것 또는 생성자일 때 참여하는 것의 경우에 처리가 필요함
 
 io.on("connection", (socket) => {
   console.log("connection info: " + socket.request.connection._peername);
@@ -25,8 +30,9 @@ io.on("connection", (socket) => {
 
   socket.on("join room", ({ from, room }) => {
     console.log(`${from} join ${room} room`);
-    rooms.push({ name: room, joiner: from });
     const elRoom = rooms.find((el) => el.name === room);
+
+    elRoom.joiner = from;
 
     socket.join(room);
 
@@ -35,7 +41,7 @@ io.on("connection", (socket) => {
       message: `⚠️ 새로고침시 채팅이 종료됩니다`,
     });
     io.to(room).emit("notice", {
-      message: `${elRoom.joiner} 님이 채팅에 참가했습니다`,
+      message: `${elRoom.creator} 님이 채팅에 참가했습니다`,
     });
     io.to(room).emit("notice", {
       message: `${from} 님이 채팅에 참가했습니다`,
@@ -48,36 +54,89 @@ io.on("connection", (socket) => {
   // - 다른 룸에 조인할 때
   // - 룸에서 나가기 버튼을 눌렀을 때
   socket.on("leave room", ({ from }) => {
-    const room = rooms.find((el) => el.joiner === from);
-    socket.leave(room.name, () => {
-      console.log(`${from} leave ${room.name}`);
-    });
-    io.to(room.name).emit("notice", {
-      message: `${from} 님이 채팅에서 나가셨습니다`,
-    });
+    for (let i = 0; i < rooms.length; i++) {
+      const room = rooms[i];
+      let isIn = room.creator === from || room.joiner === from;
+
+      if (isIn) {
+        if (room.creator === from) {
+          room.creator = null;
+        } else {
+          room.joiner = null;
+        }
+        if (!(room.creator && room.joiner)) {
+          rooms = rooms.slice(0, i).concat(rooms.slice(i + 1));
+        }
+        socket.leave(room.name);
+        io.to(room.name).emit("notice", {
+          message: `${from} 님이 채팅에서 나가셨습니다`,
+        });
+        break;
+      }
+    }
   });
 
   socket.on("send message", ({ message, from }) => {
-    const room = rooms.find((el) => el.joiner === from);
+    const room = rooms.find((el) => {
+      return el.joiner === from || el.creator === from;
+    });
     console.log(`send message ${from} to ${room.name}`);
     io.to(room.name).emit("receiveMessage", { from, message });
   });
 
-  // TODO: 생성자가 참여자를 선별할 수 있게 해야됨
-  // TODO: 매칭을 통해 사용자가 연결되어 채팅이 가능하게 해줘야 됨 각각의 단계에서는 사용자가 그 단계를 인지할 수 있는 피드백이 필요함
-  // TODO: 소켓서버는 이미 인증이된 연결만 가능하므로 잘못된 접근이 발생할 경우 예외처리가 필요함
-  // 매칭 시작과 매칭 중 매칭 종료 세가지의 이벤트가 필요함
-  // 생성자 / 참여자
-  // 매칭시작 / ...
-  // 매칭중 / 매칭시작
-  // 성공 / 성공
-
   socket.on("start", ({ from, room }) => {
-    rooms.push({ name: room, joiner: from });
+    rooms.push({ name: room, creator: from, joiner: null });
     socket.join(room);
     socket.emit("loading", false);
-    console.log(rooms);
-    console.log("start");
+  });
+
+  socket.on("req permission", ({ from, fromUser, room }) => {
+    const elReq = reqs.find((el) => el.room === room);
+
+    if (!elReq) {
+      reqs.push({ room: room, list: [fromUser] });
+      io.to(room).emit("res permission", {
+        username: fromUser,
+        fromSocket: socket.id,
+      });
+    } else {
+      if (!elReq.list.includes(fromUser)) {
+        elReq.list.push(fromUser);
+        io.to(room).emit("res permission", {
+          username: fromUser,
+          fromSocket: socket.id,
+        });
+      } else {
+        return;
+      }
+    }
+
+    console.log(reqs);
+  });
+
+  socket.on("req reject permission", ({ username, socketId }) => {
+    for (let i = 0; i < reqs.length; i++) {
+      let list = reqs[i].list;
+      let idx = list.indexOf(username);
+      if (idx !== -1) {
+        reqs[i].list = list.slice(0, idx).concat(list.slice(idx + 1));
+        break;
+      }
+    }
+
+    io.to(socketId).emit("res reject permission", {});
+  });
+
+  socket.on("req accept permisson", ({ username, socketId }) => {
+    for (let i = 0; i < reqs.length; i++) {
+      const isIn = reqs[i].room === username;
+      if (isIn) {
+        reqs = reqs.slice(0, i).concat(reqs.slice(i + 1));
+        break;
+      }
+    }
+
+    io.to(socketId).emit("res accept permisson", { username });
   });
 });
 
