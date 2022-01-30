@@ -56,7 +56,6 @@ function UserList({
       fromUser: username,
       room: room.username,
     });
-    // res permission
     setIsMode("loading_permission");
     // socket.emit(`join room`, { from: nickname, room: room.username });
     setIsMessage(true);

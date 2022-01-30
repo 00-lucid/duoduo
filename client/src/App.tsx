@@ -37,6 +37,7 @@ function App() {
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
 
   useEffect(() => {
+    console.log("set socket");
     setSocket(io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`));
     setIsMode("none");
     setChats([]);

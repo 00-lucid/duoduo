@@ -1,5 +1,9 @@
+import axios from "axios";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { getToken } from "../common/auth";
 import { socketState } from "../state";
+import { userInfoState } from "../state-persist";
 
 function PermissionList({
   username,
@@ -7,6 +11,7 @@ function PermissionList({
   socketId,
   setPermissions,
   idx,
+  setIsMode,
 }: any) {
   // 수락할 경우
   // rooms에 해당하는 userlist 삭제
@@ -14,7 +19,29 @@ function PermissionList({
   // permissionlist 모두 삭제
   // 다른 요청자들 거절
 
-  const accept = () => {};
+  const userInfo = useRecoilValue(userInfoState);
+
+  const accept = async () => {
+    // TODO: 1/30
+    const { data } = await axios.delete(
+      `${process.env.REACT_APP_SERVER_URL}/userlist/username/${userInfo.username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken().token}`,
+        },
+      }
+    );
+    if (data.state === "success") {
+      socket.emit("req accept permisson", {
+        username: userInfo.username,
+        socketId,
+      });
+      setPermissions([]);
+      // setDummy((old: any) => {
+      //   return old.filter((el: any) => el.id !== room.id);
+      // });
+    }
+  };
 
   // 거절할 경우
   // permissionlist 삭제

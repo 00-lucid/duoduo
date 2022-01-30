@@ -45,8 +45,11 @@ function MessageModal({
     });
 
     socket.on("res reject permission", () => {
-      alert("요청을 거절했습니다");
       setIsMode("none");
+    });
+
+    socket.on("res accept permisson", ({ username }: any) => {
+      socket.emit("join room", { from: userInfo.nickname, room: username });
     });
   }, []);
 
@@ -108,6 +111,7 @@ function MessageModal({
                       socket={socket}
                       socketId={el.socketId}
                       setPermissions={setPermissions}
+                      setIsMode={setIsMode}
                     />
                   ))}
                   <section className="flex flex-col justify-center items-center h-full">
