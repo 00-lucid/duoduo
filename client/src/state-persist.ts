@@ -27,4 +27,16 @@ const chatsState = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export { userInfoState, userListCooldownState, isModeState, chatsState };
+const permissionListState = atom<any[]>({
+  key: "permissionList",
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export {
+  userInfoState,
+  userListCooldownState,
+  isModeState,
+  chatsState,
+  permissionListState,
+};

@@ -458,7 +458,7 @@ function Root() {
             </p>
             <ul className="flex flex-col w-full">
               {dummyRankList?.map((el: any, idx: number) => {
-                return <RankList idx={idx} rank={el} />;
+                return <RankList key={idx} idx={idx} rank={el} />;
               })}
             </ul>
             <p

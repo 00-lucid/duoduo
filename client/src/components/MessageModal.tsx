@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { userInfoState } from "../state-persist";
+import { permissionListState, userInfoState } from "../state-persist";
 import { getToken } from "../common/auth";
-import { permissionListState, socketState } from "../state";
+import { socketState } from "../state";
 import Chat from "./Chat";
 import "../App.css";
 import PermissionList from "./PermissionList";
@@ -61,6 +61,8 @@ function MessageModal({
     socket.on("res accept permisson", ({ username }: any) => {
       socket.emit("join room", { from: userInfo.nickname, room: username });
     });
+
+    socket.emit("check", { nickname: userInfo.nickname });
   }, []);
 
   useEffect(() => {
@@ -116,6 +118,7 @@ function MessageModal({
                   <>
                     {permissions.map((el: any, idx) => (
                       <PermissionList
+                        ket={idx}
                         id={idx}
                         idx={idx}
                         username={el.username}

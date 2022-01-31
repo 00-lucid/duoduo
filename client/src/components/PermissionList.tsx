@@ -22,7 +22,6 @@ function PermissionList({
   const userInfo = useRecoilValue(userInfoState);
 
   const accept = async () => {
-    // TODO: 1/30
     const { data } = await axios.delete(
       `${process.env.REACT_APP_SERVER_URL}/userlist/username/${userInfo.username}`,
       {
