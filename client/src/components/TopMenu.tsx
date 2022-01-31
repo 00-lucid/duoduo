@@ -62,7 +62,7 @@ const Top = styled.header`
   align-items: center;
   border-bottom: 0.1rem solid #333d4b;
   justify-content: space-between;
-  z-index: 40;
+  z-index: 30;
 
   @media screen and (max-width: 767px) {
     padding-left: 2%;

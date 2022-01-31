@@ -2,6 +2,8 @@ const app = require("express")();
 const http = require("http");
 const server = http.createServer(app);
 const cors = require("cors");
+const res = require("express/lib/response");
+const { default: axios } = require("axios");
 const io = require("socket.io")(server, {
   //socket 서버 cors 설정
   cors: {
@@ -9,6 +11,7 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
+require("dotenv").config();
 
 // express 서버 cors 설정
 app.use(cors());
@@ -19,10 +22,19 @@ let rooms = [];
 // { room, list }
 let reqs = [];
 
-//TODO: 참여자일 때 생성하는 것 또는 생성자일 때 참여하는 것의 경우에 처리가 필요함
-
 io.on("connection", (socket) => {
   console.log("connection info: " + socket.request.connection._peername);
+
+  // 소캣이 룸이 존재하는지 체크하고 룸에 넣어준다
+  socket.on("check", ({ nickname }) => {
+    for (let i = 0; i < rooms.length; i++) {
+      const room = rooms[i];
+      if (room.creator === nickname || room.joiner === nickname) {
+        socket.join(room.name);
+        break;
+      }
+    }
+  });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
@@ -142,6 +154,79 @@ io.on("connection", (socket) => {
 
 app.get("/", (req, res) => {
   res.send("duoduo live message server");
+});
+
+// TODO: 새로고침해도 상태가 유지될 수 있게 해야됨
+app.get("/live", async (req, res) => {
+  let mode = "none";
+
+  // 요청을 준 클라이언트가 room 또는 queue에 있다면 전달해줘야 함
+  console.log(rooms);
+  console.log(reqs);
+
+  const jwt = req.headers.authorization;
+
+  if (!jwt) {
+    res.json({ state: "err" });
+  }
+  // {email, nickname, username}
+  const { data } = await axios.get(`${process.env.SERVER_URL}/mypage`, {
+    headers: {
+      authorization: jwt,
+    },
+  });
+
+  let findRoom = null;
+
+  let findReq = null;
+
+  let findPermissions = null;
+
+  for (let i = 0; i < rooms.length; i++) {
+    const room = rooms[i];
+    if (room.creator === data.nickname || room.joiner === data.nickname) {
+      findRoom = room;
+      break;
+    }
+  }
+
+  for (let i = 0; i < reqs.length; i++) {
+    const req = reqs[i];
+    if (findRoom) {
+      req.room === data.username ? (findPermissions = true) : null;
+    }
+    if (req.list.includes(data.username)) {
+      findReq = req;
+      break;
+    }
+  }
+
+  console.log("findRoom: ", findRoom);
+  console.log("findReq: ", findReq);
+
+  if (findRoom) {
+    // creator or joiner
+    if (findRoom.creator === data.nickname) {
+      if (findRoom.joiner) {
+        mode = "end";
+      } else {
+        if (findPermissions) {
+          mode = "permission";
+        } else {
+          mode = "waitCreator";
+        }
+      }
+    } else {
+      mode = "end";
+    }
+  } else if (findReq) {
+    // wait joiner
+    mode = "waitJoiner";
+  }
+
+  res.json({
+    mode,
+  });
 });
 
 server.listen(5000, function () {

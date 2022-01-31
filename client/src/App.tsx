@@ -22,26 +22,65 @@ import Community from "./pages/Community";
 import PostComment from "./pages/PostComment";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { chatsState, isModeState } from "./state-persist";
+import { chatsState, isModeState, permissionListState } from "./state-persist";
 import MessageModalNone from "./components/MessageModalNone";
+import axios from "axios";
+import { getToken } from "./common/auth";
 
 function App() {
+  const [permissions, setPermissions] =
+    useRecoilState<any[]>(permissionListState);
   // 매칭이 시작되면 자동으로 채팅창이 열려야됨
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
   // none -> loading -> permission -> end
   const [isMode, setIsMode] = useRecoilState<string>(isModeState);
   const [chats, setChats] = useRecoilState<any[]>(chatsState);
-
   const [isMessage, setIsMessage] = useState(false);
   const [socket, setSocket] =
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
 
   useEffect(() => {
-    console.log("set socket");
     setSocket(io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`));
-    setIsMode("none");
     setChats([]);
+    axios
+      .get(`${process.env.REACT_APP_SOCKET_SERVER_URL}/live`, {
+        headers: {
+          authorization: `Bearer ${getToken().token}`,
+        },
+      })
+      .then(({ data }) => {
+        console.log(data);
+        const { mode } = data;
+
+        // TODO: 남은거 permission
+        switch (mode) {
+          case "none":
+            setIsMode("none");
+            break;
+          case "waitCreator":
+            setIsMode("loading");
+            break;
+          case "end":
+            setIsMode("end");
+            break;
+          case "waitJoiner":
+            setIsMode("loading_permission");
+            break;
+          case "permission":
+            setIsMode("permission");
+            break;
+        }
+        // if (permissions) {
+        //   setIsMode("permission");
+        // }
+      });
   }, []);
+
+  useEffect(() => {
+    // if (isMode !== "none") {
+    //   setIsMessage(true);
+    // }
+  }, [isMode]);
 
   return (
     <div className="App">
@@ -49,7 +88,7 @@ function App() {
         <AlarmModal key={idx} alarm={alarm} idx={idx} />
       ))}
 
-      {isMessage ? (
+      {socket && (
         <MessageModal
           chats={chats}
           setChats={setChats}
@@ -57,19 +96,10 @@ function App() {
           socket={socket}
           isMode={isMode}
           setIsMode={setIsMode}
+          isMessage={isMessage}
         />
-      ) : (
-        socket && (
-          <MessageModalNone
-            chats={chats}
-            setChats={setChats}
-            setIsMessage={setIsMessage}
-            socket={socket}
-            isMode={isMode}
-            setIsMode={setIsMode}
-          />
-        )
       )}
+
       <Switch>
         <Route path="/" exact component={Root}></Route>
         <Route path="/signin" exact component={Signin}></Route>
@@ -81,6 +111,7 @@ function App() {
             <Rooms
               socket={socket}
               setIsMessage={setIsMessage}
+              isMode={isMode}
               setIsMode={setIsMode}
             />
           )}

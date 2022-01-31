@@ -16,7 +16,7 @@ import Loading from "./Loading";
 import styled from "styled-components";
 import moment from "moment";
 
-function Rooms({ socket, setIsMessage, setIsMode }: any) {
+function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
@@ -38,6 +38,7 @@ function Rooms({ socket, setIsMessage, setIsMode }: any) {
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
     );
     console.log(data);
+    // TODO: 배치일 때 생기는 문제 해결 필요
     return data[0].queueType === "RANKED_TFT_PAIRS" ? data[1] : data[0];
   };
 
@@ -49,84 +50,92 @@ function Rooms({ socket, setIsMessage, setIsMode }: any) {
   };
 
   const addUserList = async (position: string) => {
-    if (position === "none") {
+    if (isMode === "none") {
+      if (position === "none") {
+        setAlarmModal((old) => [
+          { text: "최소 1개의 포지션이 필요합니다", type: 0 },
+          ...old,
+        ]);
+        setTimeRemoveAlarm(setAlarmModal);
+        return;
+      }
+      setIsSK(true);
+      setTextSK("일꾼 포로들을 소집하는 중입니다...");
+      setIsModal(false);
+      setTextSK("소환사님의 유저정보를 가져옵니다...");
+      const summoner = await getSummoner();
+      setTextSK("소환사님의 리그정보를 가져옵니다...");
+      const league = await getLeague(summoner.id);
+
+      // typescript는 string type으로 객체 값 접근을 허용하지 않는다. 때문에 허용하는 객체라고 타입을 지정하거나 string-literal 타입을 이용해서 접근한다.
+      const rankToNumber: { [index: string]: number } = {
+        I: 1,
+        II: 2,
+        III: 3,
+        IV: 4,
+        V: 5,
+      };
+
+      const result = {
+        puuid: summoner.puuid,
+        username: userInfo.username,
+        nickname: userInfo.nickname,
+        position: position,
+        tier: league.tier[0] + rankToNumber[league.rank],
+        total_wins: league.wins,
+        total_losses: league.losses,
+        total_rate: logicWinRate(league.wins, league.losses),
+        profileIconId: summoner.profileIconId,
+        summonerLevel: summoner.summonerLevel,
+        text,
+      };
+
+      setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/userlist`,
+        result,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken().token}`,
+          },
+        }
+      );
+      if (data.most && data.most.length > 0) {
+        // 유저리스트를 생성하면 룸을 생선한다.
+        // 룸 이름은 리스트 생성자 롤 닉네임
+        socket.emit("start", {
+          from: userInfo.nickname,
+          room: userInfo.username,
+        });
+        // 다른 유저가 해당 유저리스트 듀오 요청시, 룸에 참가 및 노티를 보낸다.
+        // 노티를 받은 유저가 수락하면 채팅을 할 수 있게 된다.
+        setDummy((old) => {
+          return [data, ...old];
+        });
+      } else {
+        // jwt expired
+        destroyToken();
+        movePage("signin");
+        return;
+      }
+      setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
+      setIsMessage(true);
+
+      const dDate = new Date();
+      // 쿨타임 설정
+      dDate.setSeconds(dDate.getSeconds() + 5);
+      const dDateStr = dDate.toString();
+      setUserListCooldown(dDateStr);
+      setIsSK(false);
+      setAlarmModal((old) => [{ text: "리스트 생성 완료", type: 1 }, ...old]);
+      setTimeRemoveAlarm(setAlarmModal);
+    } else {
       setAlarmModal((old) => [
-        { text: "최소 1개의 포지션이 필요합니다", type: 0 },
+        { text: "이미 진행중인 큐가 있습니다", type: 0 },
         ...old,
       ]);
       setTimeRemoveAlarm(setAlarmModal);
-      return;
     }
-    setIsSK(true);
-    setTextSK("일꾼 포로들을 소집하는 중입니다...");
-    setIsModal(false);
-    setTextSK("소환사님의 유저정보를 가져옵니다...");
-    const summoner = await getSummoner();
-    setTextSK("소환사님의 리그정보를 가져옵니다...");
-    const league = await getLeague(summoner.id);
-
-    // typescript는 string type으로 객체 값 접근을 허용하지 않는다. 때문에 허용하는 객체라고 타입을 지정하거나 string-literal 타입을 이용해서 접근한다.
-    const rankToNumber: { [index: string]: number } = {
-      I: 1,
-      II: 2,
-      III: 3,
-      IV: 4,
-      V: 5,
-    };
-
-    const result = {
-      puuid: summoner.puuid,
-      username: userInfo.username,
-      nickname: userInfo.nickname,
-      position: position,
-      tier: league.tier[0] + rankToNumber[league.rank],
-      total_wins: league.wins,
-      total_losses: league.losses,
-      total_rate: logicWinRate(league.wins, league.losses),
-      profileIconId: summoner.profileIconId,
-      summonerLevel: summoner.summonerLevel,
-      text,
-    };
-
-    setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
-    const { data } = await axios.post(
-      `${process.env.REACT_APP_SERVER_URL}/userlist`,
-      result,
-      {
-        headers: {
-          Authorization: `Bearer ${getToken().token}`,
-        },
-      }
-    );
-    if (data.most && data.most.length > 0) {
-      // 유저리스트를 생성하면 룸을 생선한다.
-      // 룸 이름은 리스트 생성자 롤 닉네임
-      socket.emit("start", {
-        from: userInfo.nickname,
-        room: userInfo.username,
-      });
-      // 다른 유저가 해당 유저리스트 듀오 요청시, 룸에 참가 및 노티를 보낸다.
-      // 노티를 받은 유저가 수락하면 채팅을 할 수 있게 된다.
-      setDummy((old) => {
-        return [data, ...old];
-      });
-    } else {
-      // jwt expired
-      destroyToken();
-      movePage("signin");
-      return;
-    }
-    setTextSK("일꾼 포로들이 집으로 돌아갑니다...");
-    setIsMessage(true);
-
-    const dDate = new Date();
-    // 쿨타임 설정
-    dDate.setSeconds(dDate.getSeconds() + 5);
-    const dDateStr = dDate.toString();
-    setUserListCooldown(dDateStr);
-    setIsSK(false);
-    setAlarmModal((old) => [{ text: "리스트 생성 완료", type: 1 }, ...old]);
-    setTimeRemoveAlarm(setAlarmModal);
   };
 
   const logicWinRate = (win: number, defeat: number) => {

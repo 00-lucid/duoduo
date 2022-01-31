@@ -51,18 +51,7 @@ const socketState = atom<any>({
   default: null,
 });
 
-const permissionListState = atom<any[]>({
-  key: "permissionList",
-  default: [],
-});
-
-export {
-  isLoadingState,
-  alarmModalState,
-  filtersState,
-  socketState,
-  permissionListState,
-};
+export { isLoadingState, alarmModalState, filtersState, socketState };
 export type {
   Alarm,
   ServerToClientEvents,

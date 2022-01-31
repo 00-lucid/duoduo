@@ -37,10 +37,12 @@ public class MyPageController {
             // TODO: delete password
             UserEntity user = jsonWebTokenService.verifyId(id);
             jsonObject.put("email", user.getEmail());
+            jsonObject.put("nickname", user.getNickname());
 
             Optional<UserNameEntity> optionalUserName = userNameRepository.findById(id);
             UserNameEntity userNameEntity = optionalUserName.get();
             jsonObject.put("username", userNameEntity.getUsername());
+
             return jsonObject;
         } catch (Exception e) {
             System.out.println(e);
