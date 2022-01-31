@@ -19,8 +19,6 @@ let rooms = [];
 // { room, list }
 let reqs = [];
 
-//TODO: 참여자일 때 생성하는 것 또는 생성자일 때 참여하는 것의 경우에 처리가 필요함
-
 io.on("connection", (socket) => {
   console.log("connection info: " + socket.request.connection._peername);
 
