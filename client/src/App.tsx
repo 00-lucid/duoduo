@@ -31,7 +31,6 @@ function App() {
   // none -> loading -> permission -> end
   const [isMode, setIsMode] = useRecoilState<string>(isModeState);
   const [chats, setChats] = useRecoilState<any[]>(chatsState);
-
   const [isMessage, setIsMessage] = useState(false);
   const [socket, setSocket] =
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
@@ -49,7 +48,7 @@ function App() {
         <AlarmModal key={idx} alarm={alarm} idx={idx} />
       ))}
 
-      {isMessage ? (
+      {socket && (
         <MessageModal
           chats={chats}
           setChats={setChats}
@@ -57,19 +56,10 @@ function App() {
           socket={socket}
           isMode={isMode}
           setIsMode={setIsMode}
+          isMessage={isMessage}
         />
-      ) : (
-        socket && (
-          <MessageModalNone
-            chats={chats}
-            setChats={setChats}
-            setIsMessage={setIsMessage}
-            socket={socket}
-            isMode={isMode}
-            setIsMode={setIsMode}
-          />
-        )
       )}
+
       <Switch>
         <Route path="/" exact component={Root}></Route>
         <Route path="/signin" exact component={Signin}></Route>
@@ -81,6 +71,7 @@ function App() {
             <Rooms
               socket={socket}
               setIsMessage={setIsMessage}
+              isMode={isMode}
               setIsMode={setIsMode}
             />
           )}
