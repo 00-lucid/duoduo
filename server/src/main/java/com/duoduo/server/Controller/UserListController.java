@@ -170,13 +170,13 @@ public class UserListController {
                 }
             }
 
-            System.out.println(championMost);
+            System.out.println(championMost.toString());
 
-
-            // 산출한 모스트를 count 값에 따라서 정렬해줘야 됨
-            // TODO:
             Collections.sort(championMost, Collections.reverseOrder());
             List<MostDTO> onlyMost = championMost.subList(0, 3);
+
+            System.out.println(onlyMost.toString());
+
             // cp_kda "2.75 3.45 15.00"
             // cp_win_rate "45 75 62"
             DecimalFormat df = new DecimalFormat("#.##");
