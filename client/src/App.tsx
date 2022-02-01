@@ -25,7 +25,8 @@ import { io, Socket } from "socket.io-client";
 import { chatsState, isModeState, permissionListState } from "./state-persist";
 import MessageModalNone from "./components/MessageModalNone";
 import axios from "axios";
-import { getToken } from "./common/auth";
+import { destroyToken, getToken } from "./common/auth";
+import moveHome from "./common/api/page";
 
 function App() {
   const [permissions, setPermissions] =
@@ -42,38 +43,34 @@ function App() {
   useEffect(() => {
     setSocket(io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`));
     setChats([]);
-    axios
-      .get(`${process.env.REACT_APP_SOCKET_SERVER_URL}/live`, {
-        headers: {
-          authorization: `Bearer ${getToken().token}`,
-        },
-      })
-      .then(({ data }) => {
-        console.log(data);
-        const { mode } = data;
-
-        // TODO: 남은거 permission
-        switch (mode) {
-          case "none":
-            setIsMode("none");
-            break;
-          case "waitCreator":
-            setIsMode("loading");
-            break;
-          case "end":
-            setIsMode("end");
-            break;
-          case "waitJoiner":
-            setIsMode("loading_permission");
-            break;
-          case "permission":
-            setIsMode("permission");
-            break;
-        }
-        // if (permissions) {
-        //   setIsMode("permission");
-        // }
-      });
+    if (getToken().token) {
+      axios
+        .get(`${process.env.REACT_APP_SOCKET_SERVER_URL}/live`, {
+          headers: {
+            authorization: `Bearer ${getToken().token}`,
+          },
+        })
+        .then(({ data }) => {
+          const { mode } = data;
+          switch (mode) {
+            case "none":
+              setIsMode("none");
+              break;
+            case "waitCreator":
+              setIsMode("loading");
+              break;
+            case "end":
+              setIsMode("end");
+              break;
+            case "waitJoiner":
+              setIsMode("loading_permission");
+              break;
+            case "permission":
+              setIsMode("permission");
+              break;
+          }
+        });
+    }
   }, []);
 
   useEffect(() => {

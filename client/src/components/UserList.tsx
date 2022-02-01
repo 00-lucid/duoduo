@@ -123,37 +123,67 @@ function UserList({
               {room.most.length > 0 && (
                 <>
                   <section className="mr-1 flex-1 overflow-hidden flex flex-col justify-center items-center">
-                    <RateText rate={room.most_rate[0]}>
-                      {room.most_rate[0]}%
-                    </RateText>
-                    <img
-                      className="rounded-full w-10 h-10"
-                      src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room?.most[0]}.png`}
-                      alt="img"
-                    ></img>
-                    <KdaText kda={room.most_kda[0]}>{room.most_kda[0]}</KdaText>
+                    {room.most[0] !== "NONE" ? (
+                      <>
+                        <RateText rate={room.most_rate[0]}>
+                          {room.most_rate[0]}%
+                        </RateText>
+                        <img
+                          className="rounded-full w-10 h-10"
+                          src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room?.most[0]}.png`}
+                          alt="img"
+                        ></img>
+                        <KdaText kda={room.most_kda[0]}>
+                          {room.most_kda[0]}
+                        </KdaText>
+                      </>
+                    ) : (
+                      <>
+                        <div className="rounded-full w-10 h-10 bg-gray-200"></div>
+                      </>
+                    )}
                   </section>
                   <section className="mr-1 flex-1 overflow-hidden">
-                    <RateText rate={room.most_rate[1]}>
-                      {room.most_rate[1]}%
-                    </RateText>
-                    <img
-                      className="rounded-full w-10 h-10"
-                      src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room?.most[1]}.png`}
-                      alt="img"
-                    ></img>
-                    <KdaText kda={room.most_kda[1]}>{room.most_kda[1]}</KdaText>
+                    {room.most[1] !== "NONE" ? (
+                      <>
+                        <RateText rate={room.most_rate[1]}>
+                          {room.most_rate[1]}%
+                        </RateText>
+                        <img
+                          className="rounded-full w-10 h-10"
+                          src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room?.most[1]}.png`}
+                          alt="img"
+                        ></img>
+                        <KdaText kda={room.most_kda[1]}>
+                          {room.most_kda[1]}
+                        </KdaText>
+                      </>
+                    ) : (
+                      <>
+                        <div className="rounded-full w-10 h-10 bg-gray-200"></div>
+                      </>
+                    )}
                   </section>
                   <section className="mr-1 flex-1 overflow-hidden">
-                    <RateText rate={room.most_rate[2]}>
-                      {room.most_rate[2]}%
-                    </RateText>
-                    <img
-                      className="rounded-full w-10 h-10"
-                      src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room?.most[2]}.png`}
-                      alt="img"
-                    ></img>
-                    <KdaText kda={room.most_kda[2]}>{room.most_kda[2]}</KdaText>
+                    {room.most[2] !== "NONE" ? (
+                      <>
+                        <RateText rate={room.most_rate[2]}>
+                          {room.most_rate[2]}%
+                        </RateText>
+                        <img
+                          className="rounded-full w-10 h-10"
+                          src={`http://ddragon.leagueoflegends.com/cdn/11.23.1/img/champion/${room?.most[2]}.png`}
+                          alt="img"
+                        ></img>
+                        <KdaText kda={room.most_kda[2]}>
+                          {room.most_kda[2]}
+                        </KdaText>
+                      </>
+                    ) : (
+                      <>
+                        <div className="rounded-full w-10 h-10 bg-gray-200"></div>
+                      </>
+                    )}
                   </section>
                 </>
               )}

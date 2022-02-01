@@ -113,6 +113,12 @@ function MessageModal({
                         <div></div>
                       </div>
                     </div>
+                    <p
+                      className="text-gray-400 text-sm cursor-pointer"
+                      onClick={leaveRoom}
+                    >
+                      취소
+                    </p>
                   </section>
                 ) : isMode === "permission" ? (
                   <>
