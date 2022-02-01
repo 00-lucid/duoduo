@@ -173,7 +173,24 @@ public class UserListController {
             System.out.println(championMost.toString());
 
             Collections.sort(championMost, Collections.reverseOrder());
-            List<MostDTO> onlyMost = championMost.subList(0, 3);
+
+            List<MostDTO> onlyMost = new ArrayList<>();
+
+            if (championMost.size() >= 3) {
+                onlyMost = championMost.subList(0, 3);
+            } else {
+                int i = 0;
+                while (i < championMost.size()) {
+                    onlyMost.add(championMost.get(i));
+                    i++;
+                }
+                while (i < 3) {
+                    MostDTO none = new MostDTO("NONE", 0, 0,  0L, 0L, 0L);
+                    onlyMost.add(none);
+                    i++;
+                }
+            }
+
 
             System.out.println(onlyMost.toString());
 
