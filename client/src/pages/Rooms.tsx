@@ -124,7 +124,7 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
 
       const dDate = new Date();
       // 쿨타임 설정
-      dDate.setSeconds(dDate.getSeconds() + 5);
+      dDate.setSeconds(dDate.getMinutes() + 5);
       const dDateStr = dDate.toString();
       setUserListCooldown(dDateStr);
       setIsSK(false);

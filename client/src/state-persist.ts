@@ -33,10 +33,17 @@ const permissionListState = atom<any[]>({
   effects_UNSTABLE: [persistAtom],
 });
 
+const isReceiveMessageState = atom<boolean>({
+  key: "isReceiveMessage",
+  default: false,
+  effects_UNSTABLE: [persistAtom],
+});
+
 export {
   userInfoState,
   userListCooldownState,
   isModeState,
   chatsState,
   permissionListState,
+  isReceiveMessageState,
 };

@@ -2,7 +2,6 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
-import { socketState } from "../state";
 import { userInfoState } from "../state-persist";
 
 function PermissionList({
