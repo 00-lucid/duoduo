@@ -43,7 +43,7 @@ const alarmModalState = atom<Alarm[]>({
 
 const filtersState = atom<any[]>({
   key: "filters",
-  default: [[], []],
+  default: ["", ""],
 });
 
 export { isLoadingState, alarmModalState, filtersState };

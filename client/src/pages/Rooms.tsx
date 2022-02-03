@@ -31,8 +31,66 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
   const [text, setText] = useState("");
   const signIn = getToken().token ? true : false;
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
+  // config: [G, mid]
   const filters = useRecoilValue<any[]>(filtersState);
-  // 가공이 필요없는 lol 플레이어 데이터는 여기서 가져옴
+
+  const fixUserListFilter = (data: any) => {
+    for (let i = 0; i < data.length; i++) {
+      let obj = data[i];
+      const newMost = obj.most.split(" ");
+      const newMostRate = obj.most_rate.split(" ");
+      const newMostKda = obj.most_kda.split(" ");
+      obj.most = newMost;
+      obj.most_rate = newMostRate;
+      obj.most_kda = newMostKda;
+    }
+    setDummy(data);
+    setIsLoading(false);
+  };
+
+  const getUserListFilter = async () => {
+    setIsLoading(true);
+
+    const position = filters[0];
+    const tier = filters[1];
+    let result = null;
+
+    if (tier && position) {
+      console.log("all");
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}`
+      );
+      console.log(data);
+      result = data.result;
+    } else if (!tier && position) {
+      console.log("position");
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}`
+      );
+      console.log(data);
+      result = data.result;
+    } else if (!position && tier) {
+      console.log("tier");
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}`
+      );
+
+      console.log(data);
+      result = data.result;
+    } else {
+      axios.get(`${process.env.REACT_APP_SERVER_URL}/userlist`).then((res) => {
+        const { data } = res;
+        if (data) {
+          setDummy(data);
+          setIsLoading(false);
+        }
+      });
+      return;
+    }
+
+    fixUserListFilter(result);
+  };
+
   const getLeague = async (encryptedSummonerId: string) => {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
@@ -146,15 +204,12 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIsLoading(true);
-    axios.get(`${process.env.REACT_APP_SERVER_URL}/userlist`).then((res) => {
-      const { data } = res;
-      if (data) {
-        setDummy(data);
-        setIsLoading(false);
-      }
-    });
   }, []);
+
+  useEffect(() => {
+    console.log(filters);
+    getUserListFilter();
+  }, [filters]);
 
   useEffect(() => {
     if (inView && page * 10 === dummys.length) {
@@ -238,54 +293,39 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
             {isLoading && (
               <>
                 <UserListSK />
-                <UserListSK />
-                <UserListSK />
-                <UserListSK />
-                <UserListSK />
-                <UserListSK />
-                <UserListSK />
               </>
             )}
             {!isLoading &&
-              dummys
-                .filter((el: any) =>
-                  filters[0].length > 0
-                    ? filters[0].includes(el.position)
-                    : true
-                )
-                .filter((el: any) =>
-                  filters[1].length > 0 ? filters[1].includes(el.tier[0]) : true
-                )
-                .map((room: any, idx) => {
-                  if (
-                    idx === dummys.length - 1 &&
-                    idx > 8 &&
-                    dummys.length % 10 === 0
-                  ) {
-                    return (
-                      <UserList
-                        key={room.id}
-                        room={room}
-                        last={ref}
-                        socket={socket}
-                        setDummy={setDummy}
-                        setIsMessage={setIsMessage}
-                        setIsMode={setIsMode}
-                      />
-                    );
-                  } else {
-                    return (
-                      <UserList
-                        key={room.id}
-                        room={room}
-                        setDummy={setDummy}
-                        socket={socket}
-                        setIsMessage={setIsMessage}
-                        setIsMode={setIsMode}
-                      />
-                    );
-                  }
-                })}
+              dummys.map((room: any, idx) => {
+                if (
+                  idx === dummys.length - 1 &&
+                  idx > 8 &&
+                  dummys.length % 10 === 0
+                ) {
+                  return (
+                    <UserList
+                      key={room.id}
+                      room={room}
+                      last={ref}
+                      socket={socket}
+                      setDummy={setDummy}
+                      setIsMessage={setIsMessage}
+                      setIsMode={setIsMode}
+                    />
+                  );
+                } else {
+                  return (
+                    <UserList
+                      key={room.id}
+                      room={room}
+                      setDummy={setDummy}
+                      socket={socket}
+                      setIsMessage={setIsMessage}
+                      setIsMode={setIsMode}
+                    />
+                  );
+                }
+              })}
           </ul>
         </main>
         {inView && <img></img>}

@@ -146,7 +146,7 @@ function MessageModal({
                       </div>
                     </div>
                     <p
-                      className="text-gray-400 text-sm cursor-pointer"
+                      className="text-gray-400 text-sm cursor-pointer hover:bg-gray-100"
                       onClick={leaveRoom}
                     >
                       취소
@@ -243,6 +243,12 @@ function MessageModal({
                           <div></div>
                         </div>
                       </div>
+                      <p
+                        className="text-gray-400 text-sm cursor-pointer"
+                        onClick={leaveRoom}
+                      >
+                        취소
+                      </p>
                     </section>
                   ) : isMode === "permission" ? (
                     <>

@@ -1,22 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-function FilterBtn({ condition, setFilters }: any) {
-  const [isClick, setIsClick] = useState<boolean>(false);
+function FilterBtn({ condition, setFilters, filters, type }: any) {
   return (
     <>
-      {!isClick ? (
+      {(filters && type === "position" && filters[0] !== condition) ||
+      (filters && type === "tier" && filters[1] !== condition) ? (
+        // off
         <button
           className="w-12 h-6 border border-gray-200 bg-gray-50 rounded-md flex justify-center items-center mr-1 shadow-md hover:bg-white"
           style={{ color: "#333d4b" }}
           onClick={() => {
-            setIsClick((old) => !old);
             setFilters((old: any[]) => {
               if (condition.length > 1 && condition[0] !== "G") {
-                const result = [...old[0], condition.toLowerCase()];
+                // position
+                const result = condition;
                 return [result, old[1]];
               } else {
-                const result = [...old[1], condition];
+                const result = condition;
                 return [old[0], result];
               }
             });
@@ -25,24 +26,16 @@ function FilterBtn({ condition, setFilters }: any) {
           <p className="text-sm opacity-40">{condition}</p>
         </button>
       ) : (
+        // on
         <button
           className="w-12 h-6 border border-gray-200 bg-green-400 rounded-md flex text-white justify-center items-center mr-1 shadow-md"
           onClick={() => {
-            setIsClick((old) => !old);
             setFilters((old: any[]) => {
               if (condition.length > 1 && condition[0] !== "G") {
-                const idxTarget = old[0].indexOf(condition.toLowerCase());
-                const result = [
-                  ...old[0].slice(0, idxTarget),
-                  ...old[0].slice(idxTarget + 1),
-                ];
+                const result = "";
                 return [result, old[1]];
               } else {
-                const idxTarget = old[1].indexOf(condition);
-                const result = [
-                  ...old[1].slice(0, idxTarget),
-                  ...old[1].slice(idxTarget + 1),
-                ];
+                const result = "";
                 return [old[0], result];
               }
             });
