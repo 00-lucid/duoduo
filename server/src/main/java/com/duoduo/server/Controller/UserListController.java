@@ -304,19 +304,22 @@ public class UserListController {
     }
 
     @GetMapping(value = "userlist/filter")
-    public JSONObject getUserListFilter(@RequestParam(value = "tier", required = false) String tier, @RequestParam(value = "position", required = false) String position) {
+    public JSONObject getUserListFilter(@RequestParam(value = "tier", required = false) String tier, @RequestParam(value = "position", required = false) String position, @RequestParam(value = "page", required = false) Integer page) {
         // TODO 필터링 인피니티 스크롤 구현 해야됨. . .
         // TODO 비밀번호 지워야됨
         JSONObject jsonObject = new JSONObject();
         try {
+            if (page == null) {
+                page = 0;
+            }
             if (tier != null && position != null) {
                 System.out.println("all");
-                jsonObject.put("result", userListRepository.findByFilter(tier, position, 0));
+                jsonObject.put("result", userListRepository.findByFilter(tier, position, page));
             } else if (position != null && tier == null) {
-                jsonObject.put("result", userListRepository.findByPosition(position, 0));
+                jsonObject.put("result", userListRepository.findByPosition(position, page));
             } else if (tier != null && position == null) {
                 System.out.println("tier");
-                jsonObject.put("result", userListRepository.findByTier(tier, 0));
+                jsonObject.put("result", userListRepository.findByTier(tier, page));
             } else {
                 jsonObject.put("result", "none");
             }
