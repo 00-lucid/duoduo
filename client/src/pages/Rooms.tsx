@@ -48,7 +48,7 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
     setIsLoading(false);
   };
 
-  const getUserListFilter = async () => {
+  const getUserListFilter = async (page = 0) => {
     setIsLoading(true);
 
     const position = filters[0];
@@ -58,21 +58,21 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
     if (tier && position) {
       console.log("all");
       const { data } = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}`
+        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
       );
       console.log(data);
       result = data.result;
     } else if (!tier && position) {
       console.log("position");
       const { data } = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}`
+        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
       );
       console.log(data);
       result = data.result;
     } else if (!position && tier) {
       console.log("tier");
       const { data } = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}`
+        `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
       );
 
       console.log(data);
@@ -213,16 +213,25 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
 
   useEffect(() => {
     if (inView && page * 10 === dummys.length) {
-      axios
-        .get(`${process.env.REACT_APP_SERVER_URL}/userlist/infinite`, {
-          headers: { Page: page },
-        })
-        .then((res) => {
+      if (!filters[0] && !filters[1]) {
+        axios
+          .get(`${process.env.REACT_APP_SERVER_URL}/userlist/infinite`, {
+            headers: { Page: page },
+          })
+          .then((res) => {
+            const { data } = res;
+            console.log(data);
+            setDummy((old) => [...old, ...data]);
+            setPage((old) => old + 1);
+          });
+      } else {
+        // filters infinite
+        getUserListFilter(page).then((res: any) => {
           const { data } = res;
-          console.log(data);
           setDummy((old) => [...old, ...data]);
           setPage((old) => old + 1);
         });
+      }
     }
   }, [inView]);
 

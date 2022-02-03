@@ -24,6 +24,7 @@ import { io, Socket } from "socket.io-client";
 import { chatsState, isModeState } from "./state-persist";
 import axios from "axios";
 import { destroyToken, getToken } from "./common/auth";
+import Callback from "./pages/Callback";
 
 function App() {
   // 매칭이 시작되면 자동으로 채팅창이 열려야됨
@@ -114,6 +115,7 @@ function App() {
         <Route path="/mypage" exact component={MyPage}></Route>
         <Route path="/community/all" exact component={Community}></Route>
         <Route path="/community/free" exact component={PostComment}></Route>
+        <Route path="/account" exact component={Callback} />
       </Switch>
     </div>
   );

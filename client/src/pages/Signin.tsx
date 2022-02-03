@@ -15,7 +15,8 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
   const setUserInfo = useSetRecoilState(userInfoState);
-
+  const client_id = process.env.REACT_APP_API_KEY_KAKAO;
+  const redirect_url = process.env.REACT_APP_OAUTH_REDIRECT_URL;
   const postSignin = async () => {
     setIsLoading(true);
     const res = await axios.post(
@@ -75,7 +76,12 @@ function Signin() {
               {isLoading ? <Loading></Loading> : "OK"}
             </SocialLoginBtn>
             <p className="font-semibold">or</p>
-            <SocialLoginBtn className="bg-yellow-300">Kakao</SocialLoginBtn>
+            <SocialLoginBtn
+              className="bg-yellow-300"
+              href={`https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_url}&response_type=code`}
+            >
+              Kakao
+            </SocialLoginBtn>
             <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
               Google
             </SocialLoginBtn>
@@ -116,7 +122,8 @@ const Input = styled.input({
   marginBottom: "0.7rem",
 });
 
-const SocialLoginBtn = styled.button({
+const SocialLoginBtn = styled.a({
+  display: "flex",
   color: "white",
   height: "55.17px",
   cursor: "pointer",
@@ -124,6 +131,8 @@ const SocialLoginBtn = styled.button({
   fontSize: "1.1rem",
   fontWeight: 600,
   borderRadius: "0.375rem",
+  justifyContent: "center",
+  alignItems: "center",
 });
 
 export default Signin;

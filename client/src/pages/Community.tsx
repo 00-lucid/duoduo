@@ -207,9 +207,6 @@ function Community() {
           {isLoading && (
             <>
               <PostSK />
-              <PostSK />
-              <PostSK />
-              <PostSK />
             </>
           )}
           {!isLoading &&
