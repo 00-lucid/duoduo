@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpHeaders;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @CrossOrigin(value = "*")
@@ -68,7 +69,7 @@ public class UserListController {
                         put("summonerLevel", obj.getSummonerLevel());
                         put("createdAt",obj.getCreatedAt());
                         put("text", obj.getText());
-
+                        put("mic", obj.isMic());
                     }};
                     result.add(userListResponse);
                 }
@@ -113,7 +114,7 @@ public class UserListController {
                 put("summonerLevel", obj.getSummonerLevel());
                 put("createdAt",obj.getCreatedAt());
                 put("text", obj.getText());
-
+                put("mic", obj.isMic());
             }};
             result.add(userListResponse);
         }
@@ -241,10 +242,12 @@ public class UserListController {
                     .profileIconId(userListDTO.getProfileIconId())
                     .summonerLevel(userListDTO.getSummonerLevel())
                     .text(userListDTO.getText())
+                    .mic(userListDTO.isMic())
                     .build();
 
             userListRepository.save(userList);
             int finalWin = win;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
             HashMap userListResponse = new HashMap(){{
                 put("id", userList.getId());
                 put("username", userListDTO.getUsername());
@@ -260,8 +263,9 @@ public class UserListController {
                 put("total_rate", userListDTO.getTotal_rate());
                 put("profileIconId", userListDTO.getProfileIconId());
                 put("summonerLevel", userListDTO.getSummonerLevel());
-                put("createdAt", userList.getCreatedAt());
+                put("createdAt", simpleDateFormat.format(new Date()));
                 put("text", userListDTO.getText());
+                put("mic", userListDTO.isMic());
             }};
 
             return userListResponse;
@@ -270,18 +274,22 @@ public class UserListController {
                 put("error", "token expired");
             }};
         } catch (Exception e) {
-            System.out.println(e);
+            StackTraceElement[] ste = e.getStackTrace();
+            String className = ste[0].getClassName();
+            String methodName = ste[0].getMethodName();
+            int lineNumber = ste[0].getLineNumber();
+            String fileName = ste[0].getFileName();
+            System.out.println("Exception : " + e.getMessage());
+            System.out.println(className + "." + methodName + " " + fileName + " " + lineNumber + "line");
             return null;
         }
     }
 
     @DeleteMapping(value = "userlist/{id}")
     public UserListEntity removeUserList(@PathVariable("id") Long listId, @RequestHeader("Authorization") String jwt) {
-        // TODO: validation
         try {
             Long userId = jsonWebTokenService.decodeId(jwt);
             UserListEntity target = userListRepository.findByIdAndId(userId, listId);
-            System.out.println(target.toString());
             userListRepository.delete(target);
             return target;
         } catch (Exception e) {
@@ -294,7 +302,9 @@ public class UserListController {
     public JSONObject removeUserListOfName(@PathVariable("username") String username, @RequestHeader("Authorization") String jwt) {
         JSONObject jsonObject = new JSONObject();
         try {
-            userListRepository.deleteAllByName(username);
+            // TODO: 유저네임에 의존하는 것이 아니라 클라이언트 id 또는 닉네임 등으로 검사해야됨
+            Long userId = jsonWebTokenService.decodeId(jwt);
+            userListRepository.deleteAllByNameAndId(username, userId);
             jsonObject.put("state", "success");
             return jsonObject;
         } catch (Exception e) {
@@ -314,12 +324,12 @@ public class UserListController {
             }
             if (tier != null && position != null) {
                 System.out.println("all");
-                jsonObject.put("result", userListRepository.findByFilter(tier, position, page));
+                jsonObject.put("result", userListRepository.findByFilter(tier, position, page * 10));
             } else if (position != null && tier == null) {
-                jsonObject.put("result", userListRepository.findByPosition(position, page));
+                jsonObject.put("result", userListRepository.findByPosition(position, page * 10));
             } else if (tier != null && position == null) {
                 System.out.println("tier");
-                jsonObject.put("result", userListRepository.findByTier(tier, page));
+                jsonObject.put("result", userListRepository.findByTier(tier, page * 10));
             } else {
                 jsonObject.put("result", "none");
             }

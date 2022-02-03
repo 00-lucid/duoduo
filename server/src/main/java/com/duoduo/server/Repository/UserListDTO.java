@@ -14,6 +14,6 @@ public class UserListDTO {
     private Integer total_rate;
     private Integer profileIconId;
     private Integer summonerLevel;
-    private String createdAt;
     private String text;
+    private boolean mic;
 }
