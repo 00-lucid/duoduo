@@ -17,6 +17,7 @@ import styled from "styled-components";
 import moment from "moment";
 
 function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
+  const [isMic, setIsMic] = useState(false);
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const [dummys, setDummy] = useState<Array<object>>([]);
@@ -146,6 +147,7 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
         profileIconId: summoner.profileIconId,
         summonerLevel: summoner.summonerLevel,
         text,
+        mic: isMic,
       };
 
       setTextSK("일꾼 포로들이 리스트를 생성하고 있습니다...");
@@ -182,12 +184,13 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
 
       const dDate = new Date();
       // 쿨타임 설정
-      dDate.setSeconds(dDate.getMinutes() + 5);
+      dDate.setMinutes(dDate.getMinutes() + 5);
       const dDateStr = dDate.toString();
       setUserListCooldown(dDateStr);
       setIsSK(false);
       setAlarmModal((old) => [{ text: "리스트 생성 완료", type: 1 }, ...old]);
       setTimeRemoveAlarm(setAlarmModal);
+      setIsMic(false);
     } else {
       setAlarmModal((old) => [
         { text: "이미 진행중인 큐가 있습니다", type: 0 },
@@ -226,11 +229,63 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
           });
       } else {
         // filters infinite
-        getUserListFilter(page).then((res: any) => {
-          const { data } = res;
-          setDummy((old) => [...old, ...data]);
-          setPage((old) => old + 1);
-        });
+
+        const position = filters[0];
+        const tier = filters[1];
+
+        if (tier && position) {
+          axios
+            .get(
+              `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
+            )
+            .then(({ data }) => {
+              for (let i = 0; i < data.result.length; i++) {
+                let obj = data.result[i];
+                const newMost = obj.most.split(" ");
+                const newMostRate = obj.most_rate.split(" ");
+                const newMostKda = obj.most_kda.split(" ");
+                obj.most = newMost;
+                obj.most_rate = newMostRate;
+                obj.most_kda = newMostKda;
+              }
+              setDummy((old) => [...old, ...data.result]);
+            });
+        } else if (!tier && position) {
+          axios
+            .get(
+              `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
+            )
+            .then(({ data }) => {
+              for (let i = 0; i < data.result.length; i++) {
+                let obj = data.result[i];
+                const newMost = obj.most.split(" ");
+                const newMostRate = obj.most_rate.split(" ");
+                const newMostKda = obj.most_kda.split(" ");
+                obj.most = newMost;
+                obj.most_rate = newMostRate;
+                obj.most_kda = newMostKda;
+              }
+              setDummy((old) => [...old, ...data.result]);
+            });
+        } else if (!position && tier) {
+          axios
+            .get(
+              `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
+            )
+            .then(({ data }) => {
+              for (let i = 0; i < data.result.length; i++) {
+                let obj = data.result[i];
+                const newMost = obj.most.split(" ");
+                const newMostRate = obj.most_rate.split(" ");
+                const newMostKda = obj.most_kda.split(" ");
+                obj.most = newMost;
+                obj.most_rate = newMostRate;
+                obj.most_kda = newMostKda;
+              }
+              setDummy((old) => [...old, ...data.result]);
+            });
+        }
+        setPage((old) => old + 1);
       }
     }
   }, [inView]);
@@ -242,111 +297,118 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
           setIsModal={setIsModal}
           addUserList={addUserList}
           setText={setText}
+          isMic={isMic}
+          setIsMic={setIsMic}
         />
       )}
-      <TopMenu />
-      <Con>
-        <section className="flex flex-row justify-center mb-2">
-          <div className="w-full h-24 flex flex-col justify-end">
-            <FilterBtnBox />
-          </div>
-        </section>
-        <header className="flex flex-row justify-center items-center">
-          <section
-            className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden w-full cursor-pointer hover:bg-white shadow-md bg-gray-50"
-            onClick={() => {
-              if (!signIn) {
-                movePage("signin");
-                return;
-              }
-              const nowMoment = moment(new Date());
-              const coolMoment = moment(userListCooldown);
-              if (coolMoment > nowMoment) {
-                setAlarmModal((old) => {
-                  const result = [
-                    { text: "5분 후 다시 시도하세요", type: 0 },
-                    ...old,
-                  ];
-                  return result;
-                });
-                setTimeRemoveAlarm(setAlarmModal);
-              } else {
-                setIsModal(true);
-              }
-            }}
-          >
-            <section className="flex flex-row items-center">
-              {/* <div className="border-2 border-green-300 w-16 h-16 rounded-full m-2"></div> */}
-              {/* <div className="m-2 w-40 text-left"> */}
-              {/* <p>{""}</p> */}
-              {/* <p className="opacity-50">{""}</p> */}
-              {/* </div> */}
-              {/* <div className="border w-14 h-14 ml-2"></div> */}
-              {/* <p className="w-4 m-3 font-black">{"S2"}</p> */}
-              {/* <div className="w-40 bg-gray-200 h-6 m-2"></div> */}
-              {/* <div className="m-2 border w-40 h-16"></div> */}
-              {/* <div className="w-4 m-3">{""}</div> */}
-              {/* <div className="w-4 m-3">{""}</div> */}
-              {/* <div className="w-4 m-3">{""}</div> */}
-              {/* <div className="w-4 m-3"></div> */}
-              {/* <button className="absolute bg-green-400 ml-10 w-10 h-full flex flex-row items-center justify-center index-y-0 right-0"> */}
-              {/* <img className="w-6 h-6" src="icon_arrow.png"></img> */}
-              {/* </button> */}
-            </section>
+      <section className="flex flex-col items-center">
+        <TopMenu />
+        <Con>
+          <section className="flex flex-row justify-center mb-2">
+            <div className="w-full h-24 flex flex-col justify-end">
+              <FilterBtnBox />
+            </div>
           </section>
-          <p className="absolute font-bold mb-3 text-xl cursor-pointer">+</p>
-        </header>
-        {isSK && <UserListSK textSK={textSK}></UserListSK>}
-        <main className="flex items-center justify-center">
-          <ul className="w-full">
-            {isLoading && (
-              <>
-                <UserListSK />
-              </>
-            )}
-            {!isLoading &&
-              dummys.map((room: any, idx) => {
-                if (
-                  idx === dummys.length - 1 &&
-                  idx > 8 &&
-                  dummys.length % 10 === 0
-                ) {
-                  return (
-                    <UserList
-                      key={room.id}
-                      room={room}
-                      last={ref}
-                      socket={socket}
-                      setDummy={setDummy}
-                      setIsMessage={setIsMessage}
-                      setIsMode={setIsMode}
-                    />
-                  );
-                } else {
-                  return (
-                    <UserList
-                      key={room.id}
-                      room={room}
-                      setDummy={setDummy}
-                      socket={socket}
-                      setIsMessage={setIsMessage}
-                      setIsMode={setIsMode}
-                    />
-                  );
+          <header className="flex flex-row justify-center items-center">
+            <section
+              className="relative flex flex-row border h-20 justify-start rounded-lg mb-2 overflow-hidden w-full cursor-pointer hover:bg-white shadow-md bg-gray-50"
+              onClick={() => {
+                if (!signIn) {
+                  movePage("signin");
+                  return;
                 }
-              })}
-          </ul>
-        </main>
-        {inView && <img></img>}
-      </Con>
+                const nowMoment = moment(new Date());
+                const coolMoment = moment(userListCooldown);
+                if (coolMoment > nowMoment) {
+                  setAlarmModal((old) => {
+                    const result = [
+                      { text: "5분 후 다시 시도하세요", type: 0 },
+                      ...old,
+                    ];
+                    return result;
+                  });
+                  setTimeRemoveAlarm(setAlarmModal);
+                } else {
+                  setIsModal(true);
+                }
+              }}
+            >
+              <section className="flex flex-row items-center">
+                {/* <div className="border-2 border-green-300 w-16 h-16 rounded-full m-2"></div> */}
+                {/* <div className="m-2 w-40 text-left"> */}
+                {/* <p>{""}</p> */}
+                {/* <p className="opacity-50">{""}</p> */}
+                {/* </div> */}
+                {/* <div className="border w-14 h-14 ml-2"></div> */}
+                {/* <p className="w-4 m-3 font-black">{"S2"}</p> */}
+                {/* <div className="w-40 bg-gray-200 h-6 m-2"></div> */}
+                {/* <div className="m-2 border w-40 h-16"></div> */}
+                {/* <div className="w-4 m-3">{""}</div> */}
+                {/* <div className="w-4 m-3">{""}</div> */}
+                {/* <div className="w-4 m-3">{""}</div> */}
+                {/* <div className="w-4 m-3"></div> */}
+                {/* <button className="absolute bg-green-400 ml-10 w-10 h-full flex flex-row items-center justify-center index-y-0 right-0"> */}
+                {/* <img className="w-6 h-6" src="icon_arrow.png"></img> */}
+                {/* </button> */}
+              </section>
+            </section>
+            <p className="absolute font-bold mb-3 text-xl cursor-pointer">+</p>
+          </header>
+          {isSK && <UserListSK textSK={textSK}></UserListSK>}
+          <main className="flex items-center justify-center">
+            <ul className="w-full">
+              {isLoading && (
+                <>
+                  <UserListSK />
+                </>
+              )}
+              {!isLoading &&
+                dummys.map((room: any, idx) => {
+                  if (
+                    idx === dummys.length - 1 &&
+                    idx > 8 &&
+                    dummys.length % 10 === 0
+                  ) {
+                    return (
+                      <UserList
+                        key={room.id}
+                        room={room}
+                        last={ref}
+                        socket={socket}
+                        setDummy={setDummy}
+                        setIsMessage={setIsMessage}
+                        setIsMode={setIsMode}
+                      />
+                    );
+                  } else {
+                    return (
+                      <UserList
+                        key={room.id}
+                        room={room}
+                        setDummy={setDummy}
+                        socket={socket}
+                        setIsMessage={setIsMessage}
+                        setIsMode={setIsMode}
+                      />
+                    );
+                  }
+                })}
+            </ul>
+          </main>
+          {inView && <img></img>}
+        </Con>
+      </section>
     </>
   );
 }
 
 const Con = styled.section`
-  margin-left: 16.666%;
-  margin-right: 16.666%;
-  @media screen and (max-width: 767px) {
+  width: 1024px;
+  color: #333d4b;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
     margin-left: 2%;
     margin-right: 2%;
   }

@@ -50,11 +50,10 @@ function TopMenu() {
 }
 
 const Top = styled.header`
+  width: 1024px;
   position: sticky;
   background-color: white;
   top: 0;
-  margin-left: 16.666%;
-  margin-right: 16.666%;
   height: 4rem;
   color: #333d4b;
   display: flex;
@@ -64,10 +63,9 @@ const Top = styled.header`
   justify-content: space-between;
   z-index: 30;
 
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: 768px) {
+    width: 100%;
     padding-left: 2%;
-    margin-left: 0;
-    margin-right: 0;
     padding-right: 2%;
   }
 `;

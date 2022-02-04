@@ -51,46 +51,48 @@ function Signin() {
 
   return (
     <>
-      <TopMenu />
-      <main className="flex flex-row h-full items-center justify-center mt-24">
-        {/* <Card className="flex justify-center items-center">
+      <section className="flex flex-col items-center">
+        <TopMenu />
+        <main className="flex flex-row h-full items-center justify-center mt-24">
+          {/* <Card className="flex justify-center items-center">
           <img className="w-full" src="umi-removebg.png" alt="umi"></img>
         </Card> */}
-        <Card className="bg-white rounded-xl p-10">
-          <p className="text-3xl font-bold mb-6">SignIn</p>
-          <Input
-            type="text"
-            placeholder="email"
-            onChange={(e) => setEmail(e.target.value)}
-          ></Input>
-          <Input
-            type="password"
-            placeholder="password"
-            onChange={(e) => setPassword(e.target.value)}
-          ></Input>
-          <section className="flex flex-col">
-            <SocialLoginBtn
-              className="bg-green-400 flex justify-center items-center"
-              onClick={postSignin}
-            >
-              {isLoading ? <Loading></Loading> : "OK"}
-            </SocialLoginBtn>
-            <p className="font-semibold">or</p>
-            <SocialLoginBtn
-              className="bg-yellow-300"
-              href={`https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_url}&response_type=code`}
-            >
-              Kakao
-            </SocialLoginBtn>
-            <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
-              Google
-            </SocialLoginBtn>
-            <Link to="/signup" className="font-semibold">
-              create duoduo account
-            </Link>
-          </section>
-        </Card>
-      </main>
+          <Card className="bg-white rounded-xl p-10">
+            <p className="text-3xl font-bold mb-6">SignIn</p>
+            <Input
+              type="text"
+              placeholder="email"
+              onChange={(e) => setEmail(e.target.value)}
+            ></Input>
+            <Input
+              type="password"
+              placeholder="password"
+              onChange={(e) => setPassword(e.target.value)}
+            ></Input>
+            <section className="flex flex-col">
+              <SocialLoginBtn
+                className="bg-green-400 flex justify-center items-center"
+                onClick={postSignin}
+              >
+                {isLoading ? <Loading></Loading> : "OK"}
+              </SocialLoginBtn>
+              <p className="font-semibold">or</p>
+              <SocialLoginBtn
+                className="bg-yellow-300"
+                href={`https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_url}&response_type=code`}
+              >
+                Kakao
+              </SocialLoginBtn>
+              <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
+                Google
+              </SocialLoginBtn>
+              <Link to="/signup" className="font-semibold">
+                create duoduo account
+              </Link>
+            </section>
+          </Card>
+        </main>
+      </section>
     </>
   );
 }

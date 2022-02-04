@@ -95,10 +95,18 @@ function UserList({
             </div>
             <div className="ml-2 md:w-40 w-32 text-left">
               <p
-                className="font-bold cursor-pointer md:text-base text-xs"
+                className="font-bold cursor-pointer md:text-base text-xs flex flex-row items-center"
                 // onClick={() => setIsDetail((old) => !old)}
               >
                 {room.username}
+                {room.mic && (
+                  <img
+                    src="icon_mic_wave.png"
+                    className="ml-1 w-4 h-4"
+                    // width={10}
+                    // height={15}
+                  ></img>
+                )}
               </p>
               <p className="opacity-40">{room.nickname}</p>
             </div>
@@ -210,14 +218,15 @@ function UserList({
             </section>
             <p className="flex text-xs opacity-40 mx-2">{createdAt}</p>
             {room.username === username ? (
-              <button
-                className=" bg-red-400 w-10 h-full flex flex-row items-center justify-center"
-                onClick={deleteUserList}
-              >
-                {/* <img className="w-4 h-4" src="icon_arrow.png"></img> */}
-                <p className="font-bold text-white">X</p>
-              </button>
+              <></>
             ) : (
+              // <button
+              //   className=" bg-red-400 w-10 h-full flex flex-row items-center justify-center"
+              //   onClick={deleteUserList}
+              // >
+              //   {/* <img className="w-4 h-4" src="icon_arrow.png"></img> */}
+              //   <p className="font-bold text-white">X</p>
+              // </button>
               <button
                 className=" bg-green-400 w-10 h-full flex flex-row items-center justify-center"
                 onClick={requestDuo}

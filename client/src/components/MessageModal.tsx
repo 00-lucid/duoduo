@@ -125,7 +125,7 @@ function MessageModal({
     <>
       {isMessage ? (
         width > 767 ? (
-          <div className="fixed bg-white w-1/4 right-0 bottom-0 border h-96 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl z-40">
+          <div className="fixed bg-white w-1/4 right-0 bottom-0 border h-96 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl z-40 ">
             <button
               className="bg-green-400 h-10"
               onClick={closeMessage}

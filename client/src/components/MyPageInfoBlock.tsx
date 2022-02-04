@@ -29,27 +29,27 @@ function MyPageInfoBlock({ title, value, setValues, token }: any) {
       return;
     }
     if (title === "이메일") {
-      if (isEmail()) {
-        res = await axios.patch(
-          `${process.env.REACT_APP_SERVER_URL}/email`,
-          {
-            nextEmail: text,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setAlarmModal((old) => [{ text: "이메일 수정 완료", type: 1 }, ...old]);
-        setTimeRemoveAlarm(setAlarmModal);
-      } else {
-        setAlarmModal((old) => [
-          { text: "잘못된 이메일 양식입니다", type: 0 },
-          ...old,
-        ]);
-        setTimeRemoveAlarm(setAlarmModal);
-      }
+      // if (isEmail()) {
+      //   res = await axios.patch(
+      //     `${process.env.REACT_APP_SERVER_URL}/email`,
+      //     {
+      //       nextEmail: text,
+      //     },
+      //     {
+      //       headers: {
+      //         Authorization: `Bearer ${token}`,
+      //       },
+      //     }
+      //   );
+      //   setAlarmModal((old) => [{ text: "이메일 수정 완료", type: 1 }, ...old]);
+      //   setTimeRemoveAlarm(setAlarmModal);
+      // } else {
+      //   setAlarmModal((old) => [
+      //     { text: "잘못된 이메일 양식입니다", type: 0 },
+      //     ...old,
+      //   ]);
+      //   setTimeRemoveAlarm(setAlarmModal);
+      // }
     } else {
       res = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/username`,
@@ -87,7 +87,7 @@ function MyPageInfoBlock({ title, value, setValues, token }: any) {
         ) : (
           <p className="text-gray-400">{value}</p>
         )}
-        {title !== "훈장" && !isInput && (
+        {title !== "훈장" && title !== "이메일" && !isInput && (
           <button onClick={() => setIsInput(true)}>
             <img src="./icon_pen.png" width="16" height="16"></img>
           </button>

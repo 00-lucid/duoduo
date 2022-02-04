@@ -86,52 +86,54 @@ function Signup() {
 
   return (
     <>
-      <TopMenu />
-      <main className="flex flex-row h-full items-center justify-center mt-24">
-        <Card className="bg-white rounded-xl">
-          <p className="text-3xl font-bold mb-6">SignUp</p>
-          <Input
-            type="text"
-            placeholder="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-              feedback(isEmail, e.target.style);
-            }}
-          ></Input>
-          <Input
-            type="password"
-            placeholder="password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              feedback(isPassword, e.target.style);
-            }}
-          ></Input>
-          <Input
-            type="password"
-            placeholder="password check"
-            onChange={(e) => setPasswordCheck(e.target.value)}
-          ></Input>
-          <Input
-            type="text"
-            placeholder="nickname (not game name)"
-            onChange={(e) => {
-              setNickname(e.target.value);
-              feedback(isNickname, e.target.style);
-            }}
-          ></Input>
-          <section>
-            <SocialLoginBtn
-              className="bg-green-400 flex justify-center items-center w-full"
-              onClick={postSignup}
-            >
-              {isLoading ? <Loading></Loading> : "완료"}
-            </SocialLoginBtn>
-            <Link to="/signin" className="font-semibold">
-              i have account or social login
-            </Link>
-          </section>
-        </Card>
-      </main>
+      <section className="flex flex-col items-center">
+        <TopMenu />
+        <main className="flex flex-row h-full items-center justify-center mt-24">
+          <Card className="bg-white rounded-xl">
+            <p className="text-3xl font-bold mb-6">SignUp</p>
+            <Input
+              type="text"
+              placeholder="email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                feedback(isEmail, e.target.style);
+              }}
+            ></Input>
+            <Input
+              type="password"
+              placeholder="password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                feedback(isPassword, e.target.style);
+              }}
+            ></Input>
+            <Input
+              type="password"
+              placeholder="password check"
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            ></Input>
+            <Input
+              type="text"
+              placeholder="nickname (not game name)"
+              onChange={(e) => {
+                setNickname(e.target.value);
+                feedback(isNickname, e.target.style);
+              }}
+            ></Input>
+            <section>
+              <SocialLoginBtn
+                className="bg-green-400 flex justify-center items-center w-full"
+                onClick={postSignup}
+              >
+                {isLoading ? <Loading></Loading> : "완료"}
+              </SocialLoginBtn>
+              <Link to="/signin" className="font-semibold">
+                i have account or social login
+              </Link>
+            </section>
+          </Card>
+        </main>
+      </section>
     </>
   );
 }
