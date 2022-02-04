@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -61,7 +61,6 @@ function Root() {
   let isUsername = getCookie("isUsername");
   const userInfo = useRecoilValue(userInfoState);
   const [bestPosts, setBestPosts] = useState<any[]>([]);
-  // let [curScene, setCurScene] = useState(0);
   let curScene = 0;
   let yOffset = 0;
   let prevScrollHeight = 0;
@@ -278,6 +277,7 @@ function Root() {
         break;
       }
     }
+
     mainRef.current.id = `show-scene-${curScene}`;
   };
 
@@ -407,7 +407,10 @@ function Root() {
         curScene--;
         enterNewScene = true;
       }
-      mainRef.current.id = `show-scene-${curScene}`;
+
+      if (mainRef.current != null) {
+        mainRef.current.id = `show-scene-${curScene}`;
+      }
 
       if (enterNewScene) return;
 
@@ -433,14 +436,17 @@ function Root() {
                   "linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0), rgba(255,255,255,0)), url('https://kr-publish.s3.amazonaws.com/notice/0268f49d4d229bcee46589954838b252d9aa3f89.jpg')",
                 backgroundPosition: "center",
                 backgroundSize: "100%",
+                backgroundRepeat: "no-repeat",
                 marginTop: "18px",
                 height: "auto",
               }}
             >
               <p className="text-white text-5xl font-black flex flex-col items-start pl-4 pr-4 pt-10 pb-10">
                 <p className="mb-4">EVENT</p>
-                <p className="text-lg font-medium">듀오듀오를 이용한 뒤</p>
-                <p className="text-lg font-medium">
+                <p className="text-base font-medium md:text-lg">
+                  듀오듀오를 이용한 뒤
+                </p>
+                <p className="text-base font-medium md:text-lg">
                   커뮤니티에 리뷰를 남겨주시면 선물이 펑펑~!
                 </p>
               </p>
@@ -473,7 +479,7 @@ function Root() {
                   </p>
                 </Link>
               </p>
-              <section className="h-full w-full flex flex-row ">
+              <section className="border w-full flex flex-row ">
                 {bestPosts.length > 0 ? (
                   <>
                     <ul className="w-1/2">

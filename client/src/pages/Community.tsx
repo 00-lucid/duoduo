@@ -13,6 +13,7 @@ import TopMenu from "../components/TopMenu";
 import { isLoadingState } from "../state";
 
 function Community() {
+  const [pre, setPre] = useState<number>(0);
   const [width, setWidth] = useState(window.innerWidth);
   const [ref, inView] = useInView();
   const [link, setLink] = useState(window.location.href);
@@ -42,6 +43,22 @@ function Community() {
         }
       });
   }, []);
+
+  const checkDrag = () => {
+    const cur = window.pageYOffset;
+    console.log(pre, cur);
+    if (pre < cur) console.log(true);
+  };
+
+  useEffect(() => {
+    function watchScroll() {
+      window.addEventListener("scroll", checkDrag);
+    }
+    watchScroll();
+    return () => {
+      window.removeEventListener("scroll", checkDrag);
+    };
+  });
 
   const clickWrite = () => {
     if (getToken().token) {
