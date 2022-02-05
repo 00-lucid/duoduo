@@ -1,6 +1,6 @@
 import axios from "axios";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { movePage } from "../common/api/page";
 import { getToken } from "../common/auth";
@@ -18,6 +18,7 @@ function Post({
   likeCount,
   last,
   createdAt,
+  isHot,
 }: any) {
   const [comments, setComments] = useState<any[]>([]);
   const [like, setLike] = useState(liked | 0);
@@ -112,6 +113,7 @@ function Post({
       setComments((old) => [data, ...old]);
     }
   };
+
   return (
     <>
       <section
@@ -120,14 +122,26 @@ function Post({
       >
         <section className="flex font-bold text-sm text-gray-400 justify-between items-center">
           <p>{title}</p>
-          <p
-            className="pt-1 pb-1 pl-2 pr-2 text-white rounded"
-            style={{
-              backgroundColor: "#333D4B",
-            }}
-          >
-            자유
-          </p>
+          <section className="flex flex-row">
+            {isHot && (
+              <p
+                className=" pt-1 pb-1 pl-2 pr-2 text-white rounded mr-2"
+                style={{
+                  backgroundColor: "#ED6C5E",
+                }}
+              >
+                인기
+              </p>
+            )}
+            <p
+              className="pt-1 pb-1 pl-2 pr-2 text-white rounded"
+              style={{
+                backgroundColor: "#333D4B",
+              }}
+            >
+              자유
+            </p>
+          </section>
         </section>
         <section
           className="flex flex-start font-semibold text-lg h-28"

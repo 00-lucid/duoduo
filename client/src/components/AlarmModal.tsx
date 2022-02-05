@@ -3,8 +3,8 @@ import styled from "styled-components";
 function AlarmModal({ alarm, idx }: any) {
   return (
     <>
-      <section className="w-full flex flex-row justify-center items-center z-50">
-        <Alarm interval={idx} className="md:w-1/3 w-5/6 mt-16">
+      <section className="flex flex-row justify-center items-center z-50">
+        <Alarm interval={idx} className="mt-16 border">
           {window.location.href.includes("community") ? (
             <img
               src={`../icon_${alarm.type}.png`}
@@ -29,11 +29,13 @@ function AlarmModal({ alarm, idx }: any) {
 }
 
 const Alarm = styled.div<{ interval: number }>`
+  width: 640px;
+  color: #333d4b;
   display: flex;
   position: fixed;
   flex-direction: column;
   background-color: white;
-  height: 10%;
+  height: 96px;
   align-items: center;
   justify-content: center;
   border-radius: 0.5rem;
@@ -43,6 +45,16 @@ const Alarm = styled.div<{ interval: number }>`
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   top: ${(props) => (props.interval ? `${props.interval * 12 + 3}%` : "3%")};
+  @media screen and (max-width: 768px) {
+    top: ${(props) => (props.interval ? `${props.interval * 16 + 3}%` : "3%")};
+  }
+  @media screen and (max-width: 640px) {
+    top: ${(props) => (props.interval ? `${props.interval * 16 + 3}%` : "3%")};
+    width: 320px;
+  }
+  @media screen and (max-width: 330px) {
+    width: 260px;
+  }
 `;
 
 export default AlarmModal;

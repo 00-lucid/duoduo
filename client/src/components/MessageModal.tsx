@@ -69,7 +69,6 @@ function MessageModal({
     });
 
     socket.on("receiveMessage", ({ from, message }: any) => {
-      console.log(`${from}님의 메시지 "${message}"`);
       setChats((old: any) => [...old, { text: `${from}: ${message}` }]);
       setIsReceiveMessage(true);
     });
