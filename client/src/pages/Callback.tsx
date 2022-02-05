@@ -17,7 +17,6 @@ function Callback() {
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}/oauth/kakao?code=${auth_code}`)
       .then(({ data }) => {
-        console.log(data);
         const token = data.token;
         saveToken({ token: token, csrf: null });
         setUserInfo((old: object) => {

@@ -57,26 +57,20 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
     let result = null;
 
     if (tier && position) {
-      console.log("all");
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
       );
-      console.log(data);
       result = data.result;
     } else if (!tier && position) {
-      console.log("position");
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
       );
-      console.log(data);
       result = data.result;
     } else if (!position && tier) {
-      console.log("tier");
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
       );
 
-      console.log(data);
       result = data.result;
     } else {
       axios.get(`${process.env.REACT_APP_SERVER_URL}/userlist`).then((res) => {
@@ -96,7 +90,6 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
     const { data } = await axios.get(
       `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}?api_key=${process.env.REACT_APP_API_KEY_RIOT}`
     );
-    console.log(data);
     // TODO: 배치일 때 생기는 문제 해결 필요
     return data[0].queueType === "RANKED_TFT_PAIRS" ? data[1] : data[0];
   };
@@ -160,7 +153,6 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
           },
         }
       );
-      console.log(data);
       if (data.most && data.most.length > 0) {
         // 유저리스트를 생성하면 룸을 생선한다.
         // 룸 이름은 리스트 생성자 롤 닉네임
@@ -210,7 +202,6 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
   }, []);
 
   useEffect(() => {
-    console.log(filters);
     getUserListFilter();
   }, [filters]);
 
@@ -223,7 +214,6 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
           })
           .then((res) => {
             const { data } = res;
-            console.log(data);
             setDummy((old) => [...old, ...data]);
             setPage((old) => old + 1);
           });

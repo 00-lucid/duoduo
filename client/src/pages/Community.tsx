@@ -13,6 +13,7 @@ import TopMenu from "../components/TopMenu";
 import { isLoadingState } from "../state";
 
 function Community() {
+  const [bestPosts, setBestPosts] = useState<any[]>([]);
   const [pre, setPre] = useState<number>(0);
   const [width, setWidth] = useState(window.innerWidth);
   const [ref, inView] = useInView();
@@ -23,13 +24,25 @@ function Community() {
   const [isAll, setIsAll] = useState(true);
   const [isConsole, setIsConsole] = useState(false);
   const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
+
+  const getBestAll = async () => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}/community/all/best`
+    );
+    let result = [];
+    for (let i = 0; i < data.length; i++) {
+      result.push(data[i].id);
+    }
+    setBestPosts(result);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsLoading(true);
+    getBestAll();
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
     });
-    // TODO: url에 따라 다른 요청이 필요함
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}/community/all?page=0`, {
         headers: {
@@ -39,26 +52,11 @@ function Community() {
       .then(({ data }) => {
         if (data) {
           setPosts(data);
+          console.log(data);
           setIsLoading(false);
         }
       });
   }, []);
-
-  const checkDrag = () => {
-    const cur = window.pageYOffset;
-    console.log(pre, cur);
-    if (pre < cur) console.log(true);
-  };
-
-  useEffect(() => {
-    function watchScroll() {
-      window.addEventListener("scroll", checkDrag);
-    }
-    watchScroll();
-    return () => {
-      window.removeEventListener("scroll", checkDrag);
-    };
-  });
 
   const clickWrite = () => {
     if (getToken().token) {
@@ -215,9 +213,19 @@ function Community() {
                 }}
               >
                 {isWrite ? (
-                  <button onClick={clickWrite}>취소</button>
+                  <button
+                    onClick={clickWrite}
+                    className="hover:bg-gray-100 rounded"
+                  >
+                    취소
+                  </button>
                 ) : (
-                  <button onClick={clickWrite}>글쓰기</button>
+                  <button
+                    onClick={clickWrite}
+                    className="hover:bg-gray-100 rounded"
+                  >
+                    글쓰기
+                  </button>
                 )}
               </section>
             </div>
@@ -236,34 +244,71 @@ function Community() {
                   idx > 8 &&
                   posts.length % 10 === 0
                 ) {
-                  return (
-                    <Post
-                      key={el.id}
-                      postId={el.id}
-                      title={el.title}
-                      body={el.body}
-                      nickname={el.nickname}
-                      liked={el.liked}
-                      commented={el.commented}
-                      likeCount={el.like}
-                      createdAt={el.createdAt}
-                      last={ref}
-                    />
-                  );
+                  if (bestPosts.includes(el.id)) {
+                    return (
+                      <Post
+                        key={el.id}
+                        postId={el.id}
+                        title={el.title}
+                        body={el.body}
+                        nickname={el.nickname}
+                        liked={el.liked}
+                        commented={el.commented}
+                        likeCount={el.likeCount}
+                        createdAt={el.createdAt}
+                        isHot={true}
+                        last={ref}
+                      />
+                    );
+                  } else {
+                    return (
+                      <Post
+                        key={el.id}
+                        postId={el.id}
+                        title={el.title}
+                        body={el.body}
+                        nickname={el.nickname}
+                        liked={el.liked}
+                        commented={el.commented}
+                        likeCount={el.likeCount}
+                        createdAt={el.createdAt}
+                        isHot={false}
+                        last={ref}
+                      />
+                    );
+                  }
                 } else {
-                  return (
-                    <Post
-                      key={el.id}
-                      postId={el.id}
-                      title={el.title}
-                      body={el.body}
-                      nickname={el.nickname}
-                      liked={el.liked}
-                      commented={el.commented}
-                      likeCount={el.likeCount}
-                      createdAt={el.createdAt}
-                    />
-                  );
+                  if (bestPosts.includes(el.id)) {
+                    return (
+                      <Post
+                        key={el.id}
+                        postId={el.id}
+                        title={el.title}
+                        body={el.body}
+                        nickname={el.nickname}
+                        liked={el.liked}
+                        commented={el.commented}
+                        likeCount={el.likeCount}
+                        createdAt={el.createdAt}
+                        isHot={true}
+                      />
+                    );
+                  } else {
+                    return (
+                      <Post
+                        key={el.id}
+                        postId={el.id}
+                        title={el.title}
+                        body={el.body}
+                        nickname={el.nickname}
+                        liked={el.liked}
+                        commented={el.commented}
+                        likeCount={el.likeCount}
+                        createdAt={el.createdAt}
+                        isHot={false}
+                      />
+                    );
+                  }
                 }
               })}
           </section>

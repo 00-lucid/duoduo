@@ -60,7 +60,6 @@ function Root() {
   let loggedIn = !!getToken().token;
   let isUsername = getCookie("isUsername");
   const userInfo = useRecoilValue(userInfoState);
-  const [bestPosts, setBestPosts] = useState<any[]>([]);
   let curScene = 0;
   let yOffset = 0;
   let prevScrollHeight = 0;
@@ -70,12 +69,7 @@ function Root() {
   const mainRef: any = useRef();
 
   let sceneInfo: SceneInfo[] = [];
-  const getBestAll = async () => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_SERVER_URL}/community/all/best`
-    );
-    setBestPosts(data);
-  };
+
   const calcValues = (values: any, currentYOffset: any) => {
     let rv;
     const scrollHeight = sceneInfo[curScene].scrollHeight;
@@ -283,7 +277,6 @@ function Root() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    getBestAll();
     sceneInfo = [
       // 0
       {
@@ -468,7 +461,7 @@ function Root() {
                   return <RankList key={idx} idx={idx} rank={el} />;
                 })}
               </ul>
-              <p
+              {/* <p
                 className="text-left text-xl font-bold w-full border-b border-black flex flex-row justify-between items-center p-2"
                 style={{ marginTop: "18px" }}
               >
@@ -479,17 +472,17 @@ function Root() {
                   </p>
                 </Link>
               </p>
-              <section className="border w-full flex flex-row ">
+              <section className="w-full flex flex-row ">
                 {bestPosts.length > 0 ? (
                   <>
                     <ul className="w-1/2">
                       {bestPosts.slice(0, 4)?.map((el, idx) => (
-                        <RankPostList idx={idx} rank={el} />
+                        <RankPostList key={el.id} idx={idx} rank={el} />
                       ))}
                     </ul>
                     <ul className="w-1/2">
                       {bestPosts.slice(4).map((el, idx) => (
-                        <RankPostList idx={idx + 4} rank={el} />
+                        <RankPostList key={el.id} idx={idx + 4} rank={el} />
                       ))}
                     </ul>
                   </>
@@ -498,7 +491,7 @@ function Root() {
                     베스트 게시글이 없습니다
                   </p>
                 )}
-              </section>
+              </section> */}
             </Screen>
           </section>
           {/* 여기서부터 인터렉션 스크린 */}
