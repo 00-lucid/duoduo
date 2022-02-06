@@ -2,7 +2,6 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getToken } from "../common/auth";
-import { socketState } from "../state";
 import { userInfoState } from "../state-persist";
 
 function PermissionList({
@@ -48,7 +47,6 @@ function PermissionList({
 
   const reject = () => {
     setPermissions((old: any) => {
-      console.log(old.slice(0, idx).concat(old.slice(idx + 1)));
       return old.slice(0, idx).concat(old.slice(idx + 1));
     });
     socket.emit("req reject permission", { username, socketId });

@@ -1,16 +1,17 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import moveHome from "../common/api/page";
+import moveHome, { setTimeRemoveAlarm } from "../common/api/page";
 import { setCookie } from "../common/auth";
 import Modal from "../components/Modal";
 import TopMenu from "../components/TopMenu";
-import { isLoadingState } from "../state";
+import { Alarm, alarmModalState, isLoadingState } from "../state";
 import Loading from "./Loading";
 
 function Signup() {
+  const setAlarmModal = useSetRecoilState<Alarm[]>(alarmModalState);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
@@ -80,58 +81,64 @@ function Signup() {
       window.history.pushState("signup", "", "/signin");
       window.history.go(0);
     } else {
-      alert("invalid email / password / nickname");
+      setAlarmModal((old) => [
+        { text: "잘못된 이메일 또는 비밀번호 또는 비밀번호 확인", type: 0 },
+        ...old,
+      ]);
+      setTimeRemoveAlarm(setAlarmModal);
     }
   };
 
   return (
     <>
-      <TopMenu />
-      <main className="flex flex-row h-full items-center justify-center mt-24">
-        <Card className="bg-white rounded-xl">
-          <p className="text-3xl font-bold mb-6">SignUp</p>
-          <Input
-            type="text"
-            placeholder="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-              feedback(isEmail, e.target.style);
-            }}
-          ></Input>
-          <Input
-            type="password"
-            placeholder="password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-              feedback(isPassword, e.target.style);
-            }}
-          ></Input>
-          <Input
-            type="password"
-            placeholder="password check"
-            onChange={(e) => setPasswordCheck(e.target.value)}
-          ></Input>
-          <Input
-            type="text"
-            placeholder="nickname (not game name)"
-            onChange={(e) => {
-              setNickname(e.target.value);
-              feedback(isNickname, e.target.style);
-            }}
-          ></Input>
-          <section>
-            <SocialLoginBtn
-              className="bg-green-400 flex justify-center items-center w-full"
-              onClick={postSignup}
-            >
-              {isLoading ? <Loading></Loading> : "완료"}
-            </SocialLoginBtn>
-            <Link to="/signin" className="font-semibold">
-              i have account or social login
-            </Link>
-          </section>
-        </Card>
-      </main>
+      <section className="flex flex-col items-center">
+        <TopMenu />
+        <main className="flex flex-row w-full h-full items-center justify-center mt-24">
+          <Card className="bg-white rounded-xl">
+            <p className="text-3xl font-bold mb-6">SignUp</p>
+            <Input
+              type="text"
+              placeholder="email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                feedback(isEmail, e.target.style);
+              }}
+            ></Input>
+            <Input
+              type="password"
+              placeholder="password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                feedback(isPassword, e.target.style);
+              }}
+            ></Input>
+            <Input
+              type="password"
+              placeholder="password check"
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            ></Input>
+            <Input
+              type="text"
+              placeholder="nickname (not game name)"
+              onChange={(e) => {
+                setNickname(e.target.value);
+                feedback(isNickname, e.target.style);
+              }}
+            ></Input>
+            <section>
+              <SocialLoginBtn
+                className="bg-green-400 flex justify-center items-center w-full"
+                onClick={postSignup}
+              >
+                {isLoading ? <Loading></Loading> : "완료"}
+              </SocialLoginBtn>
+              <Link to="/signin" className="font-semibold">
+                i have account or social login
+              </Link>
+            </section>
+          </Card>
+        </main>
+      </section>
     </>
   );
 }

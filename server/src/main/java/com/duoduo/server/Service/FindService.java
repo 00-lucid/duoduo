@@ -10,7 +10,7 @@ public class FindService {
     public int findChampionMost(ArrayList<MostDTO> championMost, String championName) {
         // [MostDTO: {championName, count}, {...}, ..., {...}]
         int isFind = -1;
-        for (int i = 0; i < championMost.size() - 1; i++) {
+        for (int i = 0; i < championMost.size(); i++) {
             MostDTO el = championMost.get(i);
             if (el.getChampionName().equals(championName)) {
                 isFind = i;

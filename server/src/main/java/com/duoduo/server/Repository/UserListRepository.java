@@ -26,6 +26,15 @@ public interface UserListRepository extends JpaRepository<UserListEntity, Long> 
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM userlist ul WHERE ul.username = :username", nativeQuery = true)
-    void deleteAllByName(@Param("username") String username);
+    @Query(value = "DELETE FROM userlist ul WHERE ul.username = :username AND ul.user = :userId", nativeQuery = true)
+    void deleteAllByNameAndId(@Param("username") String username, @Param("userId") Long userId);
+
+    @Query(value = "SELECT * FROM userlist ul WHERE ul.tier REGEXP :tier AND ul.position = :position ORDER BY id DESC limit 10 offset :page", nativeQuery = true)
+    List<UserListEntity> findByFilter(@Param("tier") String tier, @Param("position") String position, @Param("page") int page);
+
+    @Query(value = "SELECT * FROM userlist ul WHERE ul.tier REGEXP :tier ORDER BY id DESC limit 10 offset :page", nativeQuery = true)
+    List<UserListEntity> findByTier(@Param("tier") String tier, @Param("page") int page);
+
+    @Query(value = "SELECT * FROM userlist ul WHERE ul.position = :position ORDER BY id DESC limit 10 offset :page", nativeQuery = true)
+    List<UserListEntity> findByPosition(@Param("position") String position, @Param("page") int page);
 }

@@ -13,7 +13,6 @@ import {
   alarmModalState,
   ClientToServerEvents,
   ServerToClientEvents,
-  socketState,
 } from "./state";
 import AlarmModal from "./components/AlarmModal";
 import MyPage from "./pages/MyPage";
@@ -22,14 +21,12 @@ import Community from "./pages/Community";
 import PostComment from "./pages/PostComment";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { chatsState, isModeState, permissionListState } from "./state-persist";
-import MessageModalNone from "./components/MessageModalNone";
+import { chatsState, isModeState } from "./state-persist";
 import axios from "axios";
-import { getToken } from "./common/auth";
+import { destroyToken, getToken } from "./common/auth";
+import Callback from "./pages/Callback";
 
 function App() {
-  const [permissions, setPermissions] =
-    useRecoilState<any[]>(permissionListState);
   // 매칭이 시작되면 자동으로 채팅창이 열려야됨
   const [alarmModals, setAlarmModal] = useRecoilState<Alarm[]>(alarmModalState);
   // none -> loading -> permission -> end
@@ -40,40 +37,38 @@ function App() {
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>();
 
   useEffect(() => {
-    setSocket(io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`));
+    if (!socket) {
+      setSocket(io(`${process.env.REACT_APP_SOCKET_SERVER_URL}`));
+    }
     setChats([]);
-    axios
-      .get(`${process.env.REACT_APP_SOCKET_SERVER_URL}/live`, {
-        headers: {
-          authorization: `Bearer ${getToken().token}`,
-        },
-      })
-      .then(({ data }) => {
-        console.log(data);
-        const { mode } = data;
-
-        // TODO: 남은거 permission
-        switch (mode) {
-          case "none":
-            setIsMode("none");
-            break;
-          case "waitCreator":
-            setIsMode("loading");
-            break;
-          case "end":
-            setIsMode("end");
-            break;
-          case "waitJoiner":
-            setIsMode("loading_permission");
-            break;
-          case "permission":
-            setIsMode("permission");
-            break;
-        }
-        // if (permissions) {
-        //   setIsMode("permission");
-        // }
-      });
+    if (getToken().token) {
+      axios
+        .get(`${process.env.REACT_APP_SOCKET_SERVER_URL}/live`, {
+          headers: {
+            authorization: `Bearer ${getToken().token}`,
+          },
+        })
+        .then(({ data }) => {
+          const { mode } = data;
+          switch (mode) {
+            case "none":
+              setIsMode("none");
+              break;
+            case "waitCreator":
+              setIsMode("loading");
+              break;
+            case "end":
+              setIsMode("end");
+              break;
+            case "waitJoiner":
+              setIsMode("loading_permission");
+              break;
+            case "permission":
+              setIsMode("permission");
+              break;
+          }
+        });
+    }
   }, []);
 
   useEffect(() => {
@@ -120,6 +115,7 @@ function App() {
         <Route path="/mypage" exact component={MyPage}></Route>
         <Route path="/community/all" exact component={Community}></Route>
         <Route path="/community/free" exact component={PostComment}></Route>
+        <Route path="/account" exact component={Callback} />
       </Switch>
     </div>
   );

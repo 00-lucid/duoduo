@@ -74,8 +74,11 @@ public class UserListEntity {
     @Column
     private String text;
 
+    @Column
+    private boolean mic;
+
     @Builder
-    public UserListEntity (Long id, UserEntity userId, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_wins, Integer total_losses, Integer total_rate, Integer profileIconId, Integer summonerLevel, String most_kda, String most_rate, String text){
+    public UserListEntity (Long id, UserEntity userId, String username, String nickname, String position, String tier, Integer recent_rate, String most, double kda, Integer poro, Integer synergy, Integer total_wins, Integer total_losses, Integer total_rate, Integer profileIconId, Integer summonerLevel, String most_kda, String most_rate, String text, boolean mic){
         this.id = id;
         this.userId = userId;
         this.username = username;
@@ -97,6 +100,7 @@ public class UserListEntity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
         this.createdAt = simpleDateFormat.format(new Date());
         this.text = text;
+        this.mic = mic;
     }
 
 }

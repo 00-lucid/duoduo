@@ -9,7 +9,6 @@ function MessageModalNone({ setIsMessage, socket, setIsMode, setChats }: any) {
       setWidth(window.innerWidth);
     });
     socket.on("receiveMessage", ({ from, message }: any) => {
-      console.log(`${from}님의 메시지 "${message}"`);
       setChats((old: any) => [...old, { text: `${from}: ${message}` }]);
     });
 

@@ -77,6 +77,14 @@ button:focus {
   display: none; /* Chrome, Safari, Opera*/
 }
 
+input:checked ~ .dot {
+  transform: translateX(100%);
+}
+
+input:checked ~ .con {
+  background-color: #6c80cb;
+}
+
 @keyframes ldio-2d8mpw24xf9 {
   0% {
     top: 96px;

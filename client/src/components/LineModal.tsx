@@ -5,8 +5,9 @@ import styled from "styled-components";
 import { getToken, setCookie } from "../common/auth";
 import { isLoadingState } from "../state";
 import { userInfoState } from "../state-persist";
+import "../App.css";
 
-function LineModal({ setIsModal, addUserList, setText }: any) {
+function LineModal({ setIsModal, addUserList, setText, isMic, setIsMic }: any) {
   const [positions, setPosition] = useState<any>("none");
 
   const xy = (e: MouseEvent) => {
@@ -20,12 +21,7 @@ function LineModal({ setIsModal, addUserList, setText }: any) {
 
   return (
     <>
-      <div
-        className="fixed z-40 inset-0 overflow-y-auto"
-        aria-labelledby="modal-title"
-        role="dialog"
-        aria-modal="true"
-      >
+      <div className="fixed z-40 inset-0 overflow-y-hidden">
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <div
             className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
@@ -111,21 +107,55 @@ function LineModal({ setIsModal, addUserList, setText }: any) {
                 />
               </div>
             </div>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button
-                type="button"
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-400 text-base font-medium text-white hover:bg-green-500 focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                onClick={() => addUserList(positions)}
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex justify-between">
+              {/* toggle */}
+              <div
+                className="flex items-center justify-center cursor-pointer sm:mt-0 mt-2"
+                onClick={() => setIsMic((old: boolean) => !old)}
               >
-                완료
-              </button>
-              <button
-                type="button"
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                onClick={() => setIsModal(false)}
-              >
-                취소
-              </button>
+                {isMic ? (
+                  <img
+                    src="icon_mic.png"
+                    width={15}
+                    height={20}
+                    className="mr-2"
+                  ></img>
+                ) : (
+                  <img
+                    src="icon_mic_none.png"
+                    width={15}
+                    height={20}
+                    className="mr-2"
+                  ></img>
+                )}
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    id="toggleB"
+                    className="sr-only"
+                    checked={isMic}
+                  />
+                  <div className="con block bg-gray-300 w-14 h-8 rounded-full"></div>
+                  <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                </div>
+              </div>
+              {/* toggle */}
+              <section>
+                <button
+                  type="button"
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={() => setIsModal(false)}
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-400 text-base font-medium text-white hover:bg-green-500 sm:ml-3 sm:w-auto sm:text-sm sm:mt-0 mt-1"
+                  onClick={() => addUserList(positions)}
+                >
+                  완료
+                </button>
+              </section>
             </div>
           </div>
         </div>

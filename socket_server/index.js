@@ -50,9 +50,6 @@ io.on("connection", (socket) => {
 
     io.to(room).emit("end");
     io.to(room).emit("notice", {
-      message: `⚠️ 새로고침시 채팅이 종료됩니다`,
-    });
-    io.to(room).emit("notice", {
       message: `${elRoom.creator} 님이 채팅에 참가했습니다`,
     });
     io.to(room).emit("notice", {
@@ -155,78 +152,84 @@ io.on("connection", (socket) => {
 app.get("/", (req, res) => {
   res.send("duoduo live message server");
 });
-
-// TODO: 새로고침해도 상태가 유지될 수 있게 해야됨
 app.get("/live", async (req, res) => {
-  let mode = "none";
+  try {
+    if (req.headers.authorization) {
+      let mode = "none";
 
-  // 요청을 준 클라이언트가 room 또는 queue에 있다면 전달해줘야 함
-  console.log(rooms);
-  console.log(reqs);
+      // 요청을 준 클라이언트가 room 또는 queue에 있다면 전달해줘야 함
+      console.log(rooms);
+      console.log(reqs);
 
-  const jwt = req.headers.authorization;
+      const jwt = req.headers.authorization;
 
-  if (!jwt) {
-    res.json({ state: "err" });
-  }
-  // {email, nickname, username}
-  const { data } = await axios.get(`${process.env.SERVER_URL}/mypage`, {
-    headers: {
-      authorization: jwt,
-    },
-  });
+      if (!jwt) {
+        res.json({ state: "err" });
+      }
+      // {email, nickname, username}
+      const { data } = await axios.get(`${process.env.SERVER_URL}/mypage`, {
+        headers: {
+          authorization: jwt,
+        },
+      });
 
-  let findRoom = null;
+      let findRoom = null;
 
-  let findReq = null;
+      let findReq = null;
 
-  let findPermissions = null;
+      let findPermissions = null;
 
-  for (let i = 0; i < rooms.length; i++) {
-    const room = rooms[i];
-    if (room.creator === data.nickname || room.joiner === data.nickname) {
-      findRoom = room;
-      break;
-    }
-  }
-
-  for (let i = 0; i < reqs.length; i++) {
-    const req = reqs[i];
-    if (findRoom) {
-      req.room === data.username ? (findPermissions = true) : null;
-    }
-    if (req.list.includes(data.username)) {
-      findReq = req;
-      break;
-    }
-  }
-
-  console.log("findRoom: ", findRoom);
-  console.log("findReq: ", findReq);
-
-  if (findRoom) {
-    // creator or joiner
-    if (findRoom.creator === data.nickname) {
-      if (findRoom.joiner) {
-        mode = "end";
-      } else {
-        if (findPermissions) {
-          mode = "permission";
-        } else {
-          mode = "waitCreator";
+      for (let i = 0; i < rooms.length; i++) {
+        const room = rooms[i];
+        if (room.creator === data.nickname || room.joiner === data.nickname) {
+          findRoom = room;
+          break;
         }
       }
-    } else {
-      mode = "end";
-    }
-  } else if (findReq) {
-    // wait joiner
-    mode = "waitJoiner";
-  }
 
-  res.json({
-    mode,
-  });
+      for (let i = 0; i < reqs.length; i++) {
+        const req = reqs[i];
+        if (findRoom) {
+          req.room === data.username ? (findPermissions = true) : null;
+        }
+        if (req.list.includes(data.username)) {
+          findReq = req;
+          break;
+        }
+      }
+
+      console.log("findRoom: ", findRoom);
+      console.log("findReq: ", findReq);
+
+      if (findRoom) {
+        // creator or joiner
+        if (findRoom.creator === data.nickname) {
+          if (findRoom.joiner) {
+            mode = "end";
+          } else {
+            if (findPermissions) {
+              mode = "permission";
+            } else {
+              mode = "waitCreator";
+            }
+          }
+        } else {
+          mode = "end";
+        }
+      } else if (findReq) {
+        // wait joiner
+        mode = "waitJoiner";
+      }
+
+      res.json({
+        mode,
+      });
+    }
+  } catch (err) {
+    res.json({
+      status: "err",
+    });
+  }
 });
 
 server.listen(5000, function () {

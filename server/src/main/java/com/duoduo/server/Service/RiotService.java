@@ -27,7 +27,7 @@ public class RiotService {
 
         try {
 
-            URL requestURL = new URL("https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids?start=0&count=10&api_key=" + API_KEY);
+            URL requestURL = new URL("https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids?start=0&count=20&api_key=" + API_KEY);
             connection = (HttpURLConnection) requestURL.openConnection();
             connection.setRequestMethod("GET");
             int responseCode = connection.getResponseCode();

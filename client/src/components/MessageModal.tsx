@@ -1,12 +1,18 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { permissionListState, userInfoState } from "../state-persist";
+import {
+  isReceiveMessageState,
+  permissionListState,
+  userInfoState,
+  userListCooldownState,
+} from "../state-persist";
 import { getToken } from "../common/auth";
-import { socketState } from "../state";
 import Chat from "./Chat";
 import "../App.css";
 import PermissionList from "./PermissionList";
+import moment from "moment";
+import axios from "axios";
 
 function MessageModal({
   setIsMessage,
@@ -17,6 +23,12 @@ function MessageModal({
   setChats,
   isMessage,
 }: any) {
+  const [userListCooldown, setUserListCooldown] = useRecoilState<string>(
+    userListCooldownState
+  );
+  const [isReceiveMessage, setIsReceiveMessage] = useRecoilState<boolean>(
+    isReceiveMessageState
+  );
   const [permissions, setPermissions] =
     useRecoilState<any[]>(permissionListState);
   const [text, setText] = useState("");
@@ -24,7 +36,26 @@ function MessageModal({
   const isLogin = getToken().token ? true : false;
   const [width, setWidth] = useState(window.innerWidth);
 
-  const leaveRoom = () => {
+  const openMessage = () => {
+    setIsReceiveMessage(false);
+    setIsMessage(true);
+  };
+
+  const closeMessage = () => {
+    setIsReceiveMessage(false);
+    setIsMessage(false);
+  };
+
+  const leaveRoom = async () => {
+    const { data } = await axios.delete(
+      `${process.env.REACT_APP_SERVER_URL}/userlist/username/${userInfo.username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken().token}`,
+        },
+      }
+    );
+
     socket.emit("leave room", {
       from: userInfo.nickname,
     });
@@ -38,8 +69,8 @@ function MessageModal({
     });
 
     socket.on("receiveMessage", ({ from, message }: any) => {
-      console.log(`${from}님의 메시지 "${message}"`);
       setChats((old: any) => [...old, { text: `${from}: ${message}` }]);
+      setIsReceiveMessage(true);
     });
 
     socket.on("notice", ({ message }: any) => {
@@ -93,10 +124,10 @@ function MessageModal({
     <>
       {isMessage ? (
         width > 767 ? (
-          <div className="fixed bg-white w-1/4 right-0 bottom-0 border h-96 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl z-40">
+          <div className="fixed bg-white w-80 xl:w-96 md:w-72 right-0 bottom-0 border h-96 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl z-40 ">
             <button
               className="bg-green-400 h-10"
-              onClick={() => setIsMessage((old: boolean) => !old)}
+              onClick={closeMessage}
             ></button>
             <ul className="flex flex-col p-4 overflow-y-scroll w-full flex-1 text-left">
               {isLogin ? (
@@ -113,6 +144,12 @@ function MessageModal({
                         <div></div>
                       </div>
                     </div>
+                    <p
+                      className="text-gray-400 text-sm cursor-pointer hover:bg-gray-100"
+                      onClick={leaveRoom}
+                    >
+                      취소
+                    </p>
                   </section>
                 ) : isMode === "permission" ? (
                   <>
@@ -188,7 +225,7 @@ function MessageModal({
             <div className="fixed bg-white w-full bottom-0 h-3/4 flex flex-col rounded-t-xl overflow-hidden mr-4 shadow-2xl border z-40">
               <button
                 className="bg-green-400 h-10"
-                onClick={() => setIsMessage((old: boolean) => !old)}
+                onClick={closeMessage}
               ></button>
               <ul className="flex flex-col p-4 overflow-y-scroll w-full flex-1 text-left">
                 {isLogin ? (
@@ -205,6 +242,12 @@ function MessageModal({
                           <div></div>
                         </div>
                       </div>
+                      <p
+                        className="text-gray-400 text-sm cursor-pointer"
+                        onClick={leaveRoom}
+                      >
+                        취소
+                      </p>
                     </section>
                   ) : isMode === "permission" ? (
                     <>
@@ -272,18 +315,33 @@ function MessageModal({
         )
       ) : width > 767 ? (
         // web && off
-        <div className="fixed bg-white w-1/4 right-0 bottom-0 border z-40 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl">
-          {/* 노티시에는 노란색 */}
-          <button
-            className="bg-green-400 h-10"
-            onClick={() => setIsMessage(true)}
-          ></button>
-        </div>
-      ) : (
+        isReceiveMessage ? (
+          <div className="animate-bounce fixed bg-white w-80 xl:w-96 md:w-72 right-0 bottom-0 border z-40 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl">
+            <button
+              className="bg-yellow-300 h-10"
+              onClick={openMessage}
+            ></button>
+          </div>
+        ) : (
+          <div className="fixed bg-white w-80 xl:w-96 md:w-72 right-0 bottom-0 border z-40 flex flex-col rounded-t-lg overflow-hidden mr-4 shadow-2xl">
+            <button
+              className="bg-green-400 h-10"
+              onClick={openMessage}
+            ></button>
+          </div>
+        )
+      ) : isReceiveMessage ? (
         // mobile && off
         <button
+          className="animate-bounce fixed bg-yellow-300 w-16 h-16 right-4 bottom-4 border z-40 flex flex-col rounded-full overflow-hidden shadow-2xl justify-center items-center text-white"
+          onClick={openMessage}
+        >
+          <img src="./icon_message.png" width={35} height={35} />
+        </button>
+      ) : (
+        <button
           className="fixed bg-green-400 w-16 h-16 right-4 bottom-4 border z-40 flex flex-col rounded-full overflow-hidden shadow-2xl justify-center items-center text-white"
-          onClick={() => setIsMessage(true)}
+          onClick={openMessage}
         >
           <img src="./icon_message.png" width={35} height={35} />
         </button>
