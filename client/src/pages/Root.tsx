@@ -435,12 +435,12 @@ function Root() {
               }}
             >
               <p className="text-white text-5xl font-black flex flex-col items-start pl-4 pr-4 pt-10 pb-10">
-                <p className="mb-4">EVENT</p>
+                <p className="mb-4">BETA</p>
                 <p className="text-base font-medium md:text-lg">
-                  듀오듀오를 이용한 뒤
+                  현재 테스트 중인 웹 서비스입니다
                 </p>
                 <p className="text-base font-medium md:text-lg">
-                  커뮤니티에 리뷰를 남겨주시면 선물이 펑펑~!
+                  버그 또는 문제 발생시 가장 아래를 참고하시고 문의주세요 :D
                 </p>
               </p>
             </Screen>
@@ -700,7 +700,7 @@ const Screen = styled.div({
 const Main = styled.main`
   width: 1024px;
   color: #333d4b;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1023px) {
     width: 100%;
     padding-left: 0;
     padding-right: 0;

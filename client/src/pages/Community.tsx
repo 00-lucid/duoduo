@@ -321,7 +321,7 @@ function Community() {
 const Main = styled.main`
   width: 1024px;
   color: #333d4b;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1023px) {
     width: 100%;
     padding-left: 0;
     padding-right: 0;

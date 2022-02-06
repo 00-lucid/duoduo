@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import Loading from "./Loading";
-import { isLoadingState } from "../state";
+import { Alarm, alarmModalState, isLoadingState } from "../state";
 import { saveToken } from "../common/auth";
 import { userInfoState } from "../state-persist";
-import moveHome from "../common/api/page";
+import moveHome, { setTimeRemoveAlarm } from "../common/api/page";
 import TopMenu from "../components/TopMenu";
 
 function Signin() {
+  const setAlarmModal = useSetRecoilState<Alarm[]>(alarmModalState);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useRecoilState(isLoadingState);
@@ -30,7 +31,12 @@ function Signin() {
       }
     );
     if (!res.data) {
-      alert("invalid email or password");
+      setAlarmModal((old) => [
+        { text: "잘못된 이메일 또는 비밀번호", type: 0 },
+        ...old,
+      ]);
+      setTimeRemoveAlarm(setAlarmModal);
+
       setIsLoading(false);
       return;
     }
@@ -53,7 +59,7 @@ function Signin() {
     <>
       <section className="flex flex-col items-center">
         <TopMenu />
-        <main className="flex flex-row h-full items-center justify-center mt-24">
+        <main className="flex flex-row  w-full h-full items-center justify-center mt-24">
           {/* <Card className="flex justify-center items-center">
           <img className="w-full" src="umi-removebg.png" alt="umi"></img>
         </Card> */}
@@ -81,10 +87,7 @@ function Signin() {
                 className="bg-yellow-300"
                 href={`https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_url}&response_type=code`}
               >
-                Kakao
-              </SocialLoginBtn>
-              <SocialLoginBtn style={{ backgroundColor: "#E26757" }}>
-                Google
+                <img src="icon_kakao_btn.png" className="w-full h-full" />
               </SocialLoginBtn>
               <Link to="/signup" className="font-semibold">
                 create duoduo account

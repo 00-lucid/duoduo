@@ -102,6 +102,15 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
   };
 
   const addUserList = async (position: string) => {
+    console.log(userInfo.username);
+    if (!userInfo.username) {
+      setAlarmModal((old) => [
+        { text: "마이페이지에서 소환사명을 등록하세요", type: 0 },
+        ...old,
+      ]);
+      setTimeRemoveAlarm(setAlarmModal);
+      return;
+    }
     if (isMode === "none") {
       if (position === "none") {
         setAlarmModal((old) => [
@@ -395,7 +404,7 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
 const Con = styled.section`
   width: 1024px;
   color: #333d4b;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1023px) {
     width: 100%;
     padding-left: 0;
     padding-right: 0;

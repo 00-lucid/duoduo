@@ -118,7 +118,7 @@ const Page = styled.div`
   color: #333d4b;
   display: flex;
   flex-direction: row;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1023px) {
     width: 100%;
     flex-direction: column;
   }
