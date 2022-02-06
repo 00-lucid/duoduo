@@ -44,7 +44,7 @@ const Alarm = styled.div<{ interval: number }>`
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  top: ${(props) => (props.interval ? `${props.interval * 12 + 3}%` : "3%")};
+  top: ${(props) => (props.interval ? `${props.interval * 13 + 3}%` : "3%")};
   @media screen and (max-width: 768px) {
     top: ${(props) => (props.interval ? `${props.interval * 16 + 3}%` : "3%")};
   }

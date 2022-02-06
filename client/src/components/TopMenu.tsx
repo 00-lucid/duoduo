@@ -63,7 +63,7 @@ const Top = styled.header`
   justify-content: space-between;
   z-index: 30;
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1023px) {
     width: 100%;
     padding-left: 2%;
     padding-right: 2%;

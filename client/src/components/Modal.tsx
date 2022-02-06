@@ -3,42 +3,50 @@ import { useState } from "react";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getToken, setCookie } from "../common/auth";
-import { isLoadingState } from "../state";
+import { Alarm, alarmModalState, isLoadingState } from "../state";
 import { userInfoState } from "../state-persist";
 import "../App.css";
+import { setTimeRemoveAlarm } from "../common/api/page";
 
 function Modal() {
   const [username, setUsername] = useState("");
   const setUserInfo = useSetRecoilState(userInfoState);
+  const setAlarmModal = useSetRecoilState<Alarm[]>(alarmModalState);
 
   const postUsername = async () => {
-    const token = getToken().token;
-
-    const { data } = await axios.post(
-      `${process.env.REACT_APP_SERVER_URL}/username`,
-      {
-        username,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${getToken().token}`,
+    if (username.length > 2) {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/username`,
+        {
+          username,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${getToken().token}`,
+          },
+        }
+      );
 
-    if (data) {
-      setCookie("isUsername", true);
-      setUserInfo((old: object) => {
-        return { ...old, username: username };
-      });
-      window.history.pushState("signin", "", "/");
-      window.history.go(0);
+      if (data) {
+        setCookie("isUsername", true);
+        setUserInfo((old: object) => {
+          return { ...old, username: username };
+        });
+        window.history.pushState("signin", "", "/");
+        window.history.go(0);
+      }
+    } else {
+      setAlarmModal((old) => [
+        { text: "소환사명은 3글자 이상입니다", type: 0 },
+        ...old,
+      ]);
+      setTimeRemoveAlarm(setAlarmModal);
     }
   };
 
   return (
     <div
-      className="fixed z-50 overflow-y-auto md:w-full w-full flex justify-center items-center"
+      className="fixed z-40 overflow-y-auto md:w-full w-full flex justify-center items-center"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -63,19 +71,22 @@ function Modal() {
                 <img
                   width="32"
                   height="32"
-                  className="mt-1"
+                  className="animate-bounce mt-1"
                   src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDQxNy44MTMzMyA0MTciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiIGNsYXNzPSIiPjxnPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZD0ibTE1OS45ODgyODEgMzE4LjU4MjAzMWMtMy45ODgyODEgNC4wMTE3MTktOS40Mjk2ODcgNi4yNS0xNS4wODIwMzEgNi4yNXMtMTEuMDkzNzUtMi4yMzgyODEtMTUuMDgyMDMxLTYuMjVsLTEyMC40NDkyMTktMTIwLjQ2ODc1Yy0xMi41LTEyLjUtMTIuNS0zMi43Njk1MzEgMC00NS4yNDYwOTNsMTUuMDgyMDMxLTE1LjA4NTkzOGMxMi41MDM5MDctMTIuNSAzMi43NS0xMi41IDQ1LjI1IDBsNzUuMTk5MjE5IDc1LjIwMzEyNSAyMDMuMTk5MjE5LTIwMy4yMDMxMjVjMTIuNTAzOTA2LTEyLjUgMzIuNzY5NTMxLTEyLjUgNDUuMjUgMGwxNS4wODIwMzEgMTUuMDg1OTM4YzEyLjUgMTIuNSAxMi41IDMyLjc2NTYyNCAwIDQ1LjI0NjA5M3ptMCAwIiBmaWxsPSIjMzRkMzk5IiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBzdHlsZT0iIiBjbGFzcz0iIj48L3BhdGg+PC9nPjwvc3ZnPg=="
                 />
               </div>
               <h3
-                className="mt-4 text-xl leading-6 font-medium text-gray-900"
+                className="mt-4 text-xl leading-6 font-medium text-gray-900 "
                 id="modal-title"
               >
                 거의 다 됐습니다!
               </h3>
               <div className="mt-2">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 font-semibold">
                   마지막으로 라이엇 계정명을 등록하세요 :D
+                </p>
+                <p className="text-xs text-gray-500">
+                  추후 마이페이지에서 수정 가능합니다
                 </p>
               </div>
               <div className="mt-2 md:w-full w-full">
