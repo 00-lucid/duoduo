@@ -45,6 +45,7 @@ public class CommunityController {
     private List<JSONObject> getPost(@RequestParam("page") Long page, @RequestHeader("Authorization") String jwt) {
         try {
             if (jwt != null) {
+                System.out.println("PAGE: " +  page);
                 JsonWebTokenService jsonWebTokenService = new JsonWebTokenService();
                 Long userId = jsonWebTokenService.decodeId(jwt);
 
