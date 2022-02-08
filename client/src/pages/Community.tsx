@@ -52,7 +52,6 @@ function Community() {
       .then(({ data }) => {
         if (data) {
           setPosts(data);
-          console.log(data);
           setIsLoading(false);
         }
       });

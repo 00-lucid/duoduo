@@ -1,12 +1,15 @@
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { movePage } from "../common/api/page";
 import { getToken } from "../common/auth";
+import { isLoadingState } from "../state";
 import CommentList from "./CommentList";
 import CommentWrite from "./CommentWrite";
 import PostBtn from "./PostBtn";
+import "../App.css";
 
 function Post({
   postId,
@@ -28,6 +31,7 @@ function Post({
   const [isAddComment, setIsAddComment] = useState(false);
   const [text, setText] = useState("");
   const created = moment(createdAt).fromNow();
+  const [isLoading, setIsLoading] = useState(false);
   let signIn = getToken().token ? true : false;
 
   const clickLike = async () => {
@@ -71,6 +75,7 @@ function Post({
   };
 
   const clickComment = async () => {
+    setIsLoading(true);
     setComment((old: any) => (old ? 0 : 1));
     setIsComment((old) => !old);
     if (!isComment) {
@@ -84,6 +89,7 @@ function Post({
       );
       if (data) {
         setComments(data);
+        setIsLoading(false);
       }
     }
   };
@@ -192,9 +198,17 @@ function Post({
                   postAddComment={postAddComment}
                 />
               )}
-              {comments.length > 0
-                ? comments.map((el) => <CommentList key={el.id} comment={el} />)
-                : "댓글이 없습니다"}
+              {isLoading ? (
+                <div className="loadingio-spinner-rolling-hko19m50k5j">
+                  <div className="ldio-sytvh69rhed">
+                    <div></div>
+                  </div>
+                </div>
+              ) : comments.length > 0 ? (
+                comments.map((el) => <CommentList key={el.id} comment={el} />)
+              ) : (
+                "댓글이 없습니다"
+              )}
             </ul>
           </>
         )}

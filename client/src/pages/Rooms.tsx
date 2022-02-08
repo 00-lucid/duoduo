@@ -102,7 +102,6 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
   };
 
   const addUserList = async (position: string) => {
-    console.log(userInfo.username);
     if (!userInfo.username) {
       setAlarmModal((old) => [
         { text: "마이페이지에서 소환사명을 등록하세요", type: 0 },
