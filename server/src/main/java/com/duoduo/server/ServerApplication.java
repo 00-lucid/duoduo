@@ -1,5 +1,7 @@
 package com.duoduo.server;
 
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 import com.duoduo.server.Entity.PostEntity;
 import com.duoduo.server.Entity.UserEntity;
 import com.duoduo.server.Repository.PostRepository;
@@ -18,6 +20,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @PropertySource("classpath:/key.properties")
 public class ServerApplication {
+        @PostConstruct
+        public void started(){
+                TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        }
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);

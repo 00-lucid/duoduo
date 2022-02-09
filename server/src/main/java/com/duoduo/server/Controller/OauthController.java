@@ -44,7 +44,7 @@ public class OauthController {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "authorization_code");
             params.add("client_id", "5e490246777566659770531cd8719927");
-            params.add("redirect_uri", "http://localhost:3000/account");
+            params.add("redirect_uri", "http://duoduo.me/account");
             params.add("code", code);
 
             // create header
