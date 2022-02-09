@@ -120,6 +120,12 @@ function MessageModal({
     }
   };
 
+  const onEnter = (e: any) => {
+    if (e.key === "Enter") {
+      submitMessage();
+    }
+  };
+
   return (
     <>
       {isMessage ? (
@@ -300,6 +306,7 @@ function MessageModal({
                 <Input
                   type="text"
                   className="flex-1"
+                  onKeyPress={onEnter}
                   onChange={(e) => setText(e.target.value)}
                   value={text}
                 ></Input>
