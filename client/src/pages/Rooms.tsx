@@ -60,16 +60,20 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
       );
+      console.log(data.result);
       result = data.result;
     } else if (!tier && position) {
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
       );
+      console.log(data.result);
+
       result = data.result;
     } else if (!position && tier) {
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
       );
+      console.log(data.result);
 
       result = data.result;
     } else {
@@ -234,6 +238,7 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
             )
             .then(({ data }) => {
+              console.log(data);
               for (let i = 0; i < data.result.length; i++) {
                 let obj = data.result[i];
                 const newMost = obj.most.split(" ");
@@ -251,6 +256,8 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
             )
             .then(({ data }) => {
+              console.log(data);
+
               for (let i = 0; i < data.result.length; i++) {
                 let obj = data.result[i];
                 const newMost = obj.most.split(" ");
@@ -268,6 +275,8 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
             )
             .then(({ data }) => {
+              console.log(data);
+
               for (let i = 0; i < data.result.length; i++) {
                 let obj = data.result[i];
                 const newMost = obj.most.split(" ");

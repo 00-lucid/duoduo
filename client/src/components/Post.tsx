@@ -115,6 +115,7 @@ function Post({
       }
     );
     if (data) {
+      console.log(data);
       clickAddComment();
       setComments((old) => [data, ...old]);
     }
