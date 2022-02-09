@@ -32,7 +32,6 @@ public class MyPageController {
     public JSONObject getMypage(@RequestHeader(value = "Authorization") String jwt) {
         JSONObject jsonObject = new JSONObject();
         try {
-            // TODO: delete password
             Long id = jsonWebTokenService.decodeId(jwt);
             UserEntity user = jsonWebTokenService.verifyId(id);
             jsonObject.put("email", user.getEmail());
