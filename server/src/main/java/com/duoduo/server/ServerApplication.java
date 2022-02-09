@@ -22,6 +22,7 @@ import java.util.TimeZone;
 @PropertySource("classpath:/key.properties")
 public class ServerApplication {
 
+	// version beta_0.2
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
