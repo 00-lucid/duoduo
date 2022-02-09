@@ -302,7 +302,6 @@ public class UserListController {
     public JSONObject removeUserListOfName(@PathVariable("username") String username, @RequestHeader("Authorization") String jwt) {
         JSONObject jsonObject = new JSONObject();
         try {
-            // TODO: 유저네임에 의존하는 것이 아니라 클라이언트 id 또는 닉네임 등으로 검사해야됨
             Long userId = jsonWebTokenService.decodeId(jwt);
             userListRepository.deleteAllByNameAndId(username, userId);
             jsonObject.put("state", "success");
@@ -315,29 +314,55 @@ public class UserListController {
 
     @GetMapping(value = "userlist/filter")
     public JSONObject getUserListFilter(@RequestParam(value = "tier", required = false) String tier, @RequestParam(value = "position", required = false) String position, @RequestParam(value = "page", required = false) Integer page) {
-        // TODO 필터링 인피니티 스크롤 구현 해야됨. . .
-        // TODO 비밀번호 지워야됨
-        JSONObject jsonObject = new JSONObject();
+        List<UserListEntity> userList = new ArrayList();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject result = new JSONObject();
+
         try {
             if (page == null) {
                 page = 0;
             }
             if (tier != null && position != null) {
-                System.out.println("all");
-                jsonObject.put("result", userListRepository.findByFilter(tier, position, page * 10));
+                userList = userListRepository.findByFilter(tier, position, page * 10);
             } else if (position != null && tier == null) {
-                jsonObject.put("result", userListRepository.findByPosition(position, page * 10));
+                userList = userListRepository.findByPosition(position, page * 10);
             } else if (tier != null && position == null) {
-                System.out.println("tier");
-                jsonObject.put("result", userListRepository.findByTier(tier, page * 10));
+                userList = userListRepository.findByTier(tier, page * 10);
             } else {
-                jsonObject.put("result", "none");
+                result.put("result", "none");
+                return null;
             }
 
-            return jsonObject;
+            for (int i = 0; i < userList.size(); i++) {
+                JSONObject jsonObject = new JSONObject();
+                UserListEntity userListEntity = userList.get(i);
+                jsonObject.put("createdAt", userListEntity.getCreatedAt());
+                jsonObject.put("id", userListEntity.getId());
+                jsonObject.put("kda", userListEntity.getKda());
+                jsonObject.put("mic", userListEntity.isMic());
+                jsonObject.put("most", userListEntity.getMost());
+                jsonObject.put("most_kda", userListEntity.getMost_kda());
+                jsonObject.put("most_rate", userListEntity.getMost_rate());
+                jsonObject.put("nickname", userListEntity.getNickname());
+                jsonObject.put("position", userListEntity.getPosition());
+                jsonObject.put("profileIconId", userListEntity.getProfileIconId());
+                jsonObject.put("recent_rate", userListEntity.getRecent_rate());
+                jsonObject.put("summonerLevel", userListEntity.getSummonerLevel());
+                jsonObject.put("text", userListEntity.getText());
+                jsonObject.put("tier", userListEntity.getTier());
+                jsonObject.put("total_losses", userListEntity.getTotal_losses());
+                jsonObject.put("total_rate", userListEntity.getTotal_rate());
+                jsonObject.put("total_wins", userListEntity.getTotal_wins());
+                jsonObject.put("username", userListEntity.getUsername());
+
+
+                jsonArray.add(jsonObject);
+            }
+            result.put("result", jsonArray);
+            return result;
         } catch (Exception e) {
-            jsonObject.put("state", "fail");
-            return jsonObject;
+            result.put("state", "fail");
+            return null;
         }
     }
 

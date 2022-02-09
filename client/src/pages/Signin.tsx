@@ -82,7 +82,6 @@ function Signin() {
               >
                 {isLoading ? <Loading></Loading> : "OK"}
               </SocialLoginBtn>
-              <p className="font-semibold">or</p>
               <SocialLoginBtn
                 className="bg-yellow-300"
                 href={`https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_url}&response_type=code`}

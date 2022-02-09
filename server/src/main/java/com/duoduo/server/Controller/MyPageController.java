@@ -20,21 +20,19 @@ import java.util.Optional;
 public class MyPageController {
 
     @Autowired
-    private JsonWebTokenService jsonWebTokenService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserNameRepository userNameRepository;
 
+    @Autowired
+    private JsonWebTokenService jsonWebTokenService;
+
     @GetMapping(value = "/mypage")
     public JSONObject getMypage(@RequestHeader(value = "Authorization") String jwt) {
         JSONObject jsonObject = new JSONObject();
         try {
-            // TODO: JsonWebTokenService 객체가 싱글톤인지, 만약 싱글톤이라면 상태를 가져서 문제가 되지 않는지 체크 필요!
             Long id = jsonWebTokenService.decodeId(jwt);
-            // TODO: delete password
             UserEntity user = jsonWebTokenService.verifyId(id);
             jsonObject.put("email", user.getEmail());
             jsonObject.put("nickname", user.getNickname());
@@ -68,7 +66,6 @@ public class MyPageController {
 
     @PatchMapping(value = "/username")
     public String configUsername(@RequestBody JSONObject data, @RequestHeader(value = "Authorization") String jwt) {
-        // 소환사명 변경
         try {
             String nextUserName = (String) data.get("nextUserName");
             Long id = jsonWebTokenService.decodeId(jwt);

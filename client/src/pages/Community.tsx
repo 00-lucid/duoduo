@@ -51,8 +51,8 @@ function Community() {
       })
       .then(({ data }) => {
         if (data) {
-          setPosts(data);
           console.log(data);
+          setPosts(data);
           setIsLoading(false);
         }
       });

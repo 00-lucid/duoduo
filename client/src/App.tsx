@@ -71,12 +71,6 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    // if (isMode !== "none") {
-    //   setIsMessage(true);
-    // }
-  }, [isMode]);
-
   return (
     <div className="App">
       {alarmModals?.map((alarm, idx) => (

@@ -60,16 +60,20 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
       );
+      console.log(data.result);
       result = data.result;
     } else if (!tier && position) {
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
       );
+      console.log(data.result);
+
       result = data.result;
     } else if (!position && tier) {
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
       );
+      console.log(data.result);
 
       result = data.result;
     } else {
@@ -102,7 +106,6 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
   };
 
   const addUserList = async (position: string) => {
-    console.log(userInfo.username);
     if (!userInfo.username) {
       setAlarmModal((old) => [
         { text: "마이페이지에서 소환사명을 등록하세요", type: 0 },
@@ -163,14 +166,11 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
         }
       );
       if (data.most && data.most.length > 0) {
-        // 유저리스트를 생성하면 룸을 생선한다.
-        // 룸 이름은 리스트 생성자 롤 닉네임
         socket.emit("start", {
           from: userInfo.nickname,
           room: userInfo.username,
         });
-        // 다른 유저가 해당 유저리스트 듀오 요청시, 룸에 참가 및 노티를 보낸다.
-        // 노티를 받은 유저가 수락하면 채팅을 할 수 있게 된다.
+
         setDummy((old) => {
           return [data, ...old];
         });
@@ -238,6 +238,7 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&position=${position}&page=${page}`
             )
             .then(({ data }) => {
+              console.log(data);
               for (let i = 0; i < data.result.length; i++) {
                 let obj = data.result[i];
                 const newMost = obj.most.split(" ");
@@ -255,6 +256,8 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?position=${position}&page=${page}`
             )
             .then(({ data }) => {
+              console.log(data);
+
               for (let i = 0; i < data.result.length; i++) {
                 let obj = data.result[i];
                 const newMost = obj.most.split(" ");
@@ -272,6 +275,8 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               `${process.env.REACT_APP_SERVER_URL}/userlist/filter/?tier=${tier}&page=${page}`
             )
             .then(({ data }) => {
+              console.log(data);
+
               for (let i = 0; i < data.result.length; i++) {
                 let obj = data.result[i];
                 const newMost = obj.most.split(" ");
