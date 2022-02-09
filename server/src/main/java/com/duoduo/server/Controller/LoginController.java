@@ -95,20 +95,20 @@ public class LoginController {
     }
 
     @PostMapping(value = "/username")
-    public UserNameEntity createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
+    public JSONObject createUsername(@RequestBody(required = true) HashMap<String, String> map, @RequestHeader("Authorization") String data) {
+        JSONObject jsonObject = new JSONObject();
         try{
-            // TODO: @Authorwize를 통해서 JsonWebTokenService 객체를 주입해줘야 하는지 고민이 필요함: 값 덮어씌기 문제 때문에 new 를 통한 생성이 어울리지 않을까?
             Long id = jsonWebTokenService.decodeId(data);
-            System.out.println("decodedId: " + id);
             // createusernameentity
             UserEntity user =  jsonWebTokenService.verifyId(id);
-            System.out.println(user.toString());
             UserNameEntity userName =  UserNameEntity.builder()
                             .userId(user)
                             .username(map.get("username"))
                             .build();
             userNameRepository.save(userName);
-            return userName;
+
+            jsonObject.put("username", userName.getUsername());
+            return jsonObject;
         } catch (Exception e) {
             return null;
         }
