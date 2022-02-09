@@ -5,6 +5,7 @@ import com.duoduo.server.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Scope(value = "prototype")
 public class JsonWebTokenService {
 
     @Autowired
@@ -60,6 +62,7 @@ public class JsonWebTokenService {
     public UserEntity verifyId(Long id) {
         try {
             Optional<UserEntity> user = userRepository.findById(id);
+            System.out.println("excute");
             UserEntity userEntity = user.get();
             return userEntity;
         } catch (Exception e) {

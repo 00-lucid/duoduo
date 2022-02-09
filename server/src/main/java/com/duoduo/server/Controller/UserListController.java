@@ -302,7 +302,6 @@ public class UserListController {
     public JSONObject removeUserListOfName(@PathVariable("username") String username, @RequestHeader("Authorization") String jwt) {
         JSONObject jsonObject = new JSONObject();
         try {
-            // TODO: 유저네임에 의존하는 것이 아니라 클라이언트 id 또는 닉네임 등으로 검사해야됨
             Long userId = jsonWebTokenService.decodeId(jwt);
             userListRepository.deleteAllByNameAndId(username, userId);
             jsonObject.put("state", "success");
@@ -315,7 +314,6 @@ public class UserListController {
 
     @GetMapping(value = "userlist/filter")
     public JSONObject getUserListFilter(@RequestParam(value = "tier", required = false) String tier, @RequestParam(value = "position", required = false) String position, @RequestParam(value = "page", required = false) Integer page) {
-        // TODO 필터링 인피니티 스크롤 구현 해야됨. . .
         // TODO 비밀번호 지워야됨
         JSONObject jsonObject = new JSONObject();
         try {

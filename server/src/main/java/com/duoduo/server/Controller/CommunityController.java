@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +34,24 @@ public class CommunityController {
     private CommentRepository commentRepository;
 
     @GetMapping(value = "/community/all/comment")
-    private List<CommentEntity> getComments(@RequestParam("postId") Long id) {
+    private List<JSONObject> getComments(@RequestParam("postId") Long id) {
+        List<JSONObject> jsonObjects = new ArrayList<>();
         try {
-            return commentRepository.findAllByPostId(id);
+            List<CommentEntity> commentEntities = commentRepository.findAllByPostId(id);
+            for (int i = 0; i < commentEntities.size(); i++) {
+                JSONObject user = new JSONObject();
+                JSONObject comment = new JSONObject();
+                UserEntity userEntity = commentEntities.get(i).getUser();
+                CommentEntity commentEntity = commentEntities.get(i);
+                user.put("id", userEntity.getId());
+                user.put("nickname", userEntity.getNickname());
+                comment.put("user", user);
+                comment.put("createdAt", commentEntity.getCreatedAt());
+                comment.put("id", commentEntity.getId());
+                comment.put("text", commentEntity.getText());
+                jsonObjects.add(comment);
+            }
+            return jsonObjects;
         } catch (Exception e) {
             return null;
         }
@@ -45,19 +61,16 @@ public class CommunityController {
     private List<JSONObject> getPost(@RequestParam("page") Long page, @RequestHeader("Authorization") String jwt) {
         try {
             if (jwt != null) {
-                System.out.println("PAGE: " +  page);
                 JsonWebTokenService jsonWebTokenService = new JsonWebTokenService();
                 Long userId = jsonWebTokenService.decodeId(jwt);
 
                 if (page != 0) {
-                    System.out.println(page * 10);
                     return postRepository.findMoreTenWithLike(userId,page * 10);
                 } else {
                     List postDTOList = postRepository.findRecentTenWithLike(userId);
                     return postDTOList;
                 }
             } else {
-                System.out.println("비회원");
                 if (page != 0) {
                     return postRepository.findMoreTenWithLike(Long.valueOf(0),page * 10);
                 } else {
@@ -75,7 +88,6 @@ public class CommunityController {
     @PostMapping(value = "/community")
     private PostEntity createPost(@RequestBody JSONObject requestBody) {
         try {
-            System.out.println(requestBody.toString());
             PostEntity post = PostEntity.builder()
                             .title(requestBody.get("title").toString())
                             .nickname(requestBody.get("nickname").toString())
@@ -89,9 +101,9 @@ public class CommunityController {
     }
 
     @PostMapping(value = "/community/like/1")
-    private UserPostEntity createLike(@RequestParam("postId") Long id, @RequestHeader(value = "Authorization") String jwt) {
+    private JSONObject createLike(@RequestParam("postId") Long id, @RequestHeader(value = "Authorization") String jwt) {
+        JSONObject jsonObject = new JSONObject();
         try {
-            System.out.println("create");
             JsonWebTokenService jsonWebTokenService = new JsonWebTokenService();
             Long userId = jsonWebTokenService.decodeId(jwt);
             Long postId = id;
@@ -100,25 +112,25 @@ public class CommunityController {
 
             UserPostEntity userPostEntity = UserPostEntity.builder().user(user).post(post).build();
             userPostRepositoy.save(userPostEntity);
-
-            return userPostEntity;
+            jsonObject.put("state", "success");
+            return jsonObject;
         } catch (Exception e) {
             return null;
         }
     }
 
     @DeleteMapping(value = "/community/like/0")
-    private String removeLike(@RequestParam("postId") Long id, @RequestHeader("Authorization") String jwt) {
+    private JSONObject removeLike(@RequestParam("postId") Long id, @RequestHeader("Authorization") String jwt) {
+        JSONObject jsonObject = new JSONObject();
         try {
-            System.out.println("remove");
             JsonWebTokenService jsonWebTokenService = new JsonWebTokenService();
             Long userId = jsonWebTokenService.decodeId(jwt);
             Long postId = id;
 
-            System.out.println(userId+ " " +postId);
             // remove logic
             userPostRepositoy.deleteUserPostByUserIdPostId(userId, postId);
-            return "success";
+            jsonObject.put("state", "success");
+            return jsonObject;
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -126,15 +138,23 @@ public class CommunityController {
     }
 
     @PostMapping(value = "/community/all/comment")
-    private CommentEntity addComment(@RequestBody JSONObject requestBody, @RequestParam("postId") Long id, @RequestHeader("Authorization") String jwt) {
+    private JSONObject addComment(@RequestBody JSONObject requestBody, @RequestParam("postId") Long id, @RequestHeader("Authorization") String jwt) {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject userObject = new JSONObject();
         try {
             JsonWebTokenService jsonWebTokenService = new JsonWebTokenService();
             Long userId = jsonWebTokenService.decodeId(jwt);
-            System.out.println(userId);
             UserEntity user = userRepository.findById(userId).get();
             PostEntity post = postRepository.findById(id).get();
             CommentEntity commentEntity = CommentEntity.builder().user(user).post(post).text(requestBody.get("text").toString()).build();
-            return commentRepository.save(commentEntity);
+            commentRepository.save(commentEntity);
+            userObject.put("id", commentEntity.getUser().getId());
+            userObject.put("nickname", commentEntity.getUser().getNickname());
+            jsonObject.put("user", userObject);
+            jsonObject.put("createdAt", commentEntity.getCreatedAt());
+            jsonObject.put("id", commentEntity.getId());
+            jsonObject.put("text", commentEntity.getText());
+            return jsonObject;
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -144,7 +164,6 @@ public class CommunityController {
     @GetMapping(value = "/community/all/best")
     private List<JSONObject> getBestAll() {
         try {
-            System.out.println("BEST POSTS");
             return postRepository.findBestAll();
         } catch (Exception e) {
             return null;
