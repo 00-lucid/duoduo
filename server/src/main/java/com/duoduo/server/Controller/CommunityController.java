@@ -1,10 +1,7 @@
 package com.duoduo.server.Controller;
 
 import ch.qos.logback.core.encoder.EchoEncoder;
-import com.duoduo.server.Entity.CommentEntity;
-import com.duoduo.server.Entity.PostEntity;
-import com.duoduo.server.Entity.UserEntity;
-import com.duoduo.server.Entity.UserPostEntity;
+import com.duoduo.server.Entity.*;
 import com.duoduo.server.Repository.*;
 import com.duoduo.server.Service.JsonWebTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -32,6 +29,9 @@ public class CommunityController {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private RedisPostRepository redisPostRepository;
 
     @GetMapping(value = "/community/all/comment")
     private List<JSONObject> getComments(@RequestParam("postId") Long id) {
@@ -88,12 +88,23 @@ public class CommunityController {
     @PostMapping(value = "/community")
     private PostEntity createPost(@RequestBody JSONObject requestBody) {
         try {
+
+            String title = requestBody.get("title").toString();
+            String nickname = requestBody.get("nickname").toString();
+            String body = requestBody.get("body").toString();
+
             PostEntity post = PostEntity.builder()
-                            .title(requestBody.get("title").toString())
-                            .nickname(requestBody.get("nickname").toString())
-                            .body(requestBody.get("body").toString())
+                            .title(title)
+                            .nickname(nickname)
+                            .body(body)
                             .build();
             postRepository.save(post);
+
+            // redis cashing
+            RedisPostEntity redisPostEntity = new RedisPostEntity(title, nickname, body);
+            System.out.println(redisPostEntity.toString());
+            redisPostRepository.save(redisPostEntity);
+
             return post;
         } catch (Exception e) {
             return null;
