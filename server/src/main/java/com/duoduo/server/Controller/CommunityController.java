@@ -4,9 +4,11 @@ import ch.qos.logback.core.encoder.EchoEncoder;
 import com.duoduo.server.Entity.*;
 import com.duoduo.server.Repository.*;
 import com.duoduo.server.Service.JsonWebTokenService;
+import com.duoduo.server.Service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ public class CommunityController {
 
     @Autowired
     private RedisPostRepository redisPostRepository;
+
+    @Autowired
+    private RedisService redisService;
 
     @GetMapping(value = "/community/all/comment")
     private List<JSONObject> getComments(@RequestParam("postId") Long id) {
@@ -99,11 +104,6 @@ public class CommunityController {
                             .body(body)
                             .build();
             postRepository.save(post);
-
-            // redis cashing
-            RedisPostEntity redisPostEntity = new RedisPostEntity(title, nickname, body);
-            System.out.println(redisPostEntity.toString());
-            redisPostRepository.save(redisPostEntity);
 
             return post;
         } catch (Exception e) {
