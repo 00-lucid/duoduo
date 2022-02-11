@@ -64,6 +64,8 @@ function MessageModal({
   };
 
   useEffect(() => {
+    window.addEventListener("unload", leaveRoom);
+
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
     });
