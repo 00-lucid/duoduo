@@ -39,7 +39,11 @@ public class MyPageController {
 
             Optional<UserNameEntity> optionalUserName = userNameRepository.findById(id);
             UserNameEntity userNameEntity = optionalUserName.get();
-            jsonObject.put("username", userNameEntity.getUsername());
+            if (userNameEntity == null) {
+                jsonObject.put("username", "없음");
+            } else {
+                jsonObject.put("username", userNameEntity.getUsername());
+            }
 
             return jsonObject;
         } catch (Exception e) {
