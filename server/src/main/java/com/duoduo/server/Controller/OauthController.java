@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,6 +33,9 @@ import java.util.Map;
 @RestController
 public class OauthController {
 
+    @Value("${spring.redis.host}")
+    private String redirect_uri;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -44,7 +48,7 @@ public class OauthController {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "authorization_code");
             params.add("client_id", "5e490246777566659770531cd8719927");
-            params.add("redirect_uri", "http://localhost:3000/account");
+            params.add("redirect_uri", redirect_uri);
             params.add("code", code);
 
             // create header
