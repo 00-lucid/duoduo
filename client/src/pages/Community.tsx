@@ -234,6 +234,15 @@ function Community() {
             {isLoading && (
               <>
                 <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
+                <PostSK />
               </>
             )}
             {!isLoading &&
@@ -313,7 +322,7 @@ function Community() {
           </section>
         </Main>
       </section>
-      {inView && <p>로딩중</p>}
+      {inView && <p className="font-bold text-gray-400 text-center">...</p>}
     </>
   );
 }

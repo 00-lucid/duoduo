@@ -294,7 +294,7 @@ const KdaText = styled.div<{ kda: number }>`
 const RecentText = styled.p<{ rate: number }>`
   color: ${(props) => {
     const rate = props.rate;
-    if (rate > 85) {
+    if (rate >= 85) {
       return "#FACC14";
     } else if (rate > 65) {
       return "#34D399";
