@@ -364,6 +364,15 @@ function Rooms({ socket, setIsMessage, isMode, setIsMode }: any) {
               {isLoading && (
                 <>
                   <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
+                  <UserListSK />
                 </>
               )}
               {!isLoading &&

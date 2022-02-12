@@ -346,14 +346,22 @@ function MessageModal({
           className="animate-bounce fixed bg-yellow-300 w-16 h-16 right-4 bottom-4 border z-40 flex flex-col rounded-full overflow-hidden shadow-2xl justify-center items-center text-white"
           onClick={openMessage}
         >
-          <img src="./icon_message.png" width={35} height={35} />
+          <img
+            src={`${process.env.PUBLIC_URL}/icon_message.png`}
+            width={35}
+            height={35}
+          />
         </button>
       ) : (
         <button
           className="fixed bg-green-400 w-16 h-16 right-4 bottom-4 border z-40 flex flex-col rounded-full overflow-hidden shadow-2xl justify-center items-center text-white"
           onClick={openMessage}
         >
-          <img src="./icon_message.png" width={35} height={35} />
+          <img
+            src={`${process.env.PUBLIC_URL}/icon_message.png`}
+            width={35}
+            height={35}
+          />
         </button>
       )}
     </>

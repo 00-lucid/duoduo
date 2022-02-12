@@ -229,7 +229,7 @@ public class UserListController {
                     .nickname(userListDTO.getNickname())
                     .position(userListDTO.getPosition())
                     .tier(userListDTO.getTier())
-                    .recent_rate(win * 10)
+                    .recent_rate(win * 5)
                     .most(result)
                     .kda(5)
                     .poro(50)
