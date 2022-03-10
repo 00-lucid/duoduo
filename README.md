@@ -4,5 +4,7 @@
 : 리그오브레전드 친구를 찾는 웹사이트
 
 domain: https://www.duoduo.me
+
 client: on
+
 server: off
