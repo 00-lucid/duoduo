@@ -5,6 +5,6 @@
 
 domain: https://www.duoduo.me
 
-client: on
+client: off
 
 server: off
